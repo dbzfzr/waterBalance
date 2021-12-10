@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>区划管理</title>
+    <script th:src="@{/webjars/jquery/3.5.1/jquery.js}"></script>
+    <!--layui-->
+    <script type="text/javascript" th:src="@{/webjars/layui/2.6.8/layui.js}"></script>
+    <link rel="stylesheet" th:href="@{/webjars/layui/2.6.8/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/css/layuiTable.css}">
+    <link rel="stylesheet" th:href="@{/css/layuiLayer.css}">
+    <!--EasyUI_Tree 样式-->
+    <script type="text/javascript" th:src="@{/js/jquery-easyui-1.9.4/jquery.easyui.min.js}"></script>
+    <link rel="stylesheet" type="text/css" th:href="@{/js/jquery-easyui-1.9.4/themes/default/easyui.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/js/jquery-easyui-1.9.4/themes/icon.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/js/jquery-easyui-1.9.4/themes/gray/tree.css}">
+    <link rel="stylesheet" th:href="@{/css/my-easyui-tree.css}">
+    <link rel="stylesheet" th:href="@{/css/location.css}">
+    <link rel="stylesheet" th:href="@{/css/regionPage.css}">
+    <link rel="stylesheet" th:href="@{/css/map.css}">
+    <!--百度地图-->
+<!--    <script type="text/javascript" src="https://api.map.baidu.com/api?type=webgl&v=1.0&ak=X4nK3H4asgsS4cuXSuvg0viGW9qPXDAQ"></script>-->
+    <script type="text/javascript" src="https://api.map.baidu.com/api?type=webgl&v=1.0&ak=smHViQElETSO7GAfRCoXuf4yGnIokjyC"></script>   <!--hhp百度地图-->
+
+    <script type="text/javascript" th:src="@{/js/mapGL/GeoUtils/GeoUtils.js}"></script>
+    <script type="text/javascript" th:src="@{/js/mapGL/DrawingManager/DrawingManager.js}"></script>
+    <link rel="stylesheet" th:href="@{/js/mapGL/DrawingManager/DrawingManager.css}">
+    <style>
+
+    </style>
+
+</head>
+<body>
+<div class="main-frame">
+    <div id="container" class="map" style="margin-top: 40px"></div>
+    <div class="left-menu-frame">
+        <div class="top-frame" id="searchBox">
+            <input class="search-input" id="area"  placeholder="请输入区域名称(小区名称)">
+            <button class="search-button" id="searchVillage">搜索</button>
+            <button class="search-button active" id="resetVillage">重置</button>
+        </div>
+        <div class="tree-frame">
+            <ul id="organizeTree" ></ul>
+        </div>
+
+    </div>
+    <div class="draw-button-block-1">
+        <button class="draw-button" id="startDraw"  onclick="startDraw()">开始绘制</button>
+        <button class="draw-button layui-hide" id="drawByEmpty" onclick="drawByEmpty()">从空白绘制</button>
+        <button class="draw-button layui-hide" id="drawByUpLevel" onclick="drawByUpLevel()">从上一级切割</button>
+        <button class="draw-button layui-hide" id="drawByOld" onclick="drawByOld()">从已有调整</button>
+    </div>
+
+    <div class="draw-button-block-2">
+        <!--        <button class="draw-button layui-hide" id="endDraw"  onclick="endDraw()">回到起点</button>-->
+        <!--        <button class="draw-button layui-hide" id="cancelUpPoint" style="" onclick="cancelUpPoint()">撤销上一点</button>-->
+        <button class="draw-button layui-hide" id="cancelDraw"  onclick="cancelDraw()">取消绘制</button>
+        <button class="draw-button layui-hide" id="saveDraw" onclick="saveDraw()">保存绘制</button>
+    </div>
+
+</div>
+
+</body>
+<!--树形结构-->
+<script>
+
+    //获取最顶层父页面的body
+    var parentBody = window.parent.parent.document.body;
+    parentBody.style="background-color:#031133";
+
+    var layer = parent.layer;
+    var checkedOrganizeId = -1;
+    var checkedTreeLevel;
+    var checkedNode;
+    var checkedNodePoints = [];
+    $(function () {
+        initTree();
+    })
+    //树初始化
+    function initTree(){
+        $('#organizeTree').tree({
+            url:'getOrganizeTree?pId=0',
+            onLoadSuccess:function () { //当数据加载成功时触发
+                var divs=document.getElementsByClassName("tree-node");
+                for(var i =0; i<divs.length; i++){
+                    var id = $(divs[i]).attr('id');
+                    var html = $("#"+id+"").html();
+                    html = html + '<div style="display: inline-flex;float: right;color: #ffffff; margin: 4px 0;">';
+                    html = html + '<i class="layui-icon add_node_icon" name="addNode">&#xe654;</i>';/*新增*/
+                    html = html + '<i class="layui-icon edit_node_icon" name="editNode">&#xe642;</i>';/*编辑*/
+                    html = html + '<i class="layui-icon del_node_icon" name="delNode">&#xe640;</i>';/*删除*/
+                    html = html + '</div>';
+                    $("#"+id+"").html(html);
+                }
+                iconClick();
+            }
+        });
+    }
+
+    $("#resetVillage").click(function () {
+        $("#organizeTree").tree({
+            url:'getOrganizeTree?pId=0',
+            onLoadSuccess:function () {
+                $("#searchBox input").val("").removeData();
+                var divs=document.getElementsByClassName("tree-node");
+                for(var i =0; i<divs.length; i++){
+                    var id = $(divs[i]).attr('id');
+                    var html = $("#"+id+"").html();
+                    html = html + '<div style="display: inline-flex;float: right;color: #ffffff; margin: 4px 0;">';
+                    html = html + '<i class="layui-icon add_node_icon" name="addNode">&#xe654;</i>';/*新增*/
+                    html = html + '<i class="layui-icon edit_node_icon" name="editNode">&#xe642;</i>';/*编辑*/
+                    html = html + '<i class="layui-icon del_node_icon" name="delNode">&#xe640;</i>';/*删除*/
+                    html = html + '</div>';
+                    $("#"+id+"").html(html);
+                }
+                iconClick();
+            }
+        })
+    })
+
+
+    var isIconClick = false;
+    //树点击事件
+    $('#organizeTree').tree({
+        onClick:function (node) {
+            console.log(node);
+            checkedNode = node;
+            checkedOrganizeId = node.id;
+            checkedTreeLevel = node.iconCls;
+            if(!isIconClick){//新增删除编辑时，不执行该操作 210923 hhp
+                getDistrict(node.text,node.id,node.iconCls);
+            }
+        }
+    });
+
+    //树图标点击事件
+    function iconClick() {
+        //新增节点
+        $(".add_node_icon").click(function () {
+            console.info("click--->add");
+            isIconClick = true;
+            $(this).parent().parent().click();
+            var selected = $('#organizeTree').tree('getSelected');
+            console.info(selected)
+            if(selected == null) {
+                layer.msg('请先选择节点');
+                return;
+            }
+
+            var iconCls = selected.iconCls;
+            var level = Number(iconCls.substring(iconCls.length-1, iconCls.length));
+            console.log(iconCls,level);
+
+
+            layer.prompt({title:'请输入区域名称'},function(value, index, elem){
+                console.log(value); //得到value
+                layer.close(index);
+
+                var data = {};
+                data.text = value;
+                data.iconCls = 'my-tree-icon-' + (level + 1);
+                data.pId = selected.id;
+                addTree(data,selected);
+            });
+            isIconClick = false;
+        })
+        $(".edit_node_icon").click(function (res) {
+            console.info("click--->edit")
+            isIconClick = true;
+            $(this).parent().parent().click();
+            var selected = $('#organizeTree').tree('getSelected');
+            console.info(selected)
+            if(selected == null) {
+                layer.msg('请先选择节点');
+                return;
+            }
+
+            var index = layer.prompt({title:'编辑',value:selected.text, placeholder:'请输入区域名称'},function(value, index, elem){
+                console.log(value); //得到value
+                layer.close(index);
+                var data = {};
+                data.id = selected.id;
+                data.text = value;
+                data.iconCls = selected.iconCls;
+                data.pId = selected.pId;
+                $.post('modifyTree',data,function (res) {
+                    console.log(res);
+                    $('#organizeTree').tree('update', {
+                        target: selected.target,
+                        text: data.text
+                    });
+                })
+            });
+            $('#layui-layer'+ index + ".layui-layer-input").val(selected.text);
+            isIconClick = false;
+        })
+
+        $(".del_node_icon").click(function (res) {
+            isIconClick = true;
+            $(this).parent().parent().click();
+            var selected = $('#organizeTree').tree('getSelected');
+            if(selected == null) {
+                layer.msg('请先选择节点');
+                return;
+            }
+
+            layer.confirm('<span style="color: #E6EAEE">确定删除该节点？</span>', function(index){
+
+                if (selected.children.length>0){
+                    layer.msg('请先删除该节点下的子节点');
+                    return;
+                }
+
+                var loading = layer.load(1, {shade: [0.1,'#fff']});
+                $.post('delTree',{id:selected.id},function (res) {
+                    if (res.code > 0) {
+                        layer.close(index);
+                        $('#organizeTree').tree('remove',selected.target);
+                    }
+                    layer.msg(res.message);
+                    layer.close(loading);
+                })
+            })
+            isIconClick = false;
+        })
+    }
+
+
+    //添加组织
+    function addTree(data,node) {
+        $.post('addTree',data,function (res) {
+            initTree();
+            villageLocation == null;
+        })
+    }
+</script>
+
+<!--百度地图-->
+<script type="text/javascript">
+
+    var map = new BMapGL.Map("container");
+
+    var point = new BMapGL.Point(120.20769107795724, 30.183872266995300);//创建点坐标，不一定是点坐标，要看设置
+
+    map.centerAndZoom(point,14);//设置中心点（确定中心点坐标）
+
+    map.setTilt(30);       //设置地图的倾斜角度
+
+    map.enableScrollWheelZoom(true);//在PC端可以通过滚轮放大缩小地图，移动端关闭该功能
+
+    map.setMapStyleV2({
+        styleId: '95f38494b1f5c7e070759907c618ff81'//自定义地图样式 hhp 726af33cb58954d724aa45935732a562
+
+    });
+
+    var i=0;
+
+
+    // 查询区域信息
+    var queryHouseOutline = function(hid, callback){
+        var baseURL = 'http://map.baidu.com/?reqflag=pcmap&coord_type=3&from=weBMapGL&qt=ext&ext_ver=new&l=18';
+        var url = baseURL + "&uid=" + hid;
+        callback && (window.queryHouseOutlineCallback = callback);
+        $.ajax({
+            type: "get",
+            async: false,
+            url: url,
+            dataType: "jsonp",
+            jsonpCallback: "queryHouseOutlineCallback",
+            success: function(datas) {
+            }
+        });
+    };
+
+    /**
+     * 模糊查询小区信息, 无返回值
+     * @param {} house	小区名称
+     * @param {} city	所属城市名称
+     * @param {} ak		百度地图AK
+     * @param {} callback	回调函数，该函数可以接收到请求的返回值
+     */
+    var queryHouse = function(house, city, ak, callback){
+        var baseURL = 'http://api.map.baidu.com/place/v2/search?';
+        var url = baseURL + "&query=" + house + "&region=" + city + "&output=json&ak=" + ak;
+
+        callback && (window.queryHouseCallback = callback);
+        $.ajax({
+            type: "get",
+            async: false,
+            url: url,
+            dataType: "jsonp",
+            jsonpCallback: "queryHouseCallback",
+            success: function(datas) {
+            }
+        });
+    };
+
+    /**
+     * 墨卡托坐标转百度坐标 baidu jsapi WebGL 版本使用
+     * @param {} coordinate
+     * @return {}
+     */
+    var coordinateToPoints = function(map, coordinate) {
+        var points = [];
+        if (coordinate) {
+            var arr = coordinate.split(";");
+            if(arr){
+                for(var i = 0; i < arr.length; i++){
+
+                    var coord = arr[i].split(",");
+                    if(coord && coord.length == 2){
+                        var lngLat = map.mercatorToLnglat(coord[0], coord[1]);
+                        //console.log(lngLat)
+                        //var point = project.pointToLngLat(mctXY);
+                        points.push(new BMapGL.Point(lngLat[0], lngLat[1]));
+                    }
+                }
+            }
+        }
+        return points;
+    };
+
+    /**
+     * 墨卡托坐标解析
+     * @param {} mocator
+     * @return {}
+     */
+    var parseGeo = function(mocator){
+        if(typeof mocator != 'string'){
+            return {};
+        }
+        var t = mocator.split("|");
+        var n = parseInt(t[0]);
+        var i = t[1];
+        var r = t[2];
+        var o = r.split(";");
+        if(n === 4){
+            for (var a = [], s = 0; s < o.length - 1; s++){
+                "1" === o[s].split("-")[0] && a.push(o[s].split("-")[1]);
+            }
+            o = a;
+            o.push("");
+        }
+        var u = [];
+        switch(n){
+            case 1:
+                u.push(o[0]);
+                break;
+            case 2:
+            case 3:
+            case 4:
+                for (var s = 0; s < o.length - 1; s++) {
+                    var l = o[s];
+                    if (l.length > 100){
+                        l = l.replace(/(-?[1-9]\d*\.\d*|-?0\.\d*[1-9]\d*|-?0?\.0+|0|-?[1-9]\d*),(-?[1-9]\d*\.\d*|-?0\.\d*[1-9]\d*|-?0?\.0+|0|-?[1-9]\d*)(,)/g,
+                            "$1,$2;");
+                        u.push(l);
+                    } else {
+                        for (var c = [], d = l.split(","), f = 0; f < d.length; f += 2) {
+                            var p = d[f];
+                            var h = d[f + 1];
+                            c.push(p + "," + h);
+                        }
+                        u.push(c.join(";"))
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+
+        if(u.length <= 1){
+            u = u.toString();
+        }
+
+        var result = {
+            type : n,
+            bound : i,
+            points : u
+        };
+        return result;
+    };
+    var tempPly;
+
+    // 搜索到的小区的位置信息
+    var villageLocation = null;
+
+    /**
+     * 第一个参数是城市名，第二参数是小区名
+     */
+    var showArea = function(city, area){
+        queryHouse(area, city, "GFoKC0MaH0l4iCj6bNKZedu5fCPkEXWe", function(data){
+            console.log(data)
+            if (data.message == 'ok'){
+                var houses = data.results;
+                if(houses && houses.length > 0){
+                    var house = houses[0];
+
+                    queryHouseOutline(house.uid, function(houseOutline){
+
+                        //console.log(houseOutline)
+                        var geo = houseOutline.content.geo;
+                        var location = house.location;
+
+                        var point = new BMapGL.Point(location.lng, location.lat);
+
+                        var marker = new BMapGL.Marker(point);
+                        var label = new BMapGL.Label(area,{
+                            offset:new BMapGL.Size(0,0),
+
+                        });
+                        marker.setLabel(label);
+                        map.addOverlay(marker);
+
+                        if(!geo){
+                            // 20210922 Wangchong 未搜到的信息进行手动绘制
+                            layer.msg("未搜索到信息,请手动选择小区!");
+                        }else{
+                            // map.remove;
+                            villageLocation = location;
+                            // $("#jd").val(location.lng);
+                            // $("#wd").val(location.lat);
+                            $("#txtaddress").val(house.address)
+                            var geoObj = parseGeo(geo);
+                            //var bounds = coordinateToPoints(geoObj.bound);
+                            //边界点
+                            var points = coordinateToPoints(map, geoObj.points);
+                            var prism = new BMapGL.Prism(points, 100, {
+                                topFillColor: '#064360',
+                                topFillOpacity: 0.5,
+                                sideFillColor: '#188C8E',
+                                sideFillOpacity: 0.8
+                            });
+                            tempPly = prism;
+                            map.addOverlay(prism); //添加覆盖物
+                            map.setTilt(60);
+                            // map.setViewport(prism.getPath()); //调整视野
+                        }
+                    });
+                }
+            }
+        });
+    };
+
+    //  搜索按钮点击
+    $("#searchVillage").click(function () {
+        var villageName = $("#area").val();
+        if (villageName == ""){
+            return;
+        }
+        showArea("杭州市", villageName);
+    })
+
+    // 添加小区区域信息
+    $("#btnAdd").click(function(){
+        var villageName = $("#area").val();
+        if (villageName == ""){
+            return;
+        }
+        if (villageLocation == null){
+            layer.msg("请搜索小区或者手动绘制!");
+            return;
+        }
+
+        var node = $('#organizeTree').tree('getSelected');
+        if (node == null){
+            layer.msg("请选择区域节点!");
+            return;
+        }
+
+        if (node.iconCls != "my-tree-icon-5"){
+            layer.msg("请选择社区级的节点!");
+            return;
+        }
+
+        var orgInfo = {};
+        orgInfo.organizeName = villageName;
+        orgInfo.pId = node.id;
+        // 小区
+        orgInfo.nodeLevel = "my-tree-icon-6";
+        orgInfo.longitude = villageLocation.lng;
+        orgInfo.latitude = villageLocation.lat;
+
+        $.ajax({
+            url : 'insertOrganize',
+            type:'post',
+            contentType:'application/json;charset=utf-8',
+            data:JSON.stringify(orgInfo),
+            success:function (res) {
+                if (res.code > 0){
+                    layer.msg("添加成功!");
+                    initTree();
+                }else {
+                    layer.msg("添加失败!");
+                    console.log(msg);
+                }
+            }
+        })
+    })
+
+    /**
+     * 添加小区
+     */
+    function addVillage(){
+        var node = $('#organizeTree').tree('getSelected');
+        if (node){
+            var nodes = [{
+                "id":13,
+                "text":"Raspberry"
+            },{
+                "id":14,
+                "text":"Cantaloupe"
+            }];
+            $('#organizeTree').tree('append', {
+                parent:node.target,
+                data:nodes
+            });
+        }
+    }
+
+
+
+    //点击组织树 框选区域以及自动缩放地图大小
+    function getDistrict(district,id,iconCls) {
+        if(isDraw){
+           cancelDraw();//取消绘制
+        }
+
+        checkedNodePoints = [];
+        var prism;
+        var threeDHight = 200;//3D棱柱高度
+        var mapLevel = 13;//地图缩放大小
+        var time = 1000; //旋转地图角度等待时间
+        var topFillColor = '#003399';
+        var sideFillColor = '#062070';
+        if(checkedTreeLevel == 'my-tree-icon-6'){
+            topFillColor = '#0055ff';
+            sideFillColor = '#062c9b';
+        }
+        switch (iconCls) {
+            case 'my-tree-icon-1':
+                threeDHight = 50000;
+                mapLevel = 8;
+                time = 3000;
+                break;
+            case 'my-tree-icon-2':
+                threeDHight = 10000;
+                mapLevel = 10;
+                break;
+            case 'my-tree-icon-3':
+                threeDHight = 2000;
+                mapLevel = 13;
+                break;
+            case 'my-tree-icon-4':
+                threeDHight = 1000;
+                mapLevel = 14;
+                break;
+            case 'my-tree-icon-5':
+                threeDHight = 200;
+                mapLevel = 16;
+                break;
+            case 'my-tree-icon-6':
+                threeDHight = 200;
+                mapLevel = 17.9;
+                break;
+            default:
+                break;
+        }
+        map.clearOverlays();//清空覆盖物
+
+        getRegion(district, id, iconCls, function (data) {
+            var points = data.points;
+            var loading;
+            if(points.length > 0){
+                loading = layer.load(1, {shade: [0.1,'#fff']});
+                //计算中心点 start
+                var centerPoint = getCenterPoint(points);
+                // end
+                var marker = new BMapGL.Marker(centerPoint);
+                var label = new BMapGL.Label(district,{
+                    offset:new BMapGL.Size(0,0),
+
+                });
+                marker.setLabel(label);
+                map.addOverlay(marker);
+                map.centerAndZoom(centerPoint,mapLevel);//设置中心点以及地图大小
+                window.setTimeout(function (){
+                    map.setTilt(60);//改变地图倾斜角度
+                },time);
+
+                var prism2 = new BMapGL.Prism(points, threeDHight, {
+                    topFillColor: topFillColor,
+                    topFillOpacity: 0.4,
+                    sideFillColor: sideFillColor,
+                    sideFillOpacity: 0.2,
+                    enableMassClear: true
+                });
+                console.info(points);
+                map.addOverlay(prism2); //添加覆盖物
+                prismGroup.push(prism2);
+                $.each(points,function (index,point) {
+                    checkedNodePoints.push(point);
+                });
+                layer.close(loading);
+            }else{
+                //layer.msg("未找到该区域，请先绘制！")
+                checkedNodePoints = [];
+            }
+
+        });
+    }
+
+    var regionPointGroup = [];
+    var markerGroup = [];
+    var lineGroup = [];
+    var prismGroup = [];
+    var isDraw = false;//是否处于绘制状态
+    var drawState = false; //是否允许在地图上绘制点
+    var isDrawByOld = false; //是否从已有区域范围上调整
+    var isDrawByUpLevel = false; //是否从上一级进行绘制
+
+    /**
+     * 开始绘制
+     */
+    function startDraw(){
+        var selected = $('#organizeTree').tree('getSelected');
+        console.info(selected)
+        if(selected == null) {
+            layer.msg('请先选择节点');
+            return;
+        }
+        var parentNode = $('#organizeTree').tree('getParent',checkedNode.target);
+        console.info(parentNode)
+        getRegion(parentNode.text,parentNode.id,parentNode.iconCls,function (data) {
+            if(data.points.length < 1){
+                layer.msg('请先绘制上一级的区域范围！');
+            }else{
+                isDraw = true;
+                map.clearOverlays();//清空覆盖物
+                $("#startDraw").addClass('layui-hide');
+                $("#drawByEmpty").removeClass('layui-hide');
+                $("#drawByUpLevel").removeClass('layui-hide');
+                if(checkedNodePoints.length > 0){
+                    $("#drawByOld").removeClass('layui-hide');
+                }
+                $("#cancelDraw").removeClass('layui-hide');
+                $("#saveDraw").removeClass('layui-hide');
+
+
+                console.info("开始绘制");
+                regionPointGroup = [];
+                markerGroup = [];
+                lineGroup = [];
+                prismGroup = [];
+            }
+        });
+
+    }
+
+    /**
+     * 取消绘制
+     */
+    function cancelDraw() {
+        new BMapGLLib.DrawingState(map, false);//关闭绘制功能
+        $("#startDraw").removeClass('layui-hide');
+        $("#cancelDraw").addClass('layui-hide');
+        $("#saveDraw").addClass('layui-hide');
+        // $("#cancelUpPoint").addClass('layui-hide');
+        // $("#endDraw").addClass('layui-hide');
+        $("#drawByEmpty").addClass('layui-hide');
+        $("#drawByUpLevel").addClass('layui-hide');
+        $("#drawByOld").addClass('layui-hide');
+        console.info("请空")
+        console.info("点集合长度:"+markerGroup.length)
+
+        map.clearOverlays();//清空覆盖物
+        regionPointGroup = [];
+        markerGroup = [];
+        lineGroup = [];
+        prismGroup = [];
+
+        //清空点
+        // for(var i=0; i<markerGroup.length; i++){
+        //     map.removeOverlay(markerGroup[i]);
+        // }
+        // regionPointGroup = [];
+        // markerGroup = [];
+        // //清空线
+        // console.info("线集合长度:"+lineGroup.length)
+        // for(var i=0; i<lineGroup.length; i++){
+        //     map.removeOverlay(lineGroup[i]);
+        // }
+        //
+        // lineGroup = [];
+        // //清空3D棱柱
+        // console.info("柱集合长度:"+prismGroup.length)
+        // for(var i=0; i<prismGroup.length; i++){
+        //     map.removeOverlay(prismGroup[i]);
+        // }
+        // prismGroup = [];
+    }
+    // /**
+    //  * 撤销上一个点
+    //  */
+    // function cancelUpPoint() {
+    //     //撤销上一步动作
+    //     console.info("撤销")
+    //     console.info("点集合长度:"+markerGroup.length)
+    //     // if(markerGroup.length > 0){
+    //     //     map.removeOverlay(markerGroup[markerGroup.length-1]);
+    //     //     markerGroup.splice(markerGroup.length-1,1);
+    //     //     if(regionPointGroup.length > 0){
+    //     //         regionPointGroup.splice(regionPointGroup.length-1,1)
+    //     //     }
+    //     // }
+    //     if(regionPointGroup.length > 0){
+    //         map.removeOverlay(regionPointGroup[regionPointGroup.length-1]);
+    //         regionPointGroup.splice(regionPointGroup.length-1,1)
+    //     }
+    //     console.info("线集合长度:"+lineGroup.length)
+    //     if(lineGroup.length > 0){
+    //         map.removeOverlay(lineGroup[lineGroup.length-1]);
+    //         lineGroup.splice(lineGroup.length-1,1);
+    //     }
+    // }
+    /**
+     *保存绘制
+     */
+    function saveDraw(){
+        new BMapGLLib.DrawingState(map, false);//关闭绘制功能
+        var drawPoints = [];
+        if(isDrawByOld || isDrawByUpLevel) {
+            var pts = lineGroup[1].getPath();
+            drawPoints =pts;
+            drawPoints.splice(drawPoints.length-1,1);
+        }else{
+            var overlays = drawingManager.getOverlays();
+            console.info(overlays);
+            if(overlays.length < 1){
+                layer.msg('请先绘制区域范围');
+                return;
+            }
+            drawPoints = overlays[0].points;
+            drawPoints.splice(drawPoints.length-1,1);
+        }
+        console.info(drawPoints);
+
+        drawState = false;
+        $("#startDraw").removeClass('layui-hide');
+        $("#cancelDraw").addClass('layui-hide');
+        $("#saveDraw").addClass('layui-hide');
+        $("#drawByEmpty").addClass('layui-hide');
+        $("#drawByOld").addClass('layui-hide');
+        $("#drawByUpLevel").addClass('layui-hide');
+
+        var datas = new Array();
+
+        $.each(drawPoints,function (index,item) {
+            var latitude;
+            var longitude;
+            if(isDrawByOld || isDrawByUpLevel) {
+                latitude = item.lat;
+                longitude = item.lng;
+            }else{
+                latitude = item.latLng.lat;
+                longitude = item.latLng.lng;
+            }
+
+
+            var data = {};
+            data.organizeId = checkedOrganizeId;
+            data.longitude = longitude;
+            data.latitude = latitude;
+            datas.push(data);
+        });
+        $.ajax({
+            url: "insertOrganizeRegionList",
+            type: 'post',
+            contentType: 'application/json;charset=utf-8',
+            data: JSON.stringify(datas),
+            success: function (res) {
+                console.info("新增区域点位---->");
+                console.info(res)
+                layer.msg(res.message);
+                map.clearOverlays();//清空覆盖物
+            }
+        })
+
+
+        //
+        // if(isDrawByOld){
+        //     var pts=lineGroup[0].getPath();
+        //     console.info(pts);
+        //     $.each(pts,function (index,item) {
+        //         markerGroup.push(pts[index]);
+        //     });
+        //     markerGroup.splice(markerGroup.length-1,1);//去掉最后一个点，即起点
+        //     $.each(markerGroup,function (index,item) {
+        //         var latitude = item.lat;
+        //         var longitude = item.lng;
+        //         var data = {};
+        //         data.organizeId = checkedOrganizeId;
+        //         data.longitude = longitude;
+        //         data.latitude = latitude;
+        //         datas.push(data);
+        //     });
+        // }else{
+        //     $.each(markerGroup,function (index,item) {
+        //         var latitude = item.latLng.lat;
+        //         var longitude = item.latLng.lng;
+        //         var data = {};
+        //         data.organizeId = checkedOrganizeId;
+        //         data.longitude = longitude;
+        //         data.latitude = latitude;
+        //         datas.push(data);
+        //     });
+        // }
+        // console.info(markerGroup)
+        //
+        // markerGroup = [];
+        // console.info(datas);
+        // $.ajax({
+        //     url: "insertOrganizeRegionList",
+        //     type: 'post',
+        //     contentType: 'application/json;charset=utf-8',
+        //     data: JSON.stringify(datas),
+        //     success: function (res) {
+        //         console.info("新增区域点位----》");
+        //         console.info(res)
+        //         layer.msg(res.message);
+        //     }
+        // })
+
+    }
+
+    /**
+     * 从空白绘制
+     */
+    function drawByEmpty() {
+        drawState = true;
+        isDrawByOld = false;
+        isDrawByUpLevel = false;
+        $("#drawByEmpty").addClass('checked');
+        $("#drawByUpLevel").removeClass('checked');
+        $("#drawByOld").removeClass('checked');
+        // $("#endDraw").removeClass('layui-hide');
+        // $("#cancelUpPoint").removeClass('layui-hide');
+
+        new BMapGLLib.DrawingState(map, true);//开启绘制功能
+
+        map.clearOverlays();//清空覆盖物
+        regionPointGroup = [];
+        markerGroup = [];
+        lineGroup = [];
+        prismGroup = [];
+    }
+
+    /**
+     * 从上一级切割
+     */
+    function drawByUpLevel() {
+        new BMapGLLib.DrawingState(map, false);//关闭绘制功能
+        drawState = true;
+        isDrawByOld = false;
+        isDrawByUpLevel = true;
+        $("#drawByEmpty").removeClass('checked');
+        $("#drawByUpLevel").addClass('checked');
+        $("#drawByOld").removeClass('checked');
+
+        map.clearOverlays();//清空覆盖物
+        regionPointGroup = [];
+        markerGroup = [];
+        lineGroup = [];
+        prismGroup = [];
+
+        var parentNode = $('#organizeTree').tree('getParent',checkedNode.target);
+        getRegion(parentNode.text,parentNode.id,parentNode.iconCls,function (data) {
+            console.info(data.points);
+            if(data.points.length > 0){
+                data.points.push(data.points[0]);
+                var parentPolygon = new BMapGL.Polygon(data.points,
+                    {strokeColor:"#f50704",fillColor:"#cfcfcf", strokeWeight:5, strokeOpacity:1,fillOpacity:0});
+                map.addOverlay(parentPolygon);
+                lineGroup.push(parentPolygon);
+                // var polyline = new BMapGL.Polyline(data.points, {
+                //     strokeColor: "#18ff06",
+                //     strokeWeight: 3,
+                //     setStrokeStyle:"dashed",
+                //     strokeOpacity: 1
+                // });
+                // map.addOverlay(polyline);
+                // lineGroup.push(polyline);
+                // polyline.enableEditing();
+                var polygon = new BMapGL.Polygon(data.points,
+                    {strokeColor:"#18ff06",fillColor:"#cfcfcf", strokeWeight:3, strokeOpacity:1,fillOpacity:0});
+                map.addOverlay(polygon);
+                lineGroup.push(polygon);
+                polygon.enableEditing();
+            }
+        });
+
+    }
+
+    /**
+     * 从已有调整
+     */
+    function drawByOld() {
+        new BMapGLLib.DrawingState(map, false);//关闭绘制功能
+        map.clearOverlays();//清空覆盖物
+        regionPointGroup = [];
+        markerGroup = [];
+        lineGroup = [];
+        prismGroup = [];
+        drawState = false;
+        isDrawByOld = true;
+        isDrawByUpLevel = false;
+        $("#drawByEmpty").removeClass('checked');
+        $("#drawByUpLevel").removeClass('checked');
+        $("#drawByOld").addClass('checked');
+
+        // $("#cancelUpPoint").addClass('layui-hide');
+        // $("#endDraw").addClass('layui-hide');
+        $("#saveDraw").removeClass('layui-hide');
+        checkedNodePoints.push(checkedNodePoints[0]);
+
+        var parentNode = $('#organizeTree').tree('getParent',checkedNode.target);
+        getRegion(parentNode.text,parentNode.id,parentNode.iconCls,function (data) {
+            console.info(data.points);
+            if(data.points.length > 0){
+                data.points.push(data.points[0]);
+                var parentPolygon = new BMapGL.Polygon(data.points,
+                    {strokeColor:"#f50704",fillColor:"#cfcfcf", strokeWeight:5, strokeOpacity:1,fillOpacity:0});
+                map.addOverlay(parentPolygon);
+                lineGroup.push(parentPolygon);
+
+                var polygon = new BMapGL.Polygon(checkedNodePoints,
+                    {strokeColor:"#18ff06",fillColor:"#cfcfcf", strokeWeight:3, strokeOpacity:1,fillOpacity:0});
+                map.addOverlay(polygon);
+                lineGroup.push(polygon);
+                polygon.enableEditing();
+            }
+        });
+    }
+</script>
+
+<!--工具方法-->
+<script>
+    /*计算不规则多边形中心点*/
+    function getCenterPoint(points) {
+        var minLng;
+        var maxLng;
+        var minLat;
+        var maxLat;
+        $.each(points,function (index,item) {
+            if(index == 0){
+                minLng = item.lng;
+                maxLng = item.lng;
+                minLat = item.lat;
+                maxLat = item.lat;
+            }
+            if(minLng > item.lng){
+                minLng = item.lng;
+            }
+            if(maxLng < item.lng){
+                maxLng = item.lng;
+            }
+            if(minLat > item.lat){
+                minLat = item.lat;
+            }
+            if(maxLat < item.lat){
+                maxLat = item.lat;
+            }
+        })
+        var centerLng = (minLng + maxLng)/2;
+        var centerLat = (minLat + maxLat)/2;
+        return new BMapGL.Point(centerLng,centerLat);
+    }
+
+    /**
+     *
+     * @param district 区域名称
+     * @param organizeId 节点ID
+     * @param iconCls Tree节点等级
+     */
+    function getRegion(district,organizeId,iconCls,callback) {
+        // 获取行政区域
+        var boundary = new BMapGL.Boundary()
+        var prism;
+        var threeDHight = 200;//3D棱柱高度
+        var mapLevel = 13;//地图缩放大小
+        var time = 1000; //旋转地图角度等待时间
+        var topFillColor = '#003399';
+        var sideFillColor = '#062070';
+        if(checkedTreeLevel == 'my-tree-icon-6'){
+            topFillColor = '#0055ff';
+            sideFillColor = '#062c9b';
+        }
+        switch (iconCls) {
+            case 'my-tree-icon-1':
+                threeDHight = 50000;
+                mapLevel = 8;
+                time = 3000;
+                break;
+            case 'my-tree-icon-2':
+                threeDHight = 10000;
+                mapLevel = 10;
+                break;
+            case 'my-tree-icon-3':
+                threeDHight = 2000;
+                mapLevel = 13;
+                break;
+            case 'my-tree-icon-4':
+                threeDHight = 1000;
+                mapLevel = 14;
+                break;
+            case 'my-tree-icon-5':
+                threeDHight = 200;
+                mapLevel = 16;
+                break;
+            case 'my-tree-icon-6':
+                threeDHight = 200;
+                mapLevel = 17.9;
+                break;
+            default:
+                break;
+        }
+
+        var centerPoint ;
+        var houses;
+        map.clearOverlays();//清空覆盖物
+        var points = [];
+        $.post('getRegionData',{organizeId:organizeId},function (res) {
+            if(res == 'please login'){
+                layer.msg('请先刷新页面');
+                return;
+            }
+            if(res.length > 0){
+                $.each(res,function (index,item) {
+                    var point = new BMapGL.Point(item.longitude,item.latitude);
+                    points.push(point);
+                });
+                callback({
+                    points: points
+                });
+            }else{
+                queryHouse(district, '浙江省', "GFoKC0MaH0l4iCj6bNKZedu5fCPkEXWe", function(data) {
+                    console.log(data)
+                    if (data.message == 'ok') {
+                        houses = data.results;
+                        if(houses.length > 0){
+                            var location = data.results[0].location;
+
+                            console.info(iconCls)
+                            if(iconCls == 'my-tree-icon-6'){
+                                console.info(houses)
+                                if(houses && houses.length > 0){
+                                    var house = houses[0];
+                                    queryHouseOutline(house.uid, function(houseOutline){
+                                        console.log(houseOutline)
+                                        var geo = houseOutline.content.geo;
+
+                                        if(geo){
+                                            villageLocation = location;
+                                            var geoObj = parseGeo(geo);
+                                            //边界点
+                                            points = coordinateToPoints(map, geoObj.points);
+                                            callback({
+                                                points: points
+                                            });
+                                        }else{
+                                            callback({
+                                                points: []
+                                            });
+                                        }
+                                    });
+                                }
+                            }else{
+                                boundary.get(district, function (data) {
+                                    console.log(data)
+                                    for(var j= 0; j <data.boundaries.length; j++){
+                                        var boundaries = data.boundaries[j].split(";");
+
+                                        var locationStr;
+                                        for (var i = 0; i < boundaries.length; i++) {
+                                            locationStr = boundaries[i];
+                                            var point = new BMapGL.Point(locationStr.substring(0, locationStr.indexOf(",")), locationStr.substring(locationStr.indexOf(",") + 1));//创建点坐标，不一定是点坐标，要看设置
+                                            points[i] = point;
+                                        }
+                                    }
+                                    callback({
+                                        points: points
+                                    });
+
+                                });
+                            }
+                        }
+                    }
+                });
+            }
+
+        });
+
+    }
+
+    var styleOptions = {
+        strokeColor: '#18ff06', // 边线颜色。
+        fillColor: '#5E87DB', // 填充颜色。当参数为空时，圆形将没有填充效果。
+        strokeWeight: 2, // 边线的宽度，以像素为单位。
+        strokeOpacity: 1, // 边线透明度，取值范围0 - 1。
+        fillOpacity: 0.2 // 填充的透明度，取值范围0 - 1。
+    };
+    var labelOptions = {
+        borderRadius: '2px',
+        background: '#FFFBCC',
+        border: '1px solid #E1E1E1',
+        color: '#703A04',
+        fontSize: '12px',
+        letterSpacing: '0',
+        padding: '5px'
+    };
+    // 实例化鼠标绘制工具
+    var drawingManager = new BMapGLLib.DrawingManager(map, {
+        // isOpen: true, //是否开启绘制模式
+        enableDrawingTool: false, // 是否显示工具栏
+        enableCalculate: false, // 绘制是否进行测距(画线时候)、测面(画圆、多边形、矩形) 是否计算绘制出的面积
+        enableSorption: true,
+        drawingToolOptions: {
+            enableTips: true,
+            customContainer: 'selectbox_Drawing',
+            hasCustomStyle: true,
+            anchor: BMAP_ANCHOR_TOP_LEFT,
+            offset: new BMapGL.Size(15, 15), // 偏离值
+            scale: 1, // 工具栏缩放比例
+            drawingModes: [
+                BMAP_DRAWING_MARKER,
+                BMAP_DRAWING_POLYLINE,
+                BMAP_DRAWING_RECTANGLE,
+                BMAP_DRAWING_POLYGON,
+                BMAP_DRAWING_CIRCLE,
+            ]
+        },
+        enableSorption: true, // 是否开启边界吸附功能
+        sorptionDistance: 20, // 边界吸附距离
+        enableGpc: true, // 是否开启延边裁剪功能
+        enableLimit: true,  // 是否开启超限提示
+        limitOptions: {
+            area: 50000000, // 面积超限值
+            distance: 30000
+        },
+        circleOptions: styleOptions, // 圆的样式
+        polylineOptions: styleOptions, // 线的样式
+        polygonOptions: styleOptions, // 多边形的样式
+        rectangleOptions: styleOptions, // 矩形的样式
+        labelOptions: labelOptions // label的样式
+    });
+</script>
+</html>

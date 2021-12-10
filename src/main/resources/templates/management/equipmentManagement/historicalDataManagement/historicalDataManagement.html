@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>历史数据</title>
+
+    <!-- layui 图表扩展css-->
+    <script th:src="@{/webjars/jquery/3.5.1/jquery.js}"></script>
+    <script type="text/javascript" th:src="@{/webjars/layui/2.6.8/layui.js}"></script>
+    <link rel="stylesheet" th:href="@{/webjars/layui/2.6.8/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/css/toolBarIcon.css}">
+    <style>
+        .layui-table-page>div{
+           margin-top: 6px;
+        }
+        .body{
+            background-color: rgba(2,21,56,0.3);
+        }
+        .layui-table-body{
+            height: 650px !important;
+        }
+    </style>
+</head>
+<body class="body">
+<div>
+    <table id="flexemDataTable">
+
+    </table>
+</div>
+<script type="text/html" id="No.">
+    {{d.LAY_TABLE_INDEX+1}}
+</script>
+</body>
+<link rel="stylesheet" th:href="@{/css/layuiTable.css}">
+<script type="text/javascript" th:src="@{/js/htmlPage/equipmentManagement/flexemDataTableRender.js}"></script>
+<script>
+    //获取最顶层父页面的body
+    var parentBody = window.parent.parent.document.body;
+    parentBody.style="background-image:url(\'../image/management_Center/backgroundPicture.png\')";
+</script>
+<script>
+    $(function () {
+        if (parent.organizeTreeClickedNodeAttributes != null){
+            setTimeout(function () {
+                renderFlexemDataTable(parent.organizeTreeClickedNodeAttributes);
+            }, 200);
+        }
+    });
+
+    var table;
+
+    layui.use(['table'], function () {
+        table = layui.table;
+    });
+
+    function renderFlexemDataTable(parameter){
+        if (parameter.systemType == "雨水监测点"){
+            rainMonitorFlexDataTableRenderJsonObject.where.boxNo = parameter.boxNo;
+            rainMonitorFlexDataTableRenderJsonObject.url = 'getRainMonitorFlexHistoryDataList';
+            table.render(rainMonitorFlexDataTableRenderJsonObject);
+            return;
+        }
+        if (parameter.systemType == "污水监测点"){
+            sewageMonitorFlexDataTableRenderJsonObject.where.boxNo = parameter.boxNo;
+            sewageMonitorFlexDataTableRenderJsonObject.url = 'getSewageMonitorFlexHistoryDataList';
+            table.render(sewageMonitorFlexDataTableRenderJsonObject);
+            return;
+        }
+        if (parameter.systemType == "泵站"){
+            pumpStationFlexDataTableRenderJsonObject.where.boxNo = parameter.boxNo;
+            pumpStationFlexDataTableRenderJsonObject.url = 'getPumpStationFlexHistoryDataList';
+            table.render(pumpStationFlexDataTableRenderJsonObject);
+        }
+    }
+</script>
+</html>

@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zy.gis.mapper.SewageBalanceMapper" >
+  <resultMap id="BaseResultMap" type="com.zy.gis.pojo.waterbalance.SewageBalance" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="total_sewage_balance" property="totalSewageBalance" jdbcType="VARCHAR" />
+    <result column="regional_total_sewage_balance" property="regionalTotalSewageBalance" jdbcType="VARCHAR" />
+    <result column="local_sewage_balance" property="localSewageBalance" jdbcType="VARCHAR" />
+    <result column="a_area_balance" property="aAreaBalance" jdbcType="VARCHAR" />
+    <result column="b_area_balance" property="bAreaBalance" jdbcType="VARCHAR" />
+    <result column="c_area_balance" property="cAreaBalance" jdbcType="VARCHAR" />
+    <result column="d_area_balance" property="dAreaBalance" jdbcType="VARCHAR" />
+    <result column="e_area_balance" property="eAreaBalance" jdbcType="VARCHAR" />
+    <result column="f_area_balance" property="fAreaBalance" jdbcType="VARCHAR" />
+    <result column="g_area_balance" property="gAreaBalance" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, total_sewage_balance, regional_total_sewage_balance, local_sewage_balance, a_area_balance, 
+    b_area_balance, c_area_balance, d_area_balance, e_area_balance, f_area_balance, g_area_balance, 
+    create_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from sewage_balance
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <!--查询最近的8条污水平衡记录信息-->
+  <select id="selectNewSewageBalance" resultType="com.zy.gis.pojo.waterbalance.SewageBalance">
+       select <include refid="Base_Column_List" />  from sewage_balance
+       order by create_time desc limit 8
+  </select>
+
+  <!--20211127 Wangchong 查询污水平衡记录信息-->
+  <select id="selectSewageBalanceList" resultType="com.zy.gis.pojo.waterbalance.SewageBalance">
+    select <include refid="Base_Column_List" />  from sewage_balance
+    <where>
+      <if test="startTime != null and endTime != null ">
+        create_time between #{startTime} and #{endTime}
+      </if>
+    </where>
+    order by create_time desc
+    <if test="limit != null and offset != null">
+      limit #{offset}, #{limit}
+    </if>
+  </select>
+
+  <!--20211127 Wangchong 查询污水平衡记录信息数量-->
+  <select id="selectSewageBalanceListCount" resultType="java.lang.Integer">
+    select count(*) from sewage_balance
+    <where>
+      <if test="startTime != null and endTime != null ">
+        create_time between #{startTime} and #{endTime}
+      </if>
+    </where>
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from sewage_balance
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insertSelective" parameterType="com.zy.gis.pojo.waterbalance.SewageBalance" >
+    insert into sewage_balance
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="totalSewageBalance != null" >
+        total_sewage_balance,
+      </if>
+      <if test="regionalTotalSewageBalance != null" >
+        regional_total_sewage_balance,
+      </if>
+      <if test="localSewageBalance != null" >
+        local_sewage_balance,
+      </if>
+      <if test="aAreaBalance != null" >
+        a_area_balance,
+      </if>
+      <if test="bAreaBalance != null" >
+        b_area_balance,
+      </if>
+      <if test="cAreaBalance != null" >
+        c_area_balance,
+      </if>
+      <if test="dAreaBalance != null" >
+        d_area_balance,
+      </if>
+      <if test="eAreaBalance != null" >
+        e_area_balance,
+      </if>
+      <if test="fAreaBalance != null" >
+        f_area_balance,
+      </if>
+      <if test="gAreaBalance != null" >
+        g_area_balance,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="totalSewageBalance != null" >
+        #{totalSewageBalance,jdbcType=VARCHAR},
+      </if>
+      <if test="regionalTotalSewageBalance != null" >
+        #{regionalTotalSewageBalance,jdbcType=VARCHAR},
+      </if>
+      <if test="localSewageBalance != null" >
+        #{localSewageBalance,jdbcType=VARCHAR},
+      </if>
+      <if test="aAreaBalance != null" >
+        #{aAreaBalance,jdbcType=VARCHAR},
+      </if>
+      <if test="bAreaBalance != null" >
+        #{bAreaBalance,jdbcType=VARCHAR},
+      </if>
+      <if test="cAreaBalance != null" >
+        #{cAreaBalance,jdbcType=VARCHAR},
+      </if>
+      <if test="dAreaBalance != null" >
+        #{dAreaBalance,jdbcType=VARCHAR},
+      </if>
+      <if test="eAreaBalance != null" >
+        #{eAreaBalance,jdbcType=VARCHAR},
+      </if>
+      <if test="fAreaBalance != null" >
+        #{fAreaBalance,jdbcType=VARCHAR},
+      </if>
+      <if test="gAreaBalance != null" >
+        #{gAreaBalance,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zy.gis.pojo.waterbalance.SewageBalance" >
+    update sewage_balance
+    <set >
+      <if test="totalSewageBalance != null" >
+        total_sewage_balance = #{totalSewageBalance,jdbcType=VARCHAR},
+      </if>
+      <if test="regionalTotalSewageBalance != null" >
+        regional_total_sewage_balance = #{regionalTotalSewageBalance,jdbcType=VARCHAR},
+      </if>
+      <if test="localSewageBalance != null" >
+        local_sewage_balance = #{localSewageBalance,jdbcType=VARCHAR},
+      </if>
+      <if test="aAreaBalance != null" >
+        a_area_balance = #{aAreaBalance,jdbcType=VARCHAR},
+      </if>
+      <if test="bAreaBalance != null" >
+        b_area_balance = #{bAreaBalance,jdbcType=VARCHAR},
+      </if>
+      <if test="cAreaBalance != null" >
+        c_area_balance = #{cAreaBalance,jdbcType=VARCHAR},
+      </if>
+      <if test="dAreaBalance != null" >
+        d_area_balance = #{dAreaBalance,jdbcType=VARCHAR},
+      </if>
+      <if test="eAreaBalance != null" >
+        e_area_balance = #{eAreaBalance,jdbcType=VARCHAR},
+      </if>
+      <if test="fAreaBalance != null" >
+        f_area_balance = #{fAreaBalance,jdbcType=VARCHAR},
+      </if>
+      <if test="gAreaBalance != null" >
+        g_area_balance = #{gAreaBalance,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zy.gis.pojo.waterbalance.SewageBalance" >
+    update sewage_balance
+    set total_sewage_balance = #{totalSewageBalance,jdbcType=VARCHAR},
+      regional_total_sewage_balance = #{regionalTotalSewageBalance,jdbcType=VARCHAR},
+      local_sewage_balance = #{localSewageBalance,jdbcType=VARCHAR},
+      a_area_balance = #{aAreaBalance,jdbcType=VARCHAR},
+      b_area_balance = #{bAreaBalance,jdbcType=VARCHAR},
+      c_area_balance = #{cAreaBalance,jdbcType=VARCHAR},
+      d_area_balance = #{dAreaBalance,jdbcType=VARCHAR},
+      e_area_balance = #{eAreaBalance,jdbcType=VARCHAR},
+      f_area_balance = #{fAreaBalance,jdbcType=VARCHAR},
+      g_area_balance = #{gAreaBalance,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

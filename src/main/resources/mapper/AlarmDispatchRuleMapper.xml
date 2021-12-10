@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zy.gis.mapper.AlarmDispatchRuleMapper" >
+  <resultMap id="BaseResultMap" type="com.zy.gis.pojo.AlarmDispatchRule" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="organization_code" property="organizationCode" jdbcType="INTEGER" />
+    <result column="alarm_type" property="alarmType" jdbcType="VARCHAR" />
+    <result column="dispatch_to_user_id" property="dispatchToUserId" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, organization_code, alarm_type, dispatch_to_user_id, create_time, update_time
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from alarm_dispatch_rule
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <!--20211130 Wangchong 查询报警派单规则-->
+  <select id="selectAlarmDispatchRuleList" resultType="com.zy.gis.pojo.AlarmDispatchRule">
+    select dispatchRule.id, dispatchRule.organization_code, dispatchRule.alarm_type, dispatchRule.dispatch_to_user_id, dispatchRule.create_time, dispatchRule.update_time,
+  userInfo.address, userInfo.role_name, userInfo.user_name  from
+    (
+      select
+      <include refid="Base_Column_List"/>
+      from alarm_dispatch_rule
+      <where>
+        <if test="alarmType != null">
+           alarm_type = #{alarmType}
+        </if>
+        <if test="organizationCode != null">
+         and organization_code = #{organizationCode}
+        </if>
+       </where>
+    ) dispatchRule, user_info userInfo where dispatchRule.dispatch_to_user_id = userInfo.user_id
+    order by create_time desc
+    <if test="limit != null and offset != null">
+      limit #{offset}, #{limit}
+    </if>
+  </select>
+
+   <!--20211130 Wangchong 查询报警派单规则-->
+  <select id="selectAlarmDispatchRuleCount" resultType="java.lang.Integer">
+    select count(*)  from
+    (
+      select
+      <include refid="Base_Column_List"/>
+      from alarm_dispatch_rule
+      <where>
+        <if test="alarmType != null">
+           alarm_type = #{alarmType}
+        </if>
+        <if test="organizationCode != null">
+         and organization_code = #{organizationCode}
+        </if>
+        <if test="dispatchToUserId != null">
+          and dispatch_to_user_id = #{dispatchToUserId}
+        </if>
+       </where>
+    ) dispatchRule, user_info userInfo where dispatchRule.dispatch_to_user_id = userInfo.user_id
+
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from alarm_dispatch_rule
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insertSelective" parameterType="com.zy.gis.pojo.AlarmDispatchRule">
+    insert into alarm_dispatch_rule
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="organizationCode != null" >
+        organization_code,
+      </if>
+      <if test="alarmType != null" >
+        alarm_type,
+      </if>
+      <if test="dispatchToUserId != null" >
+        dispatch_to_user_id,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="organizationCode != null" >
+        #{organizationCode,jdbcType=INTEGER},
+      </if>
+      <if test="alarmType != null" >
+        #{alarmType,jdbcType=VARCHAR},
+      </if>
+      <if test="dispatchToUserId != null" >
+        #{dispatchToUserId,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.zy.gis.pojo.AlarmDispatchRule" >
+    update alarm_dispatch_rule
+    <set >
+      <if test="organizationCode != null" >
+        organization_code = #{organizationCode,jdbcType=INTEGER},
+      </if>
+      <if test="alarmType != null" >
+        alarm_type = #{alarmType,jdbcType=VARCHAR},
+      </if>
+      <if test="dispatchToUserId != null" >
+        dispatch_to_user_id = #{dispatchToUserId,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

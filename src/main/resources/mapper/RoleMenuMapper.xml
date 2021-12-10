@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zy.gis.mapper.RoleMenuMapper">
+
+  <!--获取角色id所对应的菜单信息的id-->
+  <select id="selectMenuId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+     select menu_id from role_menu where role_id = #{roleId}
+  </select>
+    <!--20201022 Wangchong 插入多条角色菜单信息-->
+    <insert id="insertRoleMenu">
+
+        insert into role_menu (role_id, menu_id, create_time) values
+        <if test="roleId != null and menuIds.size > 0">
+        <foreach collection="menuIds" separator="," item="menuId">
+            (#{roleId}, #{menuId}, now())
+        </foreach>
+        </if>
+    </insert>
+
+    <!--20201022 Wangchong 删除角色菜单信息-->
+    <delete id="deleteRoleMenu">
+       delete from role_menu
+       <where>
+           <if test="roleId != null">
+               role_id = #{roleId}
+           </if>
+           <if test="menuIds != null and menuIds.size > 0">
+               and menu_id in
+               <foreach collection="menuIds" open="(" separator="," close=")" item="menuId">
+                   #{menuId}
+               </foreach>
+           </if>
+       </where>
+    </delete>
+</mapper>

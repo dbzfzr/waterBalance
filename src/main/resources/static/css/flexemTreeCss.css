@@ -1,0 +1,33 @@
+.flexemOnline{
+    background: url(../image/4G.png) no-repeat;
+    width: 20px;
+    height: 16px;
+}
+.flexemOffline{
+    background: url(../image/4G-offline.png) no-repeat;
+    width: 20px;
+    height: 16px;
+}
+
+.fourG1{
+    background: url(../image/management/4G_1.png) no-repeat;
+    width: 21px;
+    height: 16px;
+}
+
+.fourG2 {
+    background: url(../image/management/4G_2.png) no-repeat;
+    width: 21px;
+    height: 16px;
+}
+.fourG3{
+    background: url(../image/management/4G_3.png) no-repeat;
+    width: 21px;
+    height: 16px;
+}
+
+.fourG4{
+    background: url(../image/management/4G_4.png) no-repeat;
+    width: 21px;
+    height: 16px;
+}

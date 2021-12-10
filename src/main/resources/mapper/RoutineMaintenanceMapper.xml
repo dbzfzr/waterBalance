@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zy.gis.mapper.RoutineMaintenanceMapper" >
+  <resultMap id="BaseResultMap" type="com.zy.gis.pojo.RoutineMaintenance" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="organization_code" property="organizationCode" jdbcType="VARCHAR" />
+    <result column="organization_name" property="organizationName" jdbcType="VARCHAR" />
+    <result column="user_array_str" property="userArrayStr" jdbcType="VARCHAR" />
+    <result column="box_no" property="boxNo" jdbcType="VARCHAR" />
+    <result column="point_no" property="pointNo" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.zy.gis.pojo.RoutineMaintenance" extends="BaseResultMap" >
+    <result column="maintenance_array_str" property="maintenanceArrayStr" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, organization_code, organization_name, user_array_str, box_no, point_no, 
+    create_time
+  </sql>
+  <sql id="Blob_Column_List" >
+    maintenance_array_str
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from routine_maintenance
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <!--202112021456 Wangchong 查询日常维护记录信息 -->
+  <select id="selectRoutineMaintenanceList" resultType="com.zy.gis.pojo.RoutineMaintenance">
+   select routineMaintenance.id, routineMaintenance.user_id, routineMaintenance.organization_code, routineMaintenance.organization_name,
+    routineMaintenance.user_array_str, routineMaintenance.maintenance_array_str, routineMaintenance.box_no, routineMaintenance.point_no, routineMaintenance.create_time, dev.box_alias
+   from
+   (
+        select
+        <include refid="Base_Column_List" />
+        ,
+        <include refid="Blob_Column_List" />
+        from routine_maintenance
+        <where>
+          <if test="id != null" >
+           id = #{id,jdbcType=INTEGER}
+          </if>
+          <if test="userId != null" >
+           and user_id = #{userId,jdbcType=INTEGER}
+          </if>
+          <if test="organizationCode != null" >
+            and organization_code = #{organizationCode,jdbcType=VARCHAR}
+          </if>
+          <if test="boxNo != null" >
+            and box_no = #{boxNo,jdbcType=VARCHAR}
+          </if>
+          <if test="pointNo != null" >
+           and point_no = #{pointNo,jdbcType=VARCHAR}
+          </if>
+          <if test="queryStartTime != null and queryEndTime != null" >
+            and create_time between #{queryStartTime} and #{queryEndTime}
+          </if>
+        </where>
+    order by create_time desc
+        <if test="limit != null and offset != null">
+          limit #{offset}, #{limit}
+        </if>
+    ) routineMaintenance, dev_control_panel_info dev where routineMaintenance.box_no = dev.box_no
+  </select>
+
+  <!--202112021456 Wangchong 查询日常维护记录信息数量-->
+  <select id="selectRoutineMaintenanceCount" resultType="java.lang.Integer">
+    select count(*) from routine_maintenance
+    <where>
+      <if test="id != null" >
+        id = #{id,jdbcType=INTEGER}
+      </if>
+      <if test="userId != null" >
+        and user_id = #{userId,jdbcType=INTEGER}
+      </if>
+      <if test="organizationCode != null" >
+        and organization_code = #{organizationCode,jdbcType=VARCHAR}
+      </if>
+      <if test="boxNo != null" >
+        and box_no = #{boxNo,jdbcType=VARCHAR}
+      </if>
+      <if test="pointNo != null" >
+        and point_no = #{pointNo,jdbcType=VARCHAR}
+      </if>
+      <if test="queryStartTime != null and queryEndTime != null" >
+        and create_time between #{queryStartTime} and #{queryEndTime}
+      </if>
+    </where>
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from routine_maintenance
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insertSelective" parameterType="com.zy.gis.pojo.RoutineMaintenance" >
+    insert into routine_maintenance
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="organizationCode != null" >
+        organization_code,
+      </if>
+      <if test="organizationName != null" >
+        organization_name,
+      </if>
+      <if test="userArrayStr != null" >
+        user_array_str,
+      </if>
+      <if test="boxNo != null" >
+        box_no,
+      </if>
+      <if test="pointNo != null" >
+        point_no,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="maintenanceArrayStr != null" >
+        maintenance_array_str,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="organizationCode != null" >
+        #{organizationCode,jdbcType=VARCHAR},
+      </if>
+      <if test="organizationName != null" >
+        #{organizationName,jdbcType=VARCHAR},
+      </if>
+      <if test="userArrayStr != null" >
+        #{userArrayStr,jdbcType=VARCHAR},
+      </if>
+      <if test="boxNo != null" >
+        #{boxNo,jdbcType=VARCHAR},
+      </if>
+      <if test="pointNo != null" >
+        #{pointNo,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="maintenanceArrayStr != null" >
+        #{maintenanceArrayStr,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zy.gis.pojo.RoutineMaintenance" >
+    update routine_maintenance
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="organizationCode != null" >
+        organization_code = #{organizationCode,jdbcType=VARCHAR},
+      </if>
+      <if test="organizationName != null" >
+        organization_name = #{organizationName,jdbcType=VARCHAR},
+      </if>
+      <if test="userArrayStr != null" >
+        user_array_str = #{userArrayStr,jdbcType=VARCHAR},
+      </if>
+      <if test="boxNo != null" >
+        box_no = #{boxNo,jdbcType=VARCHAR},
+      </if>
+      <if test="pointNo != null" >
+        point_no = #{pointNo,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="maintenanceArrayStr != null" >
+        maintenance_array_str = #{maintenanceArrayStr,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+</mapper>

@@ -1,0 +1,170 @@
+*{
+    -webkit-box-sizing: border-box;
+}
+
+.map{
+    height: 104% !important;
+}
+
+
+.main-frame{
+    width: 96%;
+    height: 88%;
+    /*border: 0.5vh white solid;*/
+    position: absolute;
+    left: 2%;
+    top: 8vh;
+    display: flex;
+}
+.left-menu-frame{
+    width: 20vw;
+    height: 102%;
+    border-width: 0vh 0.1vh 0vh 0vh;
+    border-color: #031E4B;
+    border-style:solid;
+    left: -0.5vh;
+    position: relative;
+    background-color: rgba(0,31,66,0.5);
+    /*overflow: auto;*/
+    padding: 1vh;
+}
+.right-menu-frame{
+    padding: 1vh;
+    position: relative;
+    width: 80%;
+    height: 100%;
+}
+
+.top-frame{
+    position: relative;
+    display: flex;
+    width: 19vw;
+    height: 3.5vh;
+    /*left: 1vw;*/
+    font-size: 0.8vw;
+}
+.intelligence{
+    z-index: 489;
+    width: 216px;
+    height: 24px;
+    display: block;
+    color: #BDD3FF;
+    font-size: 24px;
+    line-height: 27px;
+    text-align: left;
+    margin-top: 19px;
+    margin-left: 30px;
+    font-weight: normal;
+    font-family: PangMenZhengDao-3;
+    text-shadow: 0px 2px 4px rgba(98, 150, 255, 0.29), 0px 1px 0px rgba(255, 255, 255, 0.5);
+}
+.menu-button{
+    width: 50%;
+    height: 100%;
+    background: #01112D;
+    border-width: 0px;
+    color:#FFFFFF;
+}
+.title{
+    color:#FFFFFF;
+    padding: 0.2vw 0;
+}
+.tree-frame{
+    width: 96%;
+    height: 44%;
+    position: relative;
+    color: #FFFFFF;
+    padding: 5px;
+    overflow: auto;
+    padding: 0 0 0 0.5vw;
+    margin-bottom: 0.5vw;
+}
+.tree-frame-event{
+    width: 101%;
+    height: 96%;
+    position: relative;
+    color: #FFFFFF;
+    padding: 5px;
+    overflow: auto;
+    padding: 0 0 0 0.5vw;
+    margin-bottom: 0.5vw;
+}
+
+
+
+
+.sever{
+    width: 100%;
+    height: .1vh;
+    /*background: #FFFFFF;*/
+    margin: 0.2vw 0;
+}
+.icon-example{
+    display: flex;
+    position: relative;
+    width: 25vw;
+    height: 3vh;
+}
+.rain-pipeline{
+    width: 1vw;
+    height: .2vh;
+    background: #09FC6B;
+    margin: 1.3vh 0.5vw;
+}
+.sewage-pipeline{
+    width: 1vw;
+    height: .2vh;
+    background: #FE0001;
+    margin: 1.3vh 0.5vw;
+}
+
+.icon-image{
+    width: 1.5vh;
+    height: 1.5vh;
+    margin: .8vh 0.5vw;
+}
+
+.region-manager{
+    width: 15.625vw;
+    height:3.7vh;
+    position: relative;
+    margin-top: 5px;
+}
+.region-check-frame{
+    width: 47%;
+    background-image: url(../../image/homePage/filterbox.png);
+    height:32px !important;
+    /*height: 3.5vh;*/
+    /*background:rgba(3,67,86,0.80);*/
+    text-align: center;
+    line-height: 3.5vh;
+    /*border-top: #34D0FF .1vh solid;*/
+    /*border-bottom: #34D0FF .1vh solid;*/
+}
+.layui-icon{
+    color: #FFFFFF;
+    margin-left: 2.5vw;
+
+}
+.organize-tree-frame{
+    width: 80%;
+    height: 50vh;
+    position:absolute;
+    top: 4vh;
+    background:rgba(2,25,61,0.80);
+    z-index: 1;
+    color: #FFFFFF;
+    overflow-y: scroll;
+}
+
+.tree-checkbox0{
+    background:url("../image/treeIcon/organizatinTreeCheckButton.png") !important;
+}
+
+.tree-checkbox1{
+    background: url("../image/treeIcon/organizatinTreeCheckButton1.png")!important;
+}
+
+.tree-checkbox2{
+    background:url("../image/treeIcon/organizatinTreeCheckButton.png") !important;
+}

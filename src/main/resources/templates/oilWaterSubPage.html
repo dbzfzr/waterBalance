@@ -1,0 +1,1806 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>主页</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <!--    <script type="text/javascript" src="https://api.map.baidu.com/api?type=webgl&v=1.0&ak=X4nK3H4asgsS4cuXSuvg0viGW9qPXDAQ"></script>   &lt;!&ndash;hhp百度地图&ndash;&gt;-->
+    <script type="text/javascript"
+            src="https://api.map.baidu.com/api?type=webgl&v=1.0&ak=smHViQElETSO7GAfRCoXuf4yGnIokjyC"></script>
+    <!--hhp百度地图-->
+
+    <!-- layui 图表扩展css-->
+    <script th:src="@{/webjars/jquery/3.5.1/jquery.js}"></script>
+    <script type="text/javascript" th:src="@{/webjars/layui/2.6.8/layui.js}"></script>
+    <link rel="stylesheet" th:href="@{/webjars/layui/2.6.8/css/layui.css}">
+    <!--EasyUI_Tree 样式-->
+    <script type="text/javascript" th:src="@{/js/jquery-easyui-1.9.4/jquery.easyui.min.js}"></script>
+    <link rel="stylesheet" type="text/css" th:href="@{/js/jquery-easyui-1.9.4/themes/default/easyui.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/js/jquery-easyui-1.9.4/themes/icon.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/js/jquery-easyui-1.9.4/themes/gray/tree.css}">
+    <link rel="stylesheet" th:href="@{/css/my-easyui-tree.css}">
+
+    <script th:src="@{/js/echarts.min.js}"></script>
+
+    <link rel="stylesheet" th:href="@{/css/mainPage.css}"/>
+    <link rel="stylesheet" th:href="@{/css/animation.css}"/>
+    <link rel="stylesheet" th:href="@{/css/oilWaterSubPage.css}"/>
+    <script th:src="@{/js/coordformat/index.js}"></script>
+    <style type="text/css">
+
+        body {
+            height: 100%;
+            margin: 0px;
+            padding: 0px;
+            overflow: hidden;
+        }
+
+        .level_frame {
+            transform: rotateY(0deg);
+        }
+
+        .BMap_bubble_pop {
+            background: rgba(0, 128, 255, 0.2) linear-gradient(175deg, rgba(0, 110, 255, 0.5) 0%, rgba(0, 110, 255, 0) 100%) !important;
+            border: 1px solid !important;
+            border-image: radial-gradient(circle, rgba(142, 174, 255, 1), rgba(142, 174, 255, 0.34), rgba(142, 174, 255, 0)) 1 1 !important;
+            opacity: 0.8 !important;
+        }
+
+        .BMap_bubble_title {
+            color: #FAFAFA !important;
+        }
+
+        p, ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        #nav li a {
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        #nav li:hover {
+            font-size: 18px;
+            transition: all .5s;
+        }
+
+        .navigation-bar {
+            height: 5.3vh !important;
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+        }
+
+        #nav {
+            position: absolute;
+            left: 4vw !important;
+            display: flex;
+        }
+
+        #nav li {
+            color: #fff;
+            width: 5.5vw;
+            height: 4.1vh;
+            line-height: 4.1vh;
+            cursor: pointer;
+            transition: all .2s ease-in;
+            text-align: center;
+            bottom: 0;
+            margin-right: 0.625vw;
+            /*background: #d2d2d2;*/
+            border: 1px solid;
+            background: rgba(0, 128, 255, 0.2) linear-gradient(175deg, rgba(0, 110, 255, 0.5) 0%, rgba(0, 110, 255, 0) 100%);
+            border: 1px solid;
+            border-image: radial-gradient(circle, rgba(142, 174, 255, 1), rgba(142, 174, 255, 0.34), rgba(142, 174, 255, 0)) 1 1;
+            opacity: 1;
+        }
+
+        .hide {
+            display: none;
+        }
+
+        #flexemDataDiv::-webkit-scrollbar {
+            width: 0px;
+            height: 0px;
+        }
+
+        #flexemDataDiv::-webkit-scrollbar-button:vertical {
+            display: none !important;
+        }
+
+        #flexemDataDiv::-webkit-scrollbar-track, ::-webkit-scrollbar-corner {
+            background-color: #00AAFF;
+        }
+
+        #flexemDataDiv::-webkit-scrollbar-thumb {
+            border-radius: 0;
+            background-color: rgba(0, 0, 0, .3);
+        }
+
+        table {
+            width: 100%;
+            text-align: center;
+            font-family: PingFang-SC-Regular;
+            font-size: 15px;
+            font-weight: normal;
+            font-stretch: normal;
+            line-height: 35px;
+            letter-spacing: 2px;
+            color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+
+<div id="container" style="height: 118%;
+            width:100%;position:absolute;left:0px;top:0px;
+            padding:0px; z-index: 0;color: rgb(0, 0, 0);">
+</div>
+<!--左侧信息显示框-->
+<div class="con_left_bg"></div>
+<div class="con_left">
+    <div class="left">
+        <div class="all_panel" id="temperatureDiv">
+            <p class="infoTitleLeft">商业环境指数</p>
+            <div id="businessEnvironmentIndex"></div>
+            <img src="../image/mainPage/waterbalance.png"  style="position: absolute;pointer-events: none;" class="waterbalance">
+        </div>
+
+
+        <div class="all_panel">
+            <p class="infoTitleLeft">油量曲线图</p>
+            <div id="oilVolumeCurve"></div>
+            <img src="../image/mainPage/waterbalance.png"  style="position: absolute;pointer-events: none;" class="waterbalance">
+        </div>
+
+        <div class="all_panel">
+            <p class="infoTitleLeft">报警事件</p>
+            <div id="alarmEvent"></div>
+            <img src="../image/mainPage/waterbalance.png"  style="position: absolute;pointer-events: none;" class="waterbalance">
+        </div>
+        <div style="position:absolute;pointer-events: none;margin-left: 400px">
+            <img src="../image/mainPage/leftFrameOfCockpit.png">
+        </div>
+    </div>
+</div>
+<!--左侧信息显示框结束-->
+<!--商业环境指数弹框-->
+<div id="businessEnvironmentIndexBulletBox" style="background-image: url(../image/mainPage/visualBulletFrame.png);width: 878px;height: 600px;position: absolute;margin-left: 527px;margin-top: 132px; display: none">
+    <div id="closeBox" style="background-image: url(../image/close.png);position: absolute;width: 17px; height: 17px;margin-top: 15px;margin-left: 850px;z-index: 999"></div>
+    <div style="position: absolute;width: 270px;height: 160px;">
+        <img src="../image/mainPage/oilWaterPollutionIndex.png" style="margin-left: 70px;margin-top: 10px;"><br>
+        <span style="color: #E6F2FF;margin-left: 88px">商业环境指数</span><br>
+    </div>
+    <div style="position:absolute;height: 430px;width: 270px;margin-top: 165px">
+        <img src="../image/mainPage/businessIndexRanking.png" style="margin-left: 20px">
+        <span style="font-weight:bold;color:#E6F2FF;top: -35px;position:relative;left:64px;">商业指数排名</span>
+        <div id="businessIndexRanking" style="position: absolute;width: 270px;height: 390px;margin-top: -25px"></div>
+    </div>
+    <div style="position:absolute;width:608px;height: 600px;margin-left: 270px">
+        <div style="position:absolute;width: 608px;height: 200px;">
+            <img src="../image/mainPage/businessIndexRanking.png" style="margin-left:20px;margin-top: 15px">
+            <span style="font-weight:bold;color:#E6F2FF;margin-left:-196px;position:absolute;margin-top:28px;">商业环境指数</span>
+            <div style="margin-left:360px;margin-top: -35px;">
+                <span style="color: #00FFAA">17% ↓</span><br>
+                <span style="color: #7586A2;font-size: 12px">本月同比</span>
+            </div>
+            <div style="margin-left: 435px;margin-top:-32px">
+                <span style="color: #00FFAA">17% ↓</span><br>
+                <span style="color: #7586A2;font-size: 12px">本月环比</span>
+            </div>
+            <div style="margin-left: 510px;margin-top:-32px">
+                <span style="color: #FFD500">8% ↑</span><br>
+                <span style="color: #7586A2;font-size: 12px">较上月份</span>
+            </div>
+            <div id="businessEnvironmentBulletBoxTwo" style="position:absolute;width: 608px;height: 200px;top: 30px;"></div>
+        </div>
+        <div style="position: absolute;width: 608px;height: 200px;margin-top: 200px">
+            <img src="../image/mainPage/businessIndexRanking.png" style="margin-left:20px;margin-top: 15px">
+            <span style="font-weight:bold;color:#E6F2FF;margin-left:-196px;position:absolute;margin-top:28px;">商业环境指数</span>
+            <div style="margin-left:360px;margin-top: -35px;">
+                <span style="color: #00FFAA">17% ↓</span><br>
+                <span style="color: #7586A2;font-size: 12px">本月同比</span>
+            </div>
+            <div style="margin-left: 435px;margin-top:-32px">
+                <span style="color: #00FFAA">17% ↓</span><br>
+                <span style="color: #7586A2;font-size: 12px">本月环比</span>
+            </div>
+            <div style="margin-left: 510px;margin-top:-32px">
+                <span style="color: #FFD500">8% ↑</span><br>
+                <span style="color: #7586A2;font-size: 12px">较上月份</span>
+            </div>
+            <div id="businessEnvironmentBulletBoxThree" style="position:absolute;width: 608px;height: 200px;top: 30px;"></div>
+        </div>
+        <div style="position: absolute;width: 608px;height: 200px;margin-top: 400px">
+            <img src="../image/mainPage/businessIndexRanking.png" style="margin-left:20px;margin-top: 15px">
+            <span style="font-weight:bold;color:#E6F2FF;margin-left:-196px;position:absolute;margin-top:28px;">商业环境指数</span>
+            <div style="margin-left:360px;margin-top: -35px;">
+                <span style="color: #00FFAA">17% ↓</span><br>
+                <span style="color: #7586A2;font-size: 12px">本月同比</span>
+            </div>
+            <div style="margin-left: 435px;margin-top:-32px">
+                <span style="color: #00FFAA">17% ↓</span><br>
+                <span style="color: #7586A2;font-size: 12px">本月环比</span>
+            </div>
+            <div style="margin-left: 510px;margin-top:-32px">
+                <span style="color: #FFD500">8% ↑</span><br>
+                <span style="color: #7586A2;font-size: 12px">较上月份</span>
+            </div>
+            <div id="businessEnvironmentBulletBox" style="position:absolute;width: 608px;height: 200px;top: 30px;"></div>
+        </div>
+
+
+    </div>
+
+</div>
+
+
+<!--右侧信息显示框-->
+<div class="con_right_bg"></div>
+<div class="con_right">
+    <div class="right">
+        <div id="right_info_first" class="all_panel">
+            <p class="infoTitleRight">预警运维事件</p>
+
+            <div id="right_info_first_chart">
+
+                <div style="display: inline-block">
+                    <img src="../image/mainPage/event.png" class="event">
+                    <div style="width: 172px;height: 170px;margin-top:80px; margin-left: 20px; display: inline-block "
+                         id="earlyWarningOperationAndMaintenanceEvents"></div>
+
+
+                    <div style="font-size: 12px;display: inline-block;margin-left: 40px;margin-top: 65px;position: absolute">
+                        <div style="position: absolute;height: 20px;width: 1px;background-color:rgba(48, 145, 208, 1)"></div>
+                        <div style="color: rgba(204, 221, 255, 1);width: 140px;height: 20px; background-color: rgba(31, 135, 212, 0.2)">
+                            <label style="font-family: '微软雅黑';margin-left: 5px">油污堵塞</label><label
+                                style="margin-left: 60px">21%</label>
+                        </div>
+                        <div style="position: absolute;margin-top: 30px;height: 20px;width: 1px;background-color:rgba(176, 14, 49, 1)"></div>
+                        <div style="color: rgba(204, 221, 255, 1);width: 140px;height: 20px;background-color: rgba(176, 14, 49, 0.2);margin-top: 30px;">
+                            <label style="font-family: '微软雅黑';margin-left: 5px">油量超标</label>
+                            <label style="margin-top: 3px;margin-left: 60px;position: absolute">28%</label>
+                        </div>
+                        <div style="position: absolute;margin-top: 23px;height: 20px;width: 1px;background-color:rgba(249, 210, 7, 1)"></div>
+                        <div style="color: rgba(204, 221, 255, 1);width: 140px;height: 20px;background-color: rgba(249, 210, 7, 0.2);margin-top: 23px">
+                            <label style="font-family: '微软雅黑';margin-left: 5px">设备故障</label>
+                            <label style="margin-top: 4px;margin-left: 60px;position: absolute">21%</label>
+                        </div>
+
+                        <div style="position: absolute;margin-top: 29px;height: 20px;width: 1px;background-color:rgba(160, 10, 255, 1)"></div>
+                        <div style="color: rgba(204, 221, 255, 1);width: 140px;height: 20px;background-color: rgba(160, 10, 255, 0.2);margin-top: 28px">
+                            <label style="font-family: '微软雅黑';margin-left: 5px">费油去向不明</label>
+                            <label style="margin-top: 3px;margin-left: 35px;position: absolute">21%</label>
+                        </div>
+                    </div>
+                    <div style="position: absolute;top: 35px;right: 155px;">
+                        <div style="color: rgba(232, 1, 30, 0.8);margin-top: 30px;font-size: 15px">NO.1</div>
+                        <div style="color: rgba(232, 1, 30, 0.7);margin-top: 33px;font-size: 15px">NO.2</div>
+                        <div style="color: rgba(232, 1, 30, 0.6);margin-top: 30px;font-size: 15px">NO.3</div>
+                        <div style="color: rgba(17, 94, 177, 0.7);margin-top: 30px;font-size: 15px">NO.4</div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+        <div class="all_panel" >
+            <p class="infoTitleRight">社区设施覆盖率</p>
+            <div style="position: relative;width: 100%;height: 100%;">
+                <p class="percentage" text="18.2%">18.2%</p>
+                <p  class="coverage">社区设施覆盖率</p>
+                <img src="../image/mainPage/bg_community.png" class="photo">
+                <table class="tables">
+                    <thead>
+                    <tr>
+                        <td style="color: rgba(229, 73, 70, 1);">天官</td>
+                        <td style="color: #D6E2FB">中兴</td>
+                        <td style=" color: rgba(0, 128, 255, 1);">江二</td>
+                        <td  style=" color: rgba(0, 128, 255, 1);">长河</td>
+                        <td style=" color: rgba(0, 128, 255, 1);">江一</td>
+                        <td style="color: rgba(229, 73, 70, 1);">江三</td>
+                        <td  style=" color: rgba(0, 128, 255, 1);">长一</td>
+                    </tr>
+                    <tr>
+                        <td style=" color: rgba(0, 128, 255, 1);">长二</td>
+                        <td style="color: #D6E2FB">闻涛</td>
+                        <td style="color: rgba(229, 73, 70, 1);">月明</td>
+                        <td style="color: rgba(229, 73, 70, 1);">晶都</td>
+                        <td style=" color: rgba(0, 128, 255, 1);">张家村</td>
+                        <td style=" color: rgba(0, 128, 255, 1);">汤家井</td>
+                        <td style="color: rgba(229, 73, 70, 1);">博家峙</td>
+                    </tr>
+                    <tr>
+                        <td  style=" color: rgba(0, 128, 255, 1);">白马湖</td>
+                        <td style="color: #D6E2FB">钱潮</td>
+                        <td  style=" color: rgba(0, 128, 255, 1);">冠山</td>
+                        <td  style=" color: rgba(0, 128, 255, 1);">山一</td>
+                        <td  style=" color: rgba(0, 128, 255, 1);">江一</td>
+                        <td  style=" color: rgba(0, 128, 255, 1);">江汉</td>
+                        <td style="color: #D6E2FB">观潮</td>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+        <div class="all_panel">
+            <p class="infoTitleRight">油量排名</p>
+            <div id="fuelRanking"></div>
+            <img src="../image/mainPage/waterbalance.png" style="position: absolute;pointer-events: none;" class="waterbalance">
+        </div>
+        <div style="position:absolute;pointer-events: none;margin-left: -125px">
+            <img src="../image/mainPage/rightFrameOfCockpit.png">
+        </div>
+    </div>
+</div>
+<!--水平衡数据-->
+<div class="water-balance">
+    <div class="water-item">
+        <span id="supplyWaterSpan" class="number" >220</span>
+        <span class="type" text="供水量/吨">供水量/吨</span>
+        <img src="../image/mainPage/bg_water_num.png" class="water-item-bg">
+    </div>
+    <div class="water-item">
+        <span id="sewageOutputSpan" class="number" >176</span>
+        <span class="type" text="污水排出量/吨">污水排出量/吨</span>
+        <img src="../image/mainPage/bg_water_num.png" class="water-item-bg">
+    </div>
+    <div class="water-item" style="margin-left: 8vw;">
+        <span class="number" text="12">12</span>
+        <span class="type" text="降雨量/吨">降雨量/吨</span>
+        <img src="../image/mainPage/bg_water_num.png" class="water-item-bg">
+    </div>
+    <div class="water-item">
+        <span class="number" text="12">12</span>
+        <span class="type" text="雨水排出量/吨">雨水排出量/吨</span>
+        <img src="../image/mainPage/bg_water_num.png" class="water-item-bg">
+    </div>
+</div>
+<!--区域管理、设施设备、管道管理-->
+<div style="position: absolute;top: 14vh;left: 25vw;">
+    <div class="region-manager layui-hide">
+        <div class="region-check-frame">
+            <div style="display: inline-flex;" class="region-check" onclick="getRegionTree()">
+                <p class="checked-region-name" style="color: #94E0F8">滨江区</p>
+                <i class="layui-icon" style="">&#xe623;</i>
+            </div>
+        </div>
+        <div class="organize-tree-frame layui-hide">
+            <ul id="organizeTree"></ul>
+        </div>
+    </div>
+    <div class="dev-manager layui-hide">
+        <div class="region-check-frame">
+            <div style="display: inline-flex;" class="region-check">
+                <p class="" style="color: #94E0F8">设施设备</p>
+            </div>
+        </div>
+        <div class="organize-tree-frame">
+            <ul id="devTree"></ul>
+        </div>
+        <div style="position: absolute;left: 15.625vw;">
+            <div class="icon-example">
+                <div class="rain-pipeline"></div>
+                <span class="title">雨水管网</span>
+                <div class="sewage-pipeline"></div>
+                <span class="title">污水管网</span>
+            </div>
+            <div class="icon-example">
+                <img class="icon-image" src="../image/map_point_icon/icon_yellow.png">
+                <span class="title">油水分离器</span>
+                <img class="icon-image" src="../image/map_point_icon/icon_point_green.png">
+                <span class="title">污水监测点</span>
+                <img class="icon-image" src="../image/map_point_icon/icon_orange.png">
+                <span class="title">雨污分流器</span>
+            </div>
+            <div class="icon-example">
+                <img class="icon-image" src="../image/homePage/rainMonitor.png">
+                <span class="title">雨水监测点</span>
+                <img class="icon-image" src="../image/homePage/pumpStation.png">
+                <span class="title">泵站</span>
+
+            </div>
+        </div>
+    </div>
+    <div class="network-manager layui-hide">
+        <div class="region-check-frame">
+            <div style="display: inline-flex;" class="region-check">
+                <p class="" style="color: #94E0F8">管道查看</p>
+            </div>
+        </div>
+        <div class="organize-tree-frame">
+            <ul id="networkTree"></ul>
+        </div>
+        <div style="position: absolute;left: 15.625vw;">
+            <div class="icon-example">
+                <div class="rain-pipeline"></div>
+                <span class="title">雨水管网</span>
+                <div class="sewage-pipeline"></div>
+                <span class="title">污水管网</span>
+            </div>
+            <div class="icon-example">
+                <img class="icon-image" src="../image/map_point_icon/icon_yellow.png">
+                <span class="title">隔油池</span>
+                <img class="icon-image" src="../image/map_point_icon/icon_blue.png">
+                <span class="title">雨水井</span>
+                <img class="icon-image" src="../image/map_point_icon/icon_point_green.png">
+                <span class="title">污水井</span>
+            </div>
+            <div class="icon-example">
+                <img class="icon-image" src="../image/map_point_icon/icon_blue.png">
+                <span class="title">雨水口</span>
+                <img class="icon-image" src="../image/homePage/pumpStation.png">
+                <span class="title">泵站</span>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script th:src="@{/js/htmlPage/homePage/homePage.js}"></script>
+<script th:src="@{/js/htmlPage/baiduMapAndPipeLine.js}"></script>
+<script>
+    var selectBox = $("#selectionBox li");
+    // for (var i=0; i<selectBox.length; i++){
+    //     if($(selectBox[i]).children().html() == '设施设备管理'){
+    //         $(selectBox[i]).addClass("active");
+    //     }
+    // }
+
+    $("#selectBox li").click(function () {
+        for (var i = 0; i < selectBox.length; i++) {
+            console.info($(selectBox[i]).attr("class").indexOf("active"));
+            if ($(selectBox[i]).attr("class").indexOf("active") >= 0) {
+                $(selectBox[i]).removeClass("active");
+            }
+        }
+        $(this).addClass("active");
+    });
+
+
+    $("#changeBalance").click(function () {
+        var btnValue = $("#changeBalance").html();
+
+        if (btnValue == '正') {
+            $("#changeBalance").html('斜');
+            $(".left").addClass("level_frame");
+            $(".right").addClass("level_frame");
+        } else {
+            $("#changeBalance").html('正');
+            $(".left").removeClass("level_frame");
+            $(".right").removeClass("level_frame");
+        }
+    })
+    $("#nav li").click(function () {
+        var navLis = $("#nav li");
+
+        for (var i = 0; i < navLis.length; i++) {
+            if ($(navLis[i]).attr("class").indexOf("active") >= 0) {
+                $(navLis[i]).removeClass("active")
+            }
+        }
+
+        $(this).addClass("active")
+    })
+</script>
+<!--商业环境指数-->
+<script type="text/javascript">
+    //商业环境指数
+    var myCharts = echarts.init(document.getElementById('businessEnvironmentIndex'));
+    var option;
+    var img1 = 'image://../../image/mainPage/networkSecurity.png';
+    var img2 = 'image://../../image/mainPage/waterbalance.png';
+    option = {
+        tooltip: {// 触发类型，默认数据触发
+            trigger: 'axis',
+            formatter(params) {//编写tooltip的formatter函数，返回自定义数据。
+                for (x in params) {//for ... in是为遍历对象属性而构建的
+                    // console.info(params[x])
+                    return '<img src="../../image/mainPage/promptBox.png" style="position: absolute;margin-left: -15px;' +
+                        'margin-top:5px;">'+"<br/><span style=\"color:#FFFFFF;position:absolute;\">"+params[x].seriesName+
+                        "<br/><span style=\"color:#00C96F;position:absolute;\">" + +params[x].data;
+                }
+            },
+            textStyle: {
+                color: "#DDDDDD",//设置文字颜色
+
+            },
+            borderColor: 'rgba(66,55,44,0)',
+            backgroundColor:'rgba(25,66,55,0)',
+            // extraCssText: 'width:70px;height:40px;',//定义提示框的大小extraCssText
+        },
+        xAxis: {
+            type: 'category',
+            data: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
+            axisLine: { //坐标轴 轴线
+                show: false,//是否显示
+            },
+            axisTick: {  //坐标轴 刻度
+                show: false,//是否显示
+            },
+            splitLine: {  //grid 区域中的分割线
+                show: false,
+            },
+            axisLabel: { // 坐标轴 标签
+                color: 'rgba(240, 245, 255, 1)', //定义颜色
+            },
+        },
+        yAxis: {
+            type: 'value',
+            max: 100,
+            min: 0,
+            splitNumber: 5,
+            splitLine: {
+                show: false,
+            },
+            splitTick: {
+                show: false,
+            },
+            axisLabel: {
+                show: true,
+            },
+        },
+        series: [
+            {
+
+                lineStyle: {
+                    color: '#00BFFF', //改变折线颜色#3299CC
+                },
+                name: '当前数值',
+                textStyle: {
+                    color: "#DDDDDD",//设置文字颜色
+                },
+                type: 'line',
+                smooth: true,
+                symbol: 'none',
+                data: [10, 10, 22, 37, 25, 65, 38, 89, 60, 64, 43, 43],
+            },
+            {
+                type: 'line',
+                markLine: {
+                    symbol: 'none',
+                    itemStyle: {
+                        normal: {
+                            label: {
+                                show: false,
+                            },
+                        },
+                    },
+                    data: [
+                        // {
+                        //     name: "警戒线",
+                        //     yAxis: 30,
+                        //     lineStyle: {
+                        //         color: '#923A36',
+                        //         type: 'dashed',
+                        //     }
+                        // }, {
+                        //     name: "标准线",
+                        //     yAxis: 70,
+                        //     lineStyle: {
+                        //         color: '#144C53',
+                        //         type: 'dashed'
+                        //     }
+                        // },
+                        [
+                            {
+                                symbol: 'none',
+                                x: '90%',
+                                yAxis: 'max'
+                            },
+                            {
+                                symbol: 'circle',
+                                label: {
+                                    position: 'start',
+                                    formatter: 'Max'
+                                },
+                            }
+                        ]
+                    ]
+                },
+                type: 'pictorialBar',
+            },
+        ],
+    }
+    option && myCharts.setOption(option); //加载数据图表
+
+    function refreshWaterBalance() {
+        $.ajax({
+            url: 'selectNewSewageBalance',
+            success:function (res) {
+                var array = []
+                var rainBalanceArray = []
+                var data = res.data;
+                for (var i=0; i<data.length; i++){
+                    var itemArray = []
+                    var itemArray2 = []
+                    itemArray[0] = data[i].time;
+                    itemArray[1] = data[i].sewageBalance;
+
+                    itemArray2.push(data[i].time)
+                    itemArray2.push(data[i].rainBalance);
+                    array.push(itemArray)
+                    rainBalanceArray.push(itemArray2)
+
+                }
+                // myCharts.setOption({
+                //     series: [
+                //         {
+                //             data: array
+                //         },
+                //         {
+                //             data: rainBalanceArray
+                //         }
+                //     ]
+                // })
+
+                $("#sewageOutputSpan").text(res.sewageOutput);
+                $("#supplyWaterSpan").text(res.supplyWater);
+
+            }
+        })
+    }
+    refreshWaterBalance();
+    setInterval(function () {
+        refreshWaterBalance();
+    }, 10000)
+
+
+</script>
+<!--预警运维事件-->
+<script>
+    var img = new Image();
+    var chartDom4 = document.getElementById('earlyWarningOperationAndMaintenanceEvents');
+    var myChart = echarts.init(chartDom4);
+    var option;
+    img.width = 300;
+    img.height = 300;
+    option = {
+        tooltip: {           //提示框
+            trigger: 'item',//触发类型
+            textStyle: {
+                color: "#FAFBFD",//设置文字颜色
+            },
+            borderColor:'rgba(25,66,55,0)',
+            backgroundColor: 'rgba(3,62,144,0.8)',
+        },
+        series: [
+            {
+                center: ['48%', '44%'], //设置饼的原心坐标 不设置就会默认在中心的位置
+                type: 'pie', //饼图
+                radius: ['62%', '52%'], //数组的第一项是内半径，第二项是外半径
+                avoidLabelOverlap: true,
+                itemStyle: {
+                    borderRadius: 10,//设置边框大小
+                    borderColor: '#395785',//设置边框颜色
+                    borderWidth: 1//设置边框的宽度
+                },
+                label: {
+                    show: false,
+                    position: 'center'
+                },
+                emphasis: { // 设置鼠标放在图上的圆点
+                    // label: {
+                    //   show: true,
+                    //   fontSize: '40',
+                    //   fontWeight: 'bold'
+                    // }
+                },
+                labelLine: {
+                    show: true
+                },
+                data: [
+                    {value: 21, name: '油污堵塞', itemStyle: {color: '#01A9FF'}},
+                    {value: 28, name: '油量超标', itemStyle: {color: '#FF1033'}},
+                    {value: 21, name: '设备故障', itemStyle: {color: '#F9D207'}},
+                    {value: 28, name: '费油去向不明', itemStyle: {color: '#A00AFF'}},
+
+                ]
+            }
+        ]
+    };
+    option && myChart.setOption(option);
+</script>
+<!--油量排名-->
+<script>
+    var chartDom2 = document.getElementById('fuelRanking');
+    var myChart = echarts.init(chartDom2);//init初始方法
+    var option;
+    var img1 = 'image://../../image/mainPage/oil_water.png';
+    var img2 = 'image://../../image/mainPage/sewage.png';
+    var img3 = 'image://../../image/mainPage/rain.png';
+    var img4 = 'image://../../image/mainPage/Sunny-rain-ratio.png';
+    option = {
+        tooltip: {
+            textStyle: {
+                color: "#FAFBFD",//设置文字颜色
+            },
+            borderColor:'rgba(25,66,55,0)',
+            backgroundColor: 'rgba(3,62,144,0.8)',
+        },
+        xAxis: {
+            type: 'category',//---轴类型，默认'category'
+            data: ['长河', '江二', '天宫', '长二','张家界','汤家井','汤家桥'],
+            show: true,
+            axisLine: {                  //---坐标轴 轴线
+                show: false,
+            },
+            axisTick: {                  //---坐标轴 刻度
+                show: false,                  //---是否显示
+            },
+            axisLabel:{
+                interval:0,
+                fontSize:12,
+                color:'#F4F5F6',
+            }
+        },
+        yAxis: {
+            type: 'value',
+            // splitNumber:5,  // splitNumber 可以理解为中间多少个标签
+            // max:100,
+            // min:0,
+            // interval:20,
+            splitLine:{                 //---grid 区域中的分隔线
+                show:false,
+            },
+            splitArea:{                 //--网格区域
+                show:false,                 //---是否显示，默认false
+            },
+        },
+        textStyle:{                 //----图例内容样式
+            color:'rgba(230, 247, 255, 0.6)',   //---所有图例的字体颜色
+        },
+        series: [
+            {
+                data: [
+                    {
+                        value: 152,
+                        symbol: img1,
+                    },
+                    {
+                        value: 140,
+                        symbol: img2,
+                    },
+                    {
+                        value: 220,
+                        symbol: img3,
+                    },
+                    {
+                        value: 130,
+                        symbol: img4,
+                    },
+                    {
+                        value: 215,
+                        symbol: img1,
+                    },
+                    {
+                        value: 120,
+                        symbol: img2,
+                    },
+                    {
+                        value: 190,
+                        symbol: img3,
+                    },
+
+                ],
+                type: 'pictorialBar',
+                // type:'bar',
+                barWidth: '60%',
+            }
+        ]
+    };
+    option && myChart.setOption(option);
+</script>
+<!--报警事件-->
+<script>
+    var chartDom =   document.getElementById("alarmEvent");
+    var myChart  =   echarts.init(chartDom);
+    var option;
+    option = {
+        tooltip:{    //提示框
+            textStyle: {
+                color: "#FAFBFD",//设置文字颜色
+            },
+            borderColor:'rgba(25,66,55,0)',
+            backgroundColor: 'rgba(3,62,144,0.8)',
+        },
+        legend:{    //图例
+            top: '13%',
+            // data:["天官","中兴","江二","长河","江一","江三","长一"],
+            orient:'horizontal',//水平显示
+        },
+        xAxis:{
+            type:'category',  //轴类型 默认category
+            show:true,
+            axisLine:{                   //坐标轴  轴线
+                show:false,
+            },
+            data:["1","2","3","4","5","6","7","8","9","10","11","12"],
+            axisTick:{                   //坐标轴  刻度
+                show:false,
+            },
+            axisLabel:{
+                interval:0,
+                fontSize:12,
+                color:'#F4F5F6',
+            }
+        },
+        yAxis:{
+            type:'value',
+            axisLabel:{                   //坐标轴 标签
+                color:'#7793B5',
+            },
+            splitLine: {                 //---grid 区域中的分隔线
+                show: false,
+            },
+            splitArea: {                 //--网格区域
+                show: false,                 //---是否显示，默认false
+            },
+        },
+        //系列列表 每个系列通过 type 决定自己的图表类型:
+        series:[
+            {
+                //设置柱形图中柱子的颜色
+                itemStyle:{
+                    color:function (paras) {
+                        var colorLists = ['#FFC44D','#FFC44D','#FFC44D','#FFC44D','#FFC44D','#FFC44D','#FFC44D','#FFC44D','#FFC44D','#FFC44D','#FFC44D','#FFC44D'];
+                        return colorLists[paras.dataIndex]
+                    },
+                },
+                //设置柱形图的宽
+                barWidth: '30%',
+                //多个并排柱子设置柱子之间的间距
+                // barCategoryGap:'80%',/*多个并排柱子设置柱子之间的间距*/
+                data: [73, 80, 92, 60, 78, 95, 68, 68, 78, 90, 56, 48],
+                type: 'bar',
+            },
+
+        ],
+    }
+    option && myChart.setOption(option);//加载数据图表
+</script>
+<!--油量曲线图-->
+<script>
+    var myCharts = echarts.init(document.getElementById('oilVolumeCurve'));
+    var option;
+    var img1 = 'image://../../image/mainPage/networkSecurity.png';
+    option = {
+        tooltip: {// 触发类型，默认数据触发
+            trigger: 'axis',
+            formatter(params) {//编写tooltip的formatter函数，返回自定义数据。
+                for (x in params) {//for ... in是为遍历对象属性而构建的
+                    // console.info(params[x])
+                    return '<img src="../../image/mainPage/promptBox.png" style="position: absolute;margin-left: -15px;' +
+                        'margin-top:5px;">'+"<br/><span style=\"color:#FFFFFF;position:absolute;\">"+params[x].seriesName+
+                        "<br/><span style=\"color:#00C96F;position:absolute;\">" + +params[x].data;
+                }
+            },
+            textStyle: {
+                color: "#DDDDDD",//设置文字颜色
+
+            },
+            borderColor: 'rgba(66,55,44,0)',
+            backgroundColor:'rgba(25,66,55,0)',
+            // extraCssText: 'width:70px;height:40px;',//定义提示框的大小extraCssText
+        },
+        xAxis: {
+            type: 'category',
+            data: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
+            axisLine: { //坐标轴 轴线
+                show: false,//是否显示
+            },
+            axisTick: {  //坐标轴 刻度
+                show: false,//是否显示
+            },
+            splitLine: {  //grid 区域中的分割线
+                show: false,
+            },
+            axisLabel: { // 坐标轴 标签
+                color: 'rgba(240, 245, 255, 1)', //定义颜色
+            },
+        },
+        yAxis: {
+            type: 'value',
+            splitLine: {
+                show: false,
+            },
+            splitTick: {
+                show: false,
+            },
+            axisLabel: {
+                show: true,
+            },
+        },
+        series: [
+            {
+                lineStyle: {
+                    color: '#00DCBE', //改变折线颜色#3299CC
+                },
+                name: '当前数值',
+                textStyle: {
+                    color: "#DDDDDD",//设置文字颜色
+                },
+                type: 'line',
+                smooth: true,
+                symbol: 'none',
+                data: [50, 50, 110, 185, 125, 325, 190, 445, 300, 320, 215, 215],
+            },
+            {
+                type: 'line',
+                markLine: {
+                    symbol: 'none',
+                    itemStyle: {
+                        normal: {
+                            label: {
+                                show: false,
+                            },
+                        },
+                    },
+                    data: [
+                        // {
+                        //     name: "警戒线",
+                        //     yAxis:150,
+                        //     lineStyle: {
+                        //         color: '#923A36',
+                        //         type: 'dashed',
+                        //     }
+                        // }, {
+                        //     name: "标准线",
+                        //     yAxis: 350,
+                        //     lineStyle: {
+                        //         color: '#144C53',
+                        //         type: 'dashed'
+                        //     }
+                        // },
+                        [
+                            {
+                                symbol: 'none',
+                                x: '90%',
+                                yAxis: 'max'
+                            },
+                            {
+                                symbol: 'circle',
+                                label: {
+                                    position: 'start',
+                                    formatter: 'Max'
+                                },
+                            }
+                        ]
+                    ]
+                },
+                type: 'pictorialBar',
+            }
+        ]
+    }
+    option && myCharts.setOption(option); //加载数据图表
+</script>
+<!--商业指数排名-->
+<script>
+    var chartDom5 =  document.getElementById("businessIndexRanking")
+    var myChart =  echarts.init(chartDom5);
+    var img1 = 'image://../../image/mainPage/equipment1.png';
+    var img2 = 'image://../../image/mainPage/sewage.png';
+    var img3 = 'image://../../image/mainPage/rain.png';
+    var option;
+
+    option = {
+        grid: {
+            show: false,                 //---是否显示直角坐标系网格
+            containLabel: true ,
+            x:20,
+            y:0,
+            bottom:'0%',
+        },
+        xAxis: {
+            type: 'value',
+            show: false,
+            splitLine: { //---grid 区域中的分隔线
+                show: false,
+            },
+        },
+        yAxis: {
+            type: 'category',//轴类型
+            data:['新浦','博家峙','岩大房','东冠','杨家墩','协同','联庄','汤家桥','汤家井','长二','张家','天官','江二','长河'],
+            axisLine: {                  //---坐标轴 轴线
+                show: false,
+            },
+            axisTick: {                  //---坐标轴 刻度
+                show: false,                  //---是否显示
+            },
+        },
+        tooltip: {
+            show: true,
+            trigger: 'item',
+            label: {},
+            textStyle: {
+                color: "#FAFBFD",//设置文字颜色
+            },
+            borderColor:'rgba(25,66,55,0)',
+            backgroundColor: 'rgba(3,62,144,0.8)',
+        },
+        textStyle: {                 //----图例内容样式
+            color: 'rgba(230, 247, 255, 0.6)',   //---所有图例的字体颜色
+        },
+        series: [
+            {
+                type: 'pictorialBar',
+                show: true,
+                symbol: img1,
+                symbolRepeat: false,
+                data:[25,50,59,62,65,68,66,69,72,75,78,81,84,90],
+                z: 10,
+                label: {
+                    // show: true,
+                    textStyle: {
+                        color: "rgba(230, 247, 255, 0.6)",
+                        fontSize: 15
+                    },
+                    position: "right",
+                    // rotate: -120,//旋转图中显示的数字
+
+                },
+            },
+
+        ],
+    };
+    option && myChart.setOption(option);//加载数据图表
+</script>
+<!--商业环境指数-->
+<script>
+    var chartsDom6 =  document.getElementById('businessEnvironmentBulletBox');
+    var myChart =  echarts.init(chartsDom6);
+    var option;
+    option = {
+        tooltip: {
+            trigger:'axis',
+            textStyle: {
+                color: "#FAFBFD",//设置文字颜色
+            },
+            borderColor:'rgba(25,66,55,0)',
+            backgroundColor: 'rgba(3,62,144,0.8)',
+        },
+        grid: {
+            bottom:'30%',
+        },
+        legend: {
+            left: 180,
+            top:10,
+            textStyle:{
+                color:'#808FA9',
+            },
+            data:[{icon:'circle',name:'上年度'},{icon:'circle',name:'本年度'}],
+        },
+        toolbox: {
+            show: true,
+            // feature: {
+            //     dataZoom: {
+            //         yAxisIndex: 'none'
+            //     },
+            //     dataView: { readOnly: false },
+            //     magicType: { type: ['line', 'bar'] },
+            //
+            // }
+        },
+        xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            axisTick:{
+                show:false,
+            },
+            axisLine:{
+                show:false,
+            },
+            axisLabel:{
+                color:'#F0F5FF',
+            },
+        },
+        yAxis: {
+            type: 'value',
+            splitLine:{
+                show:false,
+            },
+            axisLabel:{
+                color:'#F0F5FF',
+            },
+        },
+        series: [
+            {
+                name: '上年度',
+                type: 'line',
+                smooth:true,
+                color:'#EBC507',
+                symbol:'none',
+                data: [30, 30, 50, 60, 55, 80, 75, 60, 65, 75, 60, 40, 40],
+            },
+            {
+                name: '本年度',
+                type: 'line',
+                smooth:true,
+                color:'#00989F',
+                symbol:'none',
+                data: [30, 30, 21, 35, 45, 23, 20, 19, 18, 15, 25, 40, 35],
+            }
+
+        ]
+    };
+    option && myChart.setOption(option);//加载数据图表
+</script>
+<!--商业环境指数-->
+<script>
+    var chartsDom6 =  document.getElementById('businessEnvironmentBulletBoxTwo');
+    var myChart =  echarts.init(chartsDom6);
+    var option;
+    option = {
+        tooltip: {
+            trigger:'axis',
+            textStyle: {
+                color: "#FAFBFD",//设置文字颜色
+            },
+            borderColor:'rgba(25,66,55,0)',
+            backgroundColor: 'rgba(3,62,144,0.8)',
+        },
+        grid: {
+            bottom:'30%',
+        },
+        legend: {
+            left: 180,
+            top:10,
+            textStyle:{
+                color:'#808FA9',
+            },
+            data:[{icon:'circle',name:'上年度'},{icon:'circle',name:'本年度'}],
+        },
+        toolbox: {
+            show: true,
+            // feature: {
+            //     dataZoom: {
+            //         yAxisIndex: 'none'
+            //     },
+            //     dataView: { readOnly: false },
+            //     magicType: { type: ['line', 'bar'] },
+            //
+            // }
+        },
+        xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            axisTick:{
+                show:false,
+            },
+            axisLine:{
+                show:false,
+            },
+            axisLabel:{
+                color:'#F0F5FF',
+            },
+        },
+        yAxis: {
+            type: 'value',
+            splitLine:{
+                show:false,
+            },
+            axisLabel:{
+                color:'#F0F5FF',
+            },
+        },
+        series: [
+            {
+                name: '上年度',
+                type: 'line',
+                smooth:true,
+                color:'#EBC507',
+                symbol:'none',
+                data: [30, 30, 50, 60, 55, 80, 75, 60, 65, 75, 60, 40, 40],
+            },
+            {
+                name: '本年度',
+                type: 'line',
+                smooth:true,
+                color:'#00989F',
+                symbol:'none',
+                data: [30, 30, 21, 35, 45, 23, 20, 19, 18, 15, 25, 40, 35],
+            }
+
+        ]
+    };
+    option && myChart.setOption(option);//加载数据图表
+</script>
+<!--商业环境指数-->
+<script>
+    var chartsDom6 =  document.getElementById('businessEnvironmentBulletBoxThree');
+    var myChart =  echarts.init(chartsDom6);
+    var option;
+    option = {
+        tooltip: {
+            trigger:'axis', textStyle: {
+                color: "#FAFBFD",//设置文字颜色
+            },
+            borderColor:'rgba(25,66,55,0)',
+            backgroundColor: 'rgba(3,62,144,0.8)',
+
+        },
+        grid: {
+            bottom:'30%',
+        },
+        legend: {
+            left: 180,
+            top:10,
+            textStyle:{
+                color:'#808FA9',
+            },
+            data:[{icon:'circle',name:'上年度'},{icon:'circle',name:'本年度'}],
+        },
+        toolbox: {
+            show: true,
+            // feature: {
+            //     dataZoom: {
+            //         yAxisIndex: 'none'
+            //     },
+            //     dataView: { readOnly: false },
+            //     magicType: { type: ['line', 'bar'] },
+            //
+            // }
+        },
+        xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            axisTick:{
+                show:false,
+            },
+            axisLine:{
+                show:false,
+            },
+            axisLabel:{
+                color:'#F0F5FF',
+            },
+        },
+        yAxis: {
+            type: 'value',
+            splitLine:{
+                show:false,
+            },
+            axisLabel:{
+                color:'#F0F5FF',
+            },
+        },
+        series: [
+            {
+                name: '上年度',
+                type: 'line',
+                smooth:true,
+                color:'#EBC507',
+                symbol:'none',
+                data: [30, 30, 50, 60, 55, 80, 75, 60, 65, 75, 60, 40, 40],
+            },
+            {
+                name: '本年度',
+                type: 'line',
+                smooth:true,
+                color:'#00989F',
+                symbol:'none',
+                data: [30, 30, 21, 35, 45, 23, 20, 19, 18, 15, 25, 40, 35],
+            }
+
+        ]
+    };
+    option && myChart.setOption(option);//加载数据图表
+</script>
+<!--百度地图-->
+<script type="text/javascript">
+    var j = 1;
+    $("#temperatureDiv").click(function () {
+        if(j%2==1){
+            $("#businessEnvironmentIndexBulletBox").css('display','block');
+        }
+        if(j%2==0){
+            $("#businessEnvironmentIndexBulletBox").css('display','none');
+        }
+        j++;
+    })
+    $("#closeBox").click(function () {
+        $("#businessEnvironmentIndexBulletBox").css('display','none');
+    })
+</script>
+
+<!--region区域搜索-->
+<script>
+    var checkedOrganizeId;
+    var checkedTreeLevel;
+    var prismGroup = [];
+    var labelGroup = [];
+    var lineGroup = [];
+    var isFind = false;
+
+    function findRegion(node) {
+        var checkNode = new Array();
+        console.info(node);
+        for (var i = 0; i < node.length; i++) {
+            if (!isFind) {
+                if (node[i].iconCls != 'my-tree-icon-5') {
+                    if (node[i].children.length > 0) {
+                        checkNode = findRegion(node[i].children);
+                    }
+                } else {
+                    checkNode = node[0];
+                    isFind = true;
+                    break;
+                }
+            }
+
+        }
+        return checkNode;
+    }
+
+    $('#organizeTree').tree({
+        url: 'getOrganizeTreeByLevel?iconCls=my-tree-icon-3',
+        onLoadSuccess: function () { //当数据加载成功时触发
+            // var root = $('#organizeTree').tree('getRoots');
+            // var checkNode = findRegion(root);
+            // console.info(root)
+            // console.info(checkNode)
+            // if(root.length > 0){
+            //     $(".checked-region-name").html(checkNode.text)
+            //     checkedOrganizeId = checkNode.id;
+            //     checkedTreeLevel = checkNode.iconCls;
+            //     getDistrict(checkNode.text,checkNode.iconCls);
+            // }
+        },
+        onClick: function (node) {
+            console.log(node);
+            checkedOrganizeId = node.id;
+            checkedTreeLevel = node.iconCls;
+            $(".checked-region-name").html(node.text)
+            getDistrict(node.text, node.iconCls);
+        }
+
+    })
+
+    function getRegionTree() {
+        if ($($(".region-check").find('i'))[0].className.indexOf('checked') > -1) {
+            $(".region-check").find('i').html('&#xe623;');
+            $($(".region-check").find('i')).removeClass('checked');
+            $(".organize-tree-frame").addClass('layui-hide');
+        } else {
+            $(".region-check").find('i').html('&#xe625;');
+            $($(".region-check").find('i')).addClass('checked');
+            $(".organize-tree-frame").removeClass('layui-hide');
+        }
+    }
+
+    //点击组织树 框选区域以及自动缩放地图大小
+    function getDistrict(district, iconCls) {
+
+        var prism;
+        var threeDHight = 200;//3D棱柱高度
+        var mapLevel = 13;//地图缩放大小
+        var time = 1000; //旋转地图角度等待时间
+        var topFillColor = '#003399';
+        var sideFillColor = '#062070';
+        // var topFillColor = '#66B3FF';
+        // var sideFillColor = '#2b485f';
+        if (checkedTreeLevel == 'my-tree-icon-6') {
+            topFillColor = '#0055ff';
+            sideFillColor = '#062c9b';
+        }
+        var lineColor = 'rgb(91,154,214)';
+        var lineWidth = 2;
+        var lineOpacity = 0.2;
+        switch (iconCls) {
+            case 'my-tree-icon-1':
+                threeDHight = 50000;
+                mapLevel = 8;
+                time = 3000;
+                break;
+            case 'my-tree-icon-2':
+                threeDHight = 10000;
+                mapLevel = 10;
+                break;
+            case 'my-tree-icon-3':
+                threeDHight = 2000;
+                mapLevel = 13;
+                break;
+            case 'my-tree-icon-4':
+                threeDHight = 1000;
+                mapLevel = 16;
+                break;
+            case 'my-tree-icon-5':
+                threeDHight = 200;
+                mapLevel = 16;
+                break;
+            case 'my-tree-icon-6':
+                threeDHight = 200;
+                mapLevel = 17.9;
+                break;
+            default:
+                break;
+        }
+        var centerPoint;
+        var houses;
+        // map.clearOverlays();//清空覆盖物
+        //清空3D棱柱
+        for (var i = 0; i < prismGroup.length; i++) {
+            map.removeOverlay(prismGroup[i]);
+        }
+        for (var i = 0; i < labelGroup.length; i++) {
+            map.removeOverlay(labelGroup[i]);
+        }
+        prismGroup = [];
+        labelGroup = [];
+        for (var i = 0; i < lineGroup.length; i++) {
+            map.removeOverlay(lineGroup[i]);
+        }
+        lineGroup = [];
+        $.post('getRegionData', {organizeId: checkedOrganizeId}, function (res) {
+            var linePoints = [];
+            if (res.length > 0) {
+                var points = [];
+
+                $.each(res, function (index, item) {
+                    var point = new BMapGL.Point(item.longitude, item.latitude);
+                    points.push(point);
+                });
+                //计算中心点 start
+                centerPoint = getCenterPoint(points);
+                //end
+                var marker = new BMapGL.Marker(centerPoint);
+                var label = new BMapGL.Label(district, {
+                    offset: new BMapGL.Size(0, 0),
+
+                });
+                marker.setLabel(label);
+                map.addOverlay(marker);
+                labelGroup.push(marker);
+                map.centerAndZoom(centerPoint, mapLevel);//设置中心点以及地图大小
+                window.setTimeout(function () {
+                    map.setTilt(60);//改变地图倾斜角度
+                }, time);
+
+                var prism2 = new BMapGL.Prism(points, threeDHight, {
+                    topFillColor: topFillColor,
+                    topFillOpacity: 0.4,
+                    sideFillColor: sideFillColor,
+                    sideFillOpacity: 0.2,
+                    enableMassClear: true
+                });
+                map.addOverlay(prism2); //添加覆盖物
+                prismGroup.push(prism2);
+
+                for (var i = 0; i < points.length; i++) {
+                    linePoints.push(points[i]);
+                }
+                linePoints.push(points[0]);
+                var polyline = new BMapGL.Polyline(linePoints, {
+                    strokeColor: lineColor,
+                    strokeWeight: lineWidth,
+                    setStrokeStyle: "solid",
+                    strokeOpacity: lineOpacity
+                });
+                map.addOverlay(polyline);
+                lineGroup.push(polyline);
+
+            } else {
+                queryHouse(district, '浙江省', "GFoKC0MaH0l4iCj6bNKZedu5fCPkEXWe", function (data) {
+                    if (data.message == 'ok') {
+                        houses = data.results;
+                        if (houses.length > 0) {
+                            var location = data.results[0].location;
+                            centerPoint = new BMapGL.Point(location.lng, location.lat);
+                            var marker = new BMapGL.Marker(centerPoint);
+                            var label = new BMapGL.Label(district, {
+                                offset: new BMapGL.Size(0, 0),
+
+                            });
+                            marker.setLabel(label);
+                            map.addOverlay(marker);
+                            labelGroup.push(marker);
+
+                            map.centerAndZoom(centerPoint, mapLevel);//设置中心点以及地图大小
+                            window.setTimeout(function () {
+                                map.setTilt(60);//改变地图倾斜角度
+                            }, time);
+
+                            if (iconCls == 'my-tree-icon-6') {
+                                if (houses && houses.length > 0) {
+                                    var house = houses[0];
+                                    queryHouseOutline(house.uid, function (houseOutline) {
+                                        var geo = houseOutline.content.geo;
+
+                                        if (geo) {
+                                            villageLocation = location;
+                                            var geoObj = parseGeo(geo);
+                                            //边界点
+                                            var points = coordinateToPoints(map, geoObj.points);
+                                            var prism = new BMapGL.Prism(points, threeDHight, {
+                                                topFillColor: topFillColor,
+                                                topFillOpacity: 0.4,
+                                                sideFillColor: sideFillColor,
+                                                sideFillOpacity: 0.2,
+                                                enableMassClear: true
+                                            });
+                                            map.addOverlay(prism); //添加覆盖物
+                                            prismGroup.push(prism);
+                                            for (var i = 0; i < points.length; i++) {
+                                                linePoints.push(points[i]);
+                                            }
+                                            linePoints.push(points[0]);
+                                            var polyline = new BMapGL.Polyline(linePoints, {
+                                                strokeColor: lineColor,
+                                                strokeWeight: lineWidth,
+                                                setStrokeStyle: "dashed",
+                                                strokeOpacity: lineOpacity
+                                            });
+                                            map.addOverlay(polyline);
+                                            lineGroup.push(polyline);
+                                            // map.setTilt(60);
+                                            // map.setViewport(prism.getPath()); //调整视野
+                                        }
+                                    });
+                                }
+                            } else {
+                                // map.setTilt(30);
+                                boundary.get(district, function (data) {
+                                    var points = [];
+                                    for (var j = 0; j < data.boundaries.length; j++) {
+                                        var boundaries = data.boundaries[j].split(";");
+
+                                        var locationStr;
+                                        for (var i = 0; i < boundaries.length; i++) {
+                                            locationStr = boundaries[i];
+                                            var point = new BMapGL.Point(locationStr.substring(0, locationStr.indexOf(",")), locationStr.substring(locationStr.indexOf(",") + 1));//创建点坐标，不一定是点坐标，要看设置
+                                            points[i] = point;
+                                        }
+                                    }
+
+                                    prism = new BMapGL.Prism(points, threeDHight, {
+                                        topFillColor: topFillColor,
+                                        topFillOpacity: 0.4,
+                                        sideFillColor: sideFillColor,
+                                        sideFillOpacity: 0.2,
+                                        enableMassClear: true
+                                    });
+                                    map.addOverlay(prism); //添加覆盖物
+                                    prismGroup.push(prism);
+                                    for (var i = 0; i < points.length; i++) {
+                                        linePoints.push(points[i]);
+                                    }
+                                    linePoints.push(points[0]);
+                                    var polyline = new BMapGL.Polyline(linePoints, {
+                                        strokeColor: lineColor,
+                                        strokeWeight: lineWidth,
+                                        setStrokeStyle: "dashed",
+                                        strokeOpacity: lineOpacity
+                                    });
+                                    map.addOverlay(polyline);
+                                    lineGroup.push(polyline);
+                                    // map.setViewport(prism.getPath()); //调整视野
+                                });
+                            }
+                        }
+                    }
+                });
+            }
+
+        });
+
+    }
+
+    /**
+     * 模糊查询小区信息, 无返回值
+     * @param {} house    小区名称
+     * @param {} city    所属城市名称
+     * @param {} ak        百度地图AK
+     * @param {} callback    回调函数，该函数可以接收到请求的返回值
+     */
+    var queryHouse = function (house, city, ak, callback) {
+        var baseURL = 'http://api.map.baidu.com/place/v2/search?';
+        var url = baseURL + "&query=" + house + "&region=" + city + "&output=json&ak=" + ak;
+
+        //console.log(url)
+        callback && (window.queryHouseCallback = callback);
+        $.ajax({
+            type: "get",
+            async: false,
+            url: url,
+            dataType: "jsonp",
+            jsonpCallback: "queryHouseCallback",
+            success: function (datas) {
+            }
+        });
+    };
+    // 查询区域信息
+    var queryHouseOutline = function (hid, callback) {
+        var baseURL = 'http://map.baidu.com/?reqflag=pcmap&coord_type=3&from=weBMapGL&qt=ext&ext_ver=new&l=18';
+        var url = baseURL + "&uid=" + hid;
+        callback && (window.queryHouseOutlineCallback = callback);
+        $.ajax({
+            type: "get",
+            async: false,
+            url: url,
+            dataType: "jsonp",
+            jsonpCallback: "queryHouseOutlineCallback",
+            success: function (datas) {
+            }
+        });
+    };
+    /**
+     * 墨卡托坐标解析
+     * @param {} mocator
+     * @return {}
+     */
+    var parseGeo = function (mocator) {
+        if (typeof mocator != 'string') {
+            return {};
+        }
+        var t = mocator.split("|");
+        var n = parseInt(t[0]);
+        var i = t[1];
+        var r = t[2];
+        var o = r.split(";");
+        if (n === 4) {
+            for (var a = [], s = 0; s < o.length - 1; s++) {
+                "1" === o[s].split("-")[0] && a.push(o[s].split("-")[1]);
+            }
+            o = a;
+            o.push("");
+        }
+        var u = [];
+        switch (n) {
+            case 1:
+                u.push(o[0]);
+                break;
+            case 2:
+            case 3:
+            case 4:
+                for (var s = 0; s < o.length - 1; s++) {
+                    var l = o[s];
+                    if (l.length > 100) {
+                        l = l.replace(/(-?[1-9]\d*\.\d*|-?0\.\d*[1-9]\d*|-?0?\.0+|0|-?[1-9]\d*),(-?[1-9]\d*\.\d*|-?0\.\d*[1-9]\d*|-?0?\.0+|0|-?[1-9]\d*)(,)/g,
+                            "$1,$2;");
+                        u.push(l);
+                    } else {
+                        for (var c = [], d = l.split(","), f = 0; f < d.length; f += 2) {
+                            var p = d[f];
+                            var h = d[f + 1];
+                            c.push(p + "," + h);
+                        }
+                        u.push(c.join(";"))
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+
+        if (u.length <= 1) {
+            u = u.toString();
+        }
+
+        var result = {
+            type: n,
+            bound: i,
+            points: u
+        };
+        return result;
+    };
+    /**
+     * 墨卡托坐标转百度坐标 baidu jsapi WebGL 版本使用
+     * @param {} coordinate
+     * @return {}
+     */
+    var coordinateToPoints = function (map, coordinate) {
+        var points = [];
+        if (coordinate) {
+            var arr = coordinate.split(";");
+            if (arr) {
+                for (var i = 0; i < arr.length; i++) {
+
+                    var coord = arr[i].split(",");
+                    if (coord && coord.length == 2) {
+                        var lngLat = map.mercatorToLnglat(coord[0], coord[1]);
+                        //console.log(lngLat)
+                        //var point = project.pointToLngLat(mctXY);
+                        points.push(new BMapGL.Point(lngLat[0], lngLat[1]));
+                    }
+                }
+            }
+        }
+        return points;
+    };
+
+    /*计算不规则多边形中心点*/
+    function getCenterPoint(points) {
+        var minLng;
+        var maxLng;
+        var minLat;
+        var maxLat;
+        $.each(points, function (index, item) {
+            if (index == 0) {
+                minLng = item.lng;
+                maxLng = item.lng;
+                minLat = item.lat;
+                maxLat = item.lat;
+            }
+            if (minLng > item.lng) {
+                minLng = item.lng;
+            }
+            if (maxLng < item.lng) {
+                maxLng = item.lng;
+            }
+            if (minLat > item.lat) {
+                minLat = item.lat;
+            }
+            if (maxLat < item.lat) {
+                maxLat = item.lat;
+            }
+        })
+        var centerLng = (minLng + maxLng) / 2;
+        var centerLat = (minLat + maxLat) / 2;
+        return new BMapGL.Point(centerLng, centerLat);
+    }
+</script>
+<!--设施设备管理-->
+<script>
+    var allPoint = [];              //系统分布--所有点位集合
+    var allPipeline = [];           //系统分布--所有管线集合
+    var allCheckedPoint = [];       //系统分布--所有选中点位集合
+    var allCheckedPipeline = [];    //系统分布--所有选中点位集合
+    var nodeArray = [];
+
+    function hideTreeCheckBox(data) {
+        console.info(data);
+        for (var i = 0; i < data.length; i++) {
+            if (data[i].iconCls == "my-tree-icon-3") {
+                console.info(data[i]);
+                var child = $("#" + data[i].domId + "").children();
+                console.info(child);
+                $.each(child, function (index, item) {
+                    var allClassName = item.className.split(" ");//split()将字符串转换为字符串数组
+                    console.info(allClassName);
+                    for (var j = 0; j < allClassName.length; j++) {
+                        if (allClassName[j] == 'tree-checkbox') {
+                            $(item).addClass('layui-hide');
+                        }
+                    }
+                });
+            }
+            var childTree = data[i].children;
+            console.info(childTree);
+            if (childTree != null && childTree.length > 0) {
+                hideTreeCheckBox(childTree);
+            }
+        }
+
+    }
+
+    function selectTreeRainPoint(data) {
+
+        var data = data[0].children;
+        console.info(data);
+        for (var i = 0; i < data.length; i++) {
+            if (data[i].iconCls == 'my-tree-icon-2' && data[i].text == "雨水监测点") {
+                console.info(data[i]);
+                restartDrawDevTree(data[i].text);
+                var node = $('#devTree').tree('find', data[i].id);
+                console.info(node);
+                $('#devTree').tree('check', node.target);//获取到的具体节点对象后.target就可以了
+            }
+            var childTree = data[i].children;
+            console.info(childTree);
+            if (childTree != null && childTree.length > 0) {
+                selectTreeRainPoint(childTree);
+            }
+
+        }
+
+    }
+
+    function restartDrawDevTree() {
+
+        drawPoint(allCheckedPoint, nodeArray);
+        drawPipeline(allCheckedPipeline);
+    }
+</script>
+</html>

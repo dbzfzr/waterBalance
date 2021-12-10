@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="content-type" content="text/html">
+    <meta charset="UTF-8">
+
+    <th:block th:include="include :: header('')"/>
+
+    <style>
+        .layui-layout-admin .layui-body {
+            bottom: 0px;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-layout layui-layout-admin">
+    <!-- 头部区域（可配合layui已有的水平导航） -->
+    <th:block th:include="include :: menus"></th:block>
+    <div class="layui-body" onmouseover="show(this,'')" >
+        <!-- 内容 -->
+
+        <iframe id="childIframe" name="content" frameborder="0" scrolling="no" style="width: 100%; height: 100%;position:absolute;bottom: 0px;" src="/gisPage"><!--http://www.baidu.com-->
+        </iframe>
+    </div>
+</div>
+</body>
+
+<th:block th:include="include :: footer"/>
+</html>
+<script>
+    $("#hideMenu").click(function () {
+        $("#menuLine").css("width", "40px")
+    })
+</script>
+<script>
+    layui.use(['element'], function () {
+
+    })
+</script>

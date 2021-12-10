@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>日常维护记录</title>
+    <link rel="stylesheet" th:href="@{/css/toolBarIcon.css}">
+    <link rel="stylesheet" th:href="@{/css/layuiForm.css}">
+    <link rel="stylesheet" th:href="@{/webjars/layui/2.6.8/css/layui.css}">
+    <script type="text/javascript" th:src="@{/webjars/layui/2.6.8/layui.js}"></script>
+    <link rel="stylesheet" th:href="@{/css/layuiTable.css}">
+    <link rel="stylesheet" th:href="@{/css/alarmRecordCalendar.css}">
+
+    <style>
+        table {
+            width: 100%;
+            text-align: left;
+            font-family: PingFang-SC-Regular;
+            font-size: 15px;
+            font-weight: normal;
+            font-stretch: normal;
+            line-height: 35px;
+            letter-spacing: 2px;
+            color: #F8FAFA;
+        }
+        .layui-table-tool-panel {
+            background-color: #14325B;
+        }
+
+        .layui-table-tool-panel li:hover{
+            background-color: #041634!important;
+        }
+
+        .layui-form-item .layui-input-inline {
+            float: left;
+            width: 10vw;
+            margin-right: 10px;
+        }
+
+        .layui-input, .layui-select {
+            height: 28px;
+            width: 10vw;
+            line-height: 28px;
+        }
+
+        .layui-laypage input {
+            color: #303030;
+        }
+
+        .layui-timeline {
+            padding-left: 3vw;
+        }
+
+        .layui-layer-page {
+            color: #fafafa;
+        }
+
+        .layui-text h1, .layui-text h2, .layui-text h3 , .define-label{
+            color: #5AB8E3;
+        }
+
+        .layui-form-select dl {
+            height: 12vw;
+        }
+        /*操作栏查看详情css样式*/
+        .layui-btn{
+            background-color: transparent !important;
+        }
+
+
+        .layui-form-select .layui-input{
+            border-color: #3399FF !important;
+            border-width: 1px !important;
+        }
+
+        .layui-form-item .layui-input-inline {
+            width: 140px !important;
+        }
+        .layui-form-item  .layui-input-inline input{
+            width: 140px !important;
+            background-image: url("../../image/homePage/filterbox.png");
+            height: 32px !important;
+            font-weight: bold;
+            background-color: rgba(22,33,66,0);
+        }
+        .layui-form-select .layui-edge{
+            background-image: url("../../image/section.png")!important;
+            width: 14px !important;
+            height: 20px !important;
+            top: 45% !important;
+        }
+        .layui-form{
+            padding-left: 5px;
+            position: relative;
+            left: 10px;
+        }
+        .layui-btn{
+            box-shadow: 1px 1px rgba(2,18,50,0), 1px 1px rgba(2,18,50,0) inset;
+        }
+        input::-webkit-input-placeholder {
+            color: #dadada !important;
+        }
+
+        .layui-layer-ico{
+            background: url(../image/close.png) no-repeat !important;
+        }
+        /*查看详情弹框背景颜色*/
+        .layui-layer-page {
+            color: #fff;
+            padding: 1vw 1vh;
+            background: rgba(3, 37, 72, 0.8)10% linear-gradient(175deg, rgba(0, 41, 78, 0.8) 50%, rgba(0, 76, 158, 0.8) 100%) !important;
+            border: 1px solid;
+            border-radius: 2px;
+            border-image: radial-gradient(circle, rgba(142, 174, 255, 1), rgba(142, 174, 255, 0.34), rgba(142, 174, 255, 0)) 1 1;
+            opacity: 0.8;
+        }
+
+        .layui-layer-page .layui-layer-content{
+            height: 92% !important;
+            /*width: fit-content;*/
+            margin-left: 35px;
+        }
+
+        /*弹框信息css样式*/
+        .layui-text h3{
+            color:#EEF1F4 !important;
+        }
+        .define-label{
+            color:#EEF1F4 !important;
+        }
+
+        .layui-form-label{
+            padding: 2px 15px !important;
+        }
+
+        .layui-layer-page .layui-layer-title{
+            font-size: 18px;
+            margin-top: -17px;
+            border-bottom: 2px solid #176DE0;
+            background: rgba(8,67,160,1);
+            width: 83%;
+            margin-left: -10px;
+            border-top: 2px solid  #176DE0;
+            color:#F8FAFA;
+        }
+        .layui-layer-page .layui-layer-setwin{
+            top:2.0vh !important;
+        }
+        .layui-form-item .layui-input-inline input{
+            color: #EEF1F3;
+        }
+        .layui-timeline-item{
+            padding-bottom: 2px !important;
+        }
+        .layui-timeline-content{
+            padding-top: 16px !important;
+        }
+
+        /*运维管理下拉框样式*/
+        .layui-form-select dl{
+            background-color: rgba(0,26,51,0.6)!important;
+            border: 1px solid #001A33 !important;
+            width: 1px;
+        }
+        .layui-form-select dl dd.layui-this{
+            background-image: url("../../image/homePage/filterbox.png")!important;
+            background-color: rgba(25,66,55,0) !important;
+        }
+        .layui-form-select dl dd.layui-select-tips{
+            color: #04CCFB !important;
+        }
+        .body{
+            background-color: rgba(1,11,33,0.5);
+        }
+
+        /*新建弹框css样式*/
+        .layui-layer-title{
+            color: #E9EBEE !important;
+            font-size: 16px !important;
+            top: 3.5vh !important;
+            font-weight: bold !important;
+            border-bottom: 2px solid #114497 !important;
+            background: rgba(28, 94, 210, 0.6) !important;
+            border-top: 1px solid #EFF0F1 !important;
+        }
+
+        .layui-layer{
+            background: rgba(3, 37, 72, 0.8)10% linear-gradient(175deg, rgba(0, 41, 78, 0.8) 50%, rgba(0, 76, 158, 0.8) 100%) !important;
+
+        }
+
+        .layui-table-page{
+            top: 90px;
+        }
+
+        /*确认和取消按钮css样式*/
+        .layui-layer-btn0{
+            background-image: url("../image/toolBarIcon/antframe.png")!important;
+            background-color: #115BC6 !important;
+            border-image: url("../image/toolBarIcon/antframe1.png");
+            position: relative;
+            top: 5px;
+            height: 35px;
+            width: 60px;
+            cursor: pointer;
+            color:  #F6F8FB;
+        }
+        .layui-layer-btn1{
+            background-image: url("../image/toolBarIcon/antframe.png")!important;
+            border-image: url("../image/toolBarIcon/antframe1.png");
+            background-color: #115BC6 !important;
+            color: #F6F8FB !important;
+            position: relative;
+            top: 5px;
+            height: 35px;
+            cursor: pointer;
+            width: 60px;
+            left:20px;
+        }
+
+    </style>
+</head>
+<body class="body">
+<div class="layui-form" style="display: flex;
+            justify-content: space-between;margin-top: 3vh; margin-right: 40vw; margin-left: 150px;" lay-filter="queryCondition">
+
+    <div class="layui-form-item" >
+        <div class="layui-input-inline" style="width: 18vw;">
+            <input  style="width: 18vw;border-color: #3399FF ; border-width: 1px;" id="timeSelect" name="timeSelect" type="text"  placeholder="时间" class="layui-input" autocomplete="off">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-inline div-select" >
+            <select name="alarmType">
+                <option value="">区划</option>
+           </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-inline div-select" >
+            <select  name="alarmLevel" >
+                <option value="">点位</option>
+
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-inline div-select" >
+            <select name="handleState">
+                <option value="">人员</option>
+
+            </select>
+        </div>
+    </div>
+
+
+    <button id="search" style="background-color:rgba(1,30,65,0.3);width:32px;height:32px;border: 1px solid #0E417A"><i class="layui-icon" style="color: #E6EEFF ; font-size: 20px" >&#xe615;</i></button>
+</div>
+<div style="margin-top: -1vh;">
+    <th:block th:if="${session.users.roleName eq '运维操作人员'}">
+         <button id="add" style="width: 84px;position: absolute; margin-top: -40px;margin-left: 40px;
+height: 32px;
+background: linear-gradient(180deg, #0080FF 0%, #004D99 100%) ,linear-gradient(180deg, #00CAFF 0%, rgba(0, 77, 153, 0) 100%);
+border: 1px solid;
+border-image: linear-gradient(180deg, rgba(0, 128, 255, 0.16), rgba(58, 157, 255, 0.3)) 1 1;font-size: 12px;
+font-family: MicrosoftYaHei;
+color: #F0FAFF;
+line-height: 16px;"><i class="layui-icon">&#xe624;</i>新建</button>
+    </th:block>
+    <table id="infoTable" cellspacing="1" lay-filter="infoTable"></table>
+</div>
+<!--记录详情-->
+<div id="detailDiv"  style="color: rgba(0, 77, 153, 1); display: none;">
+    <table cellpadding="2" cellspacing="3" style="top: 20px">
+        <tr>
+            <td>时间:</td>
+            <td id="timeTd" style="font-weight: bold;left: 90px;position: absolute"></td>
+        </tr>
+        <tr>
+            <td>区划:</td>
+            <td id="orgTd" style="font-weight: bold;left: 90px;position: absolute"></td>
+        </tr>
+        <tr>
+            <td>点位:</td>
+            <td id="boxAliasTd" style="font-weight: bold;left: 90px;position: absolute"></td>
+        </tr>
+        <tr>
+            <td>人员:</td>
+            <td id="userTd" style="font-weight: bold;left: 90px;position: absolute"></td>
+        </tr>
+    </table>
+    <table id="maintenanceTable" style="margin-top: 20px;">
+    </table>
+    <div style="position: absolute; left: 270px; bottom: 15px;">
+        <button id="confirm" class="layui-layer-btn0" >确认</button><button id="cancel" class="layui-layer-btn1">取消</button>
+    </div>
+</div>
+</body>
+<script th:src="@{/webjars/jquery/3.5.1/jquery.js}"></script>
+<script type="text/javascript" th:src="@{/js/myjs.js}"></script>
+<script type="text/javascript" th:src="@{/js/htmlPage/operationManagement/routineMaintenance.js}"></script>
+<!-- 操作栏 -->
+<script type="text/html" id="recordBar">
+    <a class="layui-btn layui-btn-xs" lay-event="view" style="color: #1E9FFF;border: 1px solid transparent;"><i class="layui-icon">&#xe642;</i>查看详情</a>
+</script>
+<script type="text/html" id="No.">
+    {{d.LAY_TABLE_INDEX+1}}
+</script>
+<script>
+    $(function (){
+        $(window.parent.$(".layui-nav-item")[0]).addClass("layui-nav-itemed")//默认打开设备导航栏
+    });
+    $("#confirm").click(function () {
+        layer.closeAll();
+    })
+    $("#cancel").click(function () {
+        layer.closeAll();
+    })
+</script>
+</html>

@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script type="text/javascript" src="/lib/include-lib.js" libpath="/lib/"
+            include="jquery,jquery.range,bootstrap,font-awesome,bootstrap-checkbox,font-awesome,web-icons,layer,haoutil,nprogress,cesium-gsp"></script>
+    <link href="http://69.234.224.124:7003/css/style.css" rel="stylesheet" />
+    <link href="http://69.234.224.124:7003/css/buttomStyle.css" rel="stylesheet" />
+
+    <link rel="stylesheet"  th:href="@{/css/layuiTable.css}"/>
+    <link rel="stylesheet"  th:href="@{/css/gis/divGraphic.css}"/>
+    <script type="text/javascript" th:src="@{/webjars/layui/2.6.8/layui.js}"></script>
+    <script type="text/javascript" th:src="@{/js/gis/waterLine.js}"></script>
+    <script type="text/javascript" th:src="@{/js/mars3d/mars3d.js}"></script>
+    <script type="text/javascript" th:src="@{/js/mars3d/turf.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/js/mars3d/mars3d.css}">
+    <link rel="stylesheet" th:href="@{/webjars/layui/2.6.8/css/layui.css}">
+    <style>
+        .cesium-popup-background {
+            background: rgba(8, 55, 76, 0.5);
+        }
+
+        .cesium-popup-color {
+            color: #fafafa;
+        }
+
+        .cesium-popup-close-button {
+            position: absolute;
+            top: 0px;
+            right: 0px;
+            padding: 4px 4px 0 0;
+            text-align: center;
+            width: 18px;
+            height: 14px;
+            font: 18px/14px Tahoma,Verdana,sans-serif;
+        }
+
+        .define-table {
+            width: 100%;
+            background-color: transparent;
+            /*color: #fff;*/
+            font-family: PingFang-SC-Regular;
+            font-size: 15px;
+            font-weight: normal;
+            font-stretch: normal;
+            line-height: 35px;
+            varter-spacing: 1px;
+            color: #ffffff;
+
+        }
+
+        .define-table td, .define-table th{
+            border-width: 1px;
+            border-style: solid;
+            border-left-style: none;
+            border-color: rgba(240, 240, 240, .1);
+            border-right-style: none;
+        }
+
+        .define-table tr {
+            transition: auto;
+            -webkit-transition: auto;
+            border-radius: 6px;
+        }
+
+        .define-table tbody tr:hover, .define-table thead tr{
+
+            background-color:rgba(12, 44, 95, 0.4);
+        }
+
+        .layui-form-checked span, .layui-form-checked:hover span {
+            background-color: #002751 !important;
+        }
+
+        /*.mars3d-popup-background{background:rgba(8, 55, 76, 0.5) !important;}*/
+
+        .mars3d-popup-background{
+
+            background: rgba(0, 128, 255, 0.2) linear-gradient(175deg, rgba(0, 110, 255, 0.5) 0%, rgba(0, 110, 255, 0) 100%);
+            border: 1px solid;
+            border-image: radial-gradient(circle, rgba(142, 174, 255, 1), rgba(142, 174, 255, 0.34), rgba(142, 174, 255, 0)) 1 1;
+            opacity: 0.8;
+        }
+
+        .layui-layer-iframe{
+            background: rgba(0, 128, 255, 0.2) linear-gradient(175deg, rgba(0, 110, 255, 0.5) 0%, rgba(0, 110, 255, 0) 100%);
+            border: 1px solid;
+            border-image: radial-gradient(circle, rgba(142, 174, 255, 1), rgba(142, 174, 255, 0.34), rgba(142, 174, 255, 0)) 1 1;
+            opacity: 0.8;
+        }
+
+        .layui-layer-title {
+              background: rgba(0, 128, 255, 0.2) linear-gradient(175deg, rgba(0, 110, 255, 0.5) 0%, rgba(0, 110, 255, 0) 100%);
+              color:#FAFAFA;
+              opacity: 0.8;
+          }
+
+        .mars3d-camera-content {
+            /* 防止下面的line一直随img动画 */
+            /*height: 30px;*/
+        }
+        .mars3d-camera-img {
+            width: 130px;
+            height: 130px;
+            /*animation: cameraMove 1s linear infinite alternate;*/
+            /*-webkit-animation: cameraMove 1s linear infinite alternate;*/
+        }
+        @keyframes cameraMove {
+            from {
+                margin-top: 20px;
+            }
+            to {
+                margin-top: 0px;
+            }
+        }
+        @-webkit-keyframes cameraMove {
+            from {
+                margin-top: 20px;
+            }
+            to {
+                margin-top: 0px;
+            }
+        }
+        .mars3d-camera-line {
+            height: 120px;
+            width: 5px;
+            margin-top: 20px;
+            border-left: 3px dashed #5b8fee;
+            margin-left: calc(50% - 1px);
+        }
+        .mars3d-camera-point {
+            border-radius: 50%;
+            width: 8px;
+            height: 8px;
+            margin-left: calc(50% - 3px);
+            background-color: #5b8fee;
+        }
+
+        .navigation-bar{
+            /*width: 20vw;*/
+            height: 5.3vh;
+            position: absolute;
+            bottom: .5vh;
+            top: 12.8vh;
+            left: 60%;
+            z-index: 999;
+            font-size: .8vw;
+            transform: translate(-25%);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #nav li {
+            color:#fff;
+            width: 5.5vw;
+            height:4.1vh;
+            line-height: 4.1vh;
+            cursor: pointer;
+            transition: all .2s ease-in;
+            text-align: center;
+            bottom: 0;
+            margin-right: 0.625vw;
+
+            background: #d2d2d2;
+            opacity: 0.8;
+            border: 1px solid;
+        }
+
+        #nav li:hover {
+           font-size: 18px;
+            transition: all .5s ;
+        }
+
+        p, ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        #nav li a{
+            color:#ffffff;
+            text-decoration: none;
+        }
+
+        #nav .active li a:hover{
+            /*color:#1E9FFF;*/
+            color:#FFFFFF;
+            font-weight: bold;
+        }
+
+        #nav .active{
+            background: rgba(0, 128, 255, 0.2) linear-gradient(175deg, rgba(0, 110, 255, 0.5) 0%, rgba(0, 110, 255, 0) 100%);
+            border: 1px solid;
+            border-image: radial-gradient(circle, rgba(142, 174, 255, 1), rgba(142, 174, 255, 0.34), rgba(142, 174, 255, 0)) 1 1;
+            opacity: 1;
+        }
+        #nav .active a{
+            /*color:#1E9FFF;*/
+            color:#E5EBFF;
+            font-weight: bold;
+        }
+
+        #nav{
+            transform: translate(-50%);
+            display: flex;
+        }
+
+        .layui-form-radioed, .layui-form-radioed>i, .layui-form-radio:hover * {
+            color: rgba(0, 110, 255, 0.5) !important;
+        }
+
+        .layui-form-radio {
+           color:white !important;
+        }
+
+        .layui-form-label{
+            width: 108px;
+        }
+    </style>
+</head>
+<body>
+<div id="mars3dContainer" class="mars3d-container" style="height:116%;overflow: hidden;"></div>
+<div class="navigation-bar">
+    <ul id="nav">
+        <li class="buildingModelBtn active"><a href="javascript:;">建筑</a></li>
+        <li class="artificalModelBtn"><a href="javascript:;">人工地形</a></li>
+        <li class="sandModelBtn active"><a href="javascript:;">材质-砂石</a></li>
+        <li class="soilModelBtn active"><a href="javascript:;">材质-土壤</a></li>
+        <li class="pipeLineModelModelBtn active"><a href="javascript:;">地下管线</a></li>
+        <li class="waterLineBtn active"><a href="javascript:;">管线水流向</a></li>
+        <li id="roamStart" class="active roam"> <a href="javascript:;">开启漫游</a></li>
+        <li id="roamStop" class="active roam layui-hide"> <a href="javascript:;">关闭漫游</a></li>
+    </ul>
+</div>
+<div id="modelFlyGltfRadio" class="layui-form layui-hide" style="position:absolute; bottom:2.4vh;left:8vw;z-index:9999;">
+    <div class="layui-form-item" pane>
+        <label class="layui-form-label" style="color:white;">漫游模型:</label>
+        <div class="layui-input-block">
+            <input type="radio" name="gltfType" value="none" title="无" lay-filter="gltfNoneRadio">
+            <input type="radio" name="gltfType" value="car" title="汽车" checked lay-filter="gltfCarRadio">
+            <input type="radio" name="gltfType" value="man" title="行人" lay-filter="gltfManRadio">
+        </div>
+    </div>
+
+    <div class="layui-form-item" pane>
+        <label class="layui-form-label" style="color:white;">漫游视角:</label>
+        <div class="layui-input-block">
+            <input type="radio" name="roamCamera" value="none" title="俯视" lay-filter="lookDownRadio">
+            <input type="radio" name="roamCamera" value="car" title="平视" checked lay-filter="horizontalRadio">
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    var buildingModelLayerwork = null;
+    var artificalModelLayerwork = null;
+    var sandModelLayerwork = null;
+    var soilModelLayerwork = null;
+    var rainPipeLineModelLayerwork = null;
+    var sewagePipeLineModelLayerwork = null;
+
+    var gisModelHost = [[${gisModelHost}]];
+
+</script>
+<script>
+    var layer;
+    layui.use('layer', function () {
+        layer = layui.layer;
+    });
+</script>
+<script>
+    var pipeLineInfoHtml = "";
+    // 点位查看详情
+    function showPointDetail(data) {
+        if (data.systemType == "雨水监测点") {
+            window.layer.open({
+                type: 2,
+                title: "雨水监测点",
+                shadeClose: true,
+                area: ['468px', '540px'],
+                content: "rainMontiorFlexDataPage?boxNo=" + data.boxNo,
+                skin: "layer-mars-dialog animation-scale-up",
+                success: function (layero) {
+                },
+            });
+        } else if (data.systemType == "污水监测点") {
+            window.layer.open({
+                type: 2,
+                title: "污水监测点",
+                shadeClose: true,
+                area: ['468px', '540px'],
+                content: "sewageMonitorFlexDataPage?boxNo=" + data.boxNo,
+                skin: "layer-mars-dialog animation-scale-up",
+                success: function (layero) {
+                },
+            });
+        }else if (data.systemType == "泵站") {
+            window.layer.open({
+                type: 2,
+                title: "泵站",
+                shadeClose: true,
+                area: ['468px', '540px'],
+                content: "pumpStationFlexDataPage?boxNo=" + data.boxNo,
+                skin: "layer-mars-dialog animation-scale-up",
+                success: function (layero) {
+                },
+            });
+        }
+    }
+    // 点位点击，弹窗的内容
+    var pointPopupHtml = '<table id="popup" class="define-table" style="width: auto;"></table>'
+
+    // 管网点位添加图标
+    function addMarkPoint(data){
+
+        var html = "";
+
+        // 创建DIV数据图层
+        var divGraphicLayer = new mars3d.layer.DivLayer();
+        map.addLayer(divGraphicLayer);
+
+        var tempJson = {};
+
+        for (var i=0; i<data.length; i++){
+            var array = [];
+            array[0] = data[i].longitude;
+            array[1] = data[i].latitude;
+
+            array[2] = '8';
+
+           if(data[i].alarmState == "alarm") {
+               // 报警点位水波图标
+               var graphic = new mars3d.graphic.CircleEntity({
+                   position: array,
+                   style: {
+                       radius: 6,
+                       height: 10,
+                       material: mars3d.MaterialUtil.createMaterialProperty(mars3d.MaterialType.CircleWave, {
+                           color: "red",
+                           count: 2,
+                           speed: 16,
+                       }),
+                   },
+               });
+               waterLineGraphicLayer.addGraphic(graphic);
+           }
+            tempJson.boxNo = data[i].boxNo;
+            tempJson.systemType = data[i].systemType;
+            html = html + '<table class="define-table" style="width: auto;"><tr>' +
+                '<th scope="col" colspan="4"  style="text-align:center;font-size:15px;">' +
+                data[i].pointType + "</th></tr>";
+
+            html +=  "<tr><td>点位类型:</td>"  + "<td>"  + data[i].pointType  +"</td></tr>";
+            html += "<tr><td>点位编号:</td>"  + "<td>"  + data[i].pointNo  +"</td></tr>";
+            html += "<tr><td>地点:</td>"  + "<td>"  + data[i].addressName  +"</td></tr>";
+            html += "<tr><td>管网类型:</td>"  + "<td>"  + data[i].networkType +"</td></tr>";
+            html += "<tr><td>管网级别:</td>"  + "<td>"  + data[i].networkLevel +"</td></tr>";
+            html += "<tr><td>系统类型:</td>"  + "<td>"  + data[i].systemType + "</td></tr>";
+            // html += "<tr><td>材质:</td>"  + "<td>"  + data[i].material +"</td></tr>";
+            // html += "<tr><td>规格:</td>"  +  "<td>"  + data[i].specs + "(mm)" +"</td></tr>";
+            // html += "<tr><td>顶高程:</td>"  + "<td>"  + data[i].topDepth + "m" + "</td></tr>";
+            // html += "<tr><td>底高程:</td>"  + "<td>"  + data[i].bottomDepth +  "m" +"</td></tr>";
+            // html += "<tr><td>竣工日期:</td>"  + "<td>"  +data[i].completionDate +"</td></tr>";
+            html +="<tr><td colspan='2'><button class='layui-btn layui-btn-normal' onclick='showPointDetail(" + JSON.stringify(tempJson) + ")'>查看详情</button></td></tr>"
+            html += "</table>";
+
+            var pointStyleHtml = '<div class="mars3d-camera-content"><img class="mars3d-camera-img" src="';
+
+            if (data[i].pointType == "雨水井" || data[i].pointType == "雨水口") {
+                pointStyleHtml = pointStyleHtml + 'image/gis/alarm1.gif">' ;
+            } else{
+                pointStyleHtml = pointStyleHtml + 'image/gis/alarm2.gif">' ;
+            }
+
+            pointStyleHtml = pointStyleHtml + ' </div>';
+
+            var graphicImg = new mars3d.graphic.DivGraphic({
+                position: array,
+                style: {
+                    html: pointStyleHtml,
+                    offsetX: -65,
+                    distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0, 10000),
+                    verticalOrigin: Cesium.VerticalOrigin.CENTER,
+                },
+                popup: html,
+                popupOptions: {
+                    offsetY: -65, //显示Popup的偏移值，是DivGraphic本身的像素高度值
+                    template: '<div class="marsBlackPanel animation-spaceInDown"> <div class="marsBlackPanel-text">{content}</div><span style="color:white;" class="mars3d-popup-close-button closeButton" >×</span></div>',
+                    horizontalOrigin: Cesium.HorizontalOrigin.LEFT,
+                    verticalOrigin: Cesium.VerticalOrigin.CENTER,
+                },
+            });
+
+            divGraphicLayer.addGraphic(graphicImg);
+            html = "";
+        }
+    }
+
+    // 获取所有管网点位信息
+    // function getAllNetworkPointInfo(param){
+    //      $.ajax({
+    //          url:"getAllNetworkPoint",
+    //          type:'post',
+    //          contentType:'application/json;charset=utf-8',
+    //          data:JSON.stringify(param),
+    //          success:function (res) {
+    //              addMarkPoint(res.data)
+    //          }
+    //      })
+    // }
+
+    // 获取所有管网点位信息
+    function getAllGisPointHaveFlexemInfo(){
+        $.ajax({
+            url:"getAllGisPointHaveFlexemInfo",
+            type:'post',
+            contentType:'application/json;charset=utf-8',
+            success:function (res) {
+                addMarkPoint(res)
+            }
+        })
+    }
+
+    function getAllPipeLineInfo() {
+        $.ajax({
+            url:"getAllNetworkPipeline",
+            type:'post',
+            contentType:'application/json;charset=utf-8',
+            data:JSON.stringify({}),
+            success:function (res) {
+
+                var data = res.data;
+                var html = "";
+                html = html + '<table class="layui-table" style="width: auto;"><tr>' +
+                    '<th scope="col" colspan="4"  style="text-align:center;font-size:15px;">' + "</th></tr>";
+
+                for (var i = 0; i < data.length; i++) {
+
+                    html += "<tr><td>地点:</td>" + "<td>" + data[i].addressName + "</td></tr>";
+                    html += "<tr><td>管网类型:</td>" + "<td>" + data[i].networkType + "</td></tr>";
+                    html += "<tr><td>管网级别:</td>" + "<td>" + data[i].networkLevel + "</td></tr>";
+                    html += "<tr><td>材质:</td>" + "<td>" + data[i].material + "</td></tr>";
+                    html += "<tr><td>规格:</td>" + "<td>" + data[i].specs + "(mm)" + "</td></tr>";
+                    html += "<tr><td>竣工日期:</td>" + "<td>" + data[i].compvarionDate + "</td></tr>";
+                    html += "</table>";
+
+                }
+                pipeLineInfoHtml = html;
+            }
+        })
+    }
+</script>
+<script>
+</script>
+<script>
+    var map;
+    var roamLine = null;
+    var flydata;
+    var gltfType = 'Car';
+
+    //Cesium.AnimationViewModel.defaultTicks = [0.1, 0.25, 0.5, 1.0, 2.0, 5.0, 10.0, 15.0, 30.0, 60.0, 120.0, 300.0, 600.0, 900.0, 1800.0, 3600.0];
+    // 漫游动画控件速度选项
+    Cesium.AnimationViewModel.defaultTicks = [1.0, 1.5, 2.0];
+    // 漫游平视视角
+    var roamHorizontalCamera = {
+        type: "gs",
+        heading: 90,
+        radius: 90,
+        pitch: -12
+    };
+
+    // 漫游俯视视角
+    var roamLookDownCamera = {
+        type: "gs",
+        heading: 90,
+        radius: 90,
+        pitch: -70
+    };
+
+    var selectedRoamCamera = roamLookDownCamera;
+    // 漫游路线添加信息弹窗等
+    function roamLineBind(){
+
+        waterLineGraphicLayer.addGraphic(roamLine);
+
+        if (gltfType == "none") {
+            return;
+        }
+
+        roamLine.bindPopup('<div style="width: 200px"> <div>总 距 离：<span id="lblAllLen"> </span></div> <div>总 时 间：<span id="lblAllTime"> </span></div> <div>开始时间：<span id="lblStartTime"> </span></div> <div>剩余时间：<span id="lblRemainTime"> </span></div> <div>剩余距离：<span id="lblRemainLen"> </span></div> </div>');
+
+        // 刷新局部DOM,不影响popup面板的其他控件操作
+        roamLine.on(mars3d.EventType.postRender, function (event) {
+            var container = event.container; //popup对应的DOM
+
+            var params = roamLine.info;
+            if (!params) {
+                return;
+            }
+
+            var lblAllLen = container.querySelector("#lblAllLen");
+            if (lblAllLen) {
+                lblAllLen.innerHTML = haoutil.str.formatLength(roamLine.alllen);
+            }
+
+            var lblAllTime = container.querySelector("#lblAllTime");
+            if (lblAllTime) {
+                lblAllTime.innerHTML = haoutil.str.formatTime(roamLine.alltimes / map.clock.multiplier);
+            }
+
+            var lblStartTime = container.querySelector("#lblStartTime");
+            if (lblStartTime) {
+                lblStartTime.innerHTML = Cesium.JulianDate.toDate(roamLine.startTime).format("yyyy-M-d HH:mm:ss");
+            }
+
+            var lblRemainLen = container.querySelector("#lblRemainLen");
+            if (lblRemainLen) {
+                lblRemainLen.innerHTML = haoutil.str.formatLength(roamLine.alllen - params.len);
+            }
+
+            var lblRemainTime = container.querySelector("#lblRemainTime");
+            if (lblRemainTime) {
+
+                var remainTime = (roamLine.alltimes - params.time) / map.clock.multiplier ;
+                var remainTimeStr = haoutil.str.formatTime(remainTime);
+                lblRemainTime.innerHTML = remainTimeStr;
+            }
+        });
+    }
+
+    var flyPositions =  [
+        [120.175513,30.19423, 4.3],
+        [120.175171,30.194893, 6.2],
+        [120.174616,30.195965, 8.0],
+        [120.174047,30.197065, 7.4],
+        [120.173286,30.198493, 8.3],
+        [120.172468,30.200025, 9.3],
+        [120.172137,30.200644, 9.5],
+
+        [120.172019,30.20059, 9.5],
+        [120.172174,30.200296, 8.5],
+        [120.172691,30.19933, 7.9],
+        [120.172806,30.199113,8.6],
+        [120.172987,30.198774,8.3],
+        [120.173356,30.19808,7.3],
+        [120.173789,30.197269,7.4],
+        [120.174034,30.196805,7.1],
+        [120.17423,30.196425,6.2],
+        [120.174353,30.196136,4.3],
+        [120.174603,30.195672,8.0],
+        [120.175045,30.194844,5.6],
+        [120.175127,30.194688,5.7],
+        [120.175265,30.194425,5.6],
+        [120.175414,30.19414,3.3],
+    ];
+    // 初始化地图 并加载模型
+    function initMars3dMap(options) {
+        //center: {lat: 30.196493, lng: 120.174352, alt: 600, heading: 30, pitch: -80.4},
+
+        //合并属性参数，可覆盖config.json中的对应配置
+        var mapOptions = mars3d.Util.merge(options, {
+            scene: {
+                center: {lat: 30.196493, lng: 120.174352, alt: 232, heading: -22, pitch: -20.4,
+                    roll: 300.5}
+             }
+                ,control: {
+                    animation: true, //是否创建动画小器件，左下角仪表
+                    //timeline: true, //是否显示时间线控件
+                    compass:{enabled: true}
+                }
+            }
+        );
+
+        map = new mars3d.Map('mars3dContainer', mapOptions);
+
+        //固定光照，避免gltf模型随时间存在亮度不一致。
+        //map.fixedLight = true;
+
+        rainPipeLineModelLayerwork = new mars3d.layer.TilesetLayer({
+            url: gisModelHost + '/gx_yushui/tileset.json',
+            name: "雨水管道模型", //名称
+            maximumScreenSpaceError: 2,
+            maximumMemoryUsage: 1024,
+            position: {
+                lat: 30.197451, lng: 120.17378, alt: -5
+            },
+            flyTo: true
+        })
+
+        rainPipeLineModelLayerwork.bindPopup(
+            function (event) {
+                var html = "";
+                html = html + '<table class="define-table" style="width: auto;"><tr>' +
+                    '<th scope="col" colspan="4"  style="text-align:center;font-size:15px;">' + "</th></tr>";
+
+
+                html += "<tr><td>地点:</td>" + "<td>" + "滨江区建业路" + "</td></tr>";
+                html += "<tr><td>管网类型:</td>" + "<td>" + "雨水管网" + "</td></tr>";
+                html += "<tr><td>管网级别:</td>" + "<td>" + "二级管网" + "</td></tr>";
+                html += "<tr><td>材质:</td>" + "<td>" + "砼" + "</td></tr>";
+                html += "<tr><td>规格:</td>" + "<td>" + "300" + "(mm)" + "</td></tr>";
+                html += "<tr><td>竣工日期:</td>" + "<td>" + "2021-09-30" + "</td></tr>";
+                html += "</table>";
+                return html;
+            }
+        );
+
+        map.addLayer(rainPipeLineModelLayerwork);
+
+        sewagePipeLineModelLayerwork = new mars3d.layer.TilesetLayer({
+                url: gisModelHost + '/gx_wushui/tileset.json',
+                name: "污水管道模型", //名称
+                maximumScreenSpaceError: 2,
+                maximumMemoryUsage: 1024,
+            position: { lat: 30.197464,
+                lng: 120.17376,
+                alt: -5
+
+             },
+                flyTo: false,
+            })
+
+        sewagePipeLineModelLayerwork.bindPopup(
+            function (event) {
+                var html = "";
+                html = html + '<table class="define-table" style="width: auto;"><tr>' +
+                    '<th scope="col" colspan="4"  style="text-align:center;font-size:15px;">' + "</th></tr>";
+
+
+                html += "<tr><td>地点:</td>" + "<td>" + "滨江区建业路" + "</td></tr>";
+                html += "<tr><td>管网类型:</td>" + "<td>" + "污水管网" + "</td></tr>";
+                html += "<tr><td>管网级别:</td>" + "<td>" + "二级管网" + "</td></tr>";
+                html += "<tr><td>材质:</td>" + "<td>" + "砼" + "</td></tr>";
+                html += "<tr><td>规格:</td>" + "<td>" + "300" + "(mm)" + "</td></tr>";
+                html += "<tr><td>竣工日期:</td>" + "<td>" + "2021-09-30" + "</td></tr>";
+                html += "</table>";
+                return html;
+            }
+        );
+
+        map.addLayer(sewagePipeLineModelLayerwork);
+
+        buildingModelLayerwork = new mars3d.layer.TilesetLayer({
+            url: gisModelHost + '/build/tileset.json',
+            name: "建筑模型", //名称
+            maximumScreenSpaceError: 2,
+            maximumMemoryUsage: 1024,
+            position: {  lat: 30.196926,
+                lng: 120.17395,
+                alt: -0.5
+            },
+            flyTo: false,
+        })
+
+        map.addLayer(buildingModelLayerwork);
+
+        sandModelLayerwork = new mars3d.layer.TilesetLayer({
+            url: gisModelHost + '/caizhishashi/tileset.json',
+            name: "地下材质沙石模型", //名称
+            maximumScreenSpaceError: 2,
+            maximumMemoryUsage: 1024,
+            position: {  lat: 30.197451,
+                lng: 120.17378,
+                alt: -5,
+                heading:0
+            },
+            flyTo: false,
+        })
+
+        soilModelLayerwork = new mars3d.layer.TilesetLayer({
+            url: gisModelHost + '/caizhiturang/tileset.json',
+            name: "地下材质土壤模型", //名称
+            maximumScreenSpaceError: 2,
+            maximumMemoryUsage: 1024,
+            position: {  lat: 30.197451,
+                lng: 120.17378,
+                alt: -5,
+                heading:0
+            },
+            flyTo: false,
+        })
+
+        map.addLayer(soilModelLayerwork);
+
+        map.addLayer(sandModelLayerwork);
+
+        artificalModelLayerwork = new mars3d.layer.TilesetLayer({
+            url: gisModelHost + '/roadside/tileset.json',
+            maximumScreenSpaceError: 2,
+            maximumMemoryUsage: 1024,
+            position: {  lat: 30.197022,
+                lng: 120.173832,
+                alt:  -1,
+                heading:0
+            },
+            flyTo: false,
+        })
+        artificalModelLayerwork.show = false;
+        map.addLayer(artificalModelLayerwork);
+
+        //天地图 三维地名服务图层
+       //  var tdtDmLayer = new mars3d.layer.TdtDmLayer({
+       //      key: mars3d.Token.tianditu,
+       //  });
+       // map.addLayer(tdtDmLayer);
+
+        var tileLayer = new mars3d.layer.TdtLayer({
+            name: "天地图影像注记",
+            layer: "img_z",
+            key: mars3d.Token.tiandituArr,
+        });
+
+        map.addLayer(tileLayer);
+
+        //创建矢量数据图层
+        waterLineGraphicLayer = new mars3d.layer.GraphicLayer();
+
+        map.addLayer(waterLineGraphicLayer);
+
+        addWaterLine(waterLineGraphicLayer);
+
+        //getAllNetworkPointInfo({});
+        getAllGisPointHaveFlexemInfo();
+        //该数据可以从 基础项目 飞行漫游功能界面操作后单个路线的 保存JSON
+        flydata = {
+            name: "贴模型表面漫游",
+            speed: 40,
+            positions: flyPositions,
+            model: {
+                show: true,
+                url: "//data.mars3d.cn/gltf/mars/qiche.gltf",
+                scale: 0.1,
+                minimumPixelSize: 20,
+            },
+            camera: selectedRoamCamera,
+            clockLoop: true
+        }
+
+       roamLine = new mars3d.graphic.RoamLine(flydata);
+        roamLineBind();
+
+        // 开启漫游
+        $("#roamStart").click(function () {
+            if (roamLine){
+
+                roamLine.start();
+                roamLine.openPopup();
+                $("#mars3dContainer").css({
+                    "height":"100%"
+                    }
+                );
+                $("#roamStart").addClass("layui-hide");
+                $("#roamStop").removeClass("layui-hide");
+                $("#modelFlyGltfRadio").removeClass("layui-hide");
+            }
+        })
+
+        // 关闭漫游
+        $("#roamStop").click(function () {
+            if (roamLine){
+                roamLine.closePopup();
+                roamLine.stop();
+
+                $("#mars3dContainer").css({
+                    "height":"116%",
+                    "overflow":"hidden"}
+                );
+
+                $("#roamStart").removeClass("layui-hide");
+                $("#roamStop").addClass("layui-hide");
+                $("#modelFlyGltfRadio").addClass("layui-hide");
+            }
+        })
+    }
+
+    $(function () {
+        var configUrl = "config.json";
+
+        mars3d.Resource.fetchJson({ url: configUrl })
+            .then(function (json) {
+                //构建地图
+                initMars3dMap(json.map3d);
+            })
+            .otherwise(function (error) {
+                console.log("加载JSON出错", error);
+                haoutil.alert(error && error.message, "出错了");
+            });
+    })
+
+</script>
+<script>
+    $("#nav li").click(function () {
+
+        if($(this)[0].className.indexOf("active") > -1 && $(this)[0].className.indexOf("roam") < 0){
+            $(this).removeClass("active");
+        }else{
+            $(this).addClass("active");
+        }
+
+        var checkedClassName = $(this)[0].className;
+
+        switch (checkedClassName) {
+            case 'buildingModelBtn':
+                buildingModelLayerwork.show = false;
+                break;
+            case 'buildingModelBtn active':
+                buildingModelLayerwork.show = true;
+                break;
+            case 'artificalModelBtn':
+               artificalModelLayerwork.show = false;
+                break;
+            case 'artificalModelBtn active':
+                artificalModelLayerwork.show = true;
+                break;
+            case 'sandModelBtn':
+                sandModelLayerwork.show = false;
+                break;
+            case 'sandModelBtn active':
+                sandModelLayerwork.show = true;
+                break;
+            case 'soilModelBtn':
+                soilModelLayerwork.show = false;
+                break;
+            case 'soilModelBtn active':
+                soilModelLayerwork.show = true;
+                break;
+            case 'pipeLineModelModelBtn':
+                rainPipeLineModelLayerwork.show = false;
+                sewagePipeLineModelLayerwork.show = false;
+                break;
+            case 'pipeLineModelModelBtn active':
+                rainPipeLineModelLayerwork.show = true;
+                sewagePipeLineModelLayerwork.show = true;
+                break;
+            case 'waterLineBtn':
+                hideWaterLine();
+                break;
+            case 'waterLineBtn active':
+                showWaterLine();
+                break;
+            default:
+                break;
+        }
+    });
+
+</script>
+</body>
+<script>
+    layui.use(['form'], function () {
+        var form = layui.form;
+
+        // 无小模型
+        form.on('radio(gltfNoneRadio)', function (data) {
+            if (gltfType == "none") {
+                return;
+            }
+            gltfType = "none";
+
+            if (roamLine){
+                roamLine.stop();
+                roamLine.remove(true);
+
+                flydata.model = {};
+
+                roamLine = new mars3d.graphic.RoamLine(flydata);
+                roamLine.addTo(waterLineGraphicLayer);
+
+                roamLine.start();
+            }
+        })
+
+        // 汽车小模型选择
+        form.on('radio(gltfCarRadio)', function () {
+            if (gltfType == 'Car'){
+                return;
+            }
+            if (roamLine) {
+                roamLine.stop();
+                roamLine.remove(true);
+
+                flydata.model = {
+                    show: true,
+                    url: "//data.mars3d.cn/gltf/mars/qiche.gltf",
+                    scale: 0.1,
+                    minimumPixelSize: 20,
+                };
+
+                roamLine = new mars3d.graphic.RoamLine(flydata);
+
+                gltfType = "Car";
+
+                roamLineBind();
+                roamLine.start();
+                roamLine.openPopup();
+            }
+
+        })
+
+        // 行人小模型选择
+        form.on('radio(gltfManRadio)', function () {
+            if (gltfType == 'Man'){
+                return;
+            }
+            if (roamLine) {
+                roamLine.stop();
+                roamLine.remove(true);
+
+                flydata.model = {
+                    show: true,
+                    url: gisModelHost + "/man/walk.gltf",
+                    scale: 5,
+                    minimumPixelSize: 20,
+                };
+
+                roamLine = new mars3d.graphic.RoamLine(flydata);
+
+                waterLineGraphicLayer.addGraphic(roamLine);
+                gltfType = "Man";
+
+                roamLineBind();
+                roamLine.start();
+                roamLine.openPopup();
+            }
+
+        })
+
+            // 俯视视角选择
+            form.on('radio(lookDownRadio)', function () {
+               if (selectedRoamCamera == roamLookDownCamera){
+                   return;
+               }
+
+                selectedRoamCamera = roamLookDownCamera;
+               flydata.camera = selectedRoamCamera;
+                roamLine.setCameraOptions(selectedRoamCamera)
+            })
+
+            // 平视视角选择
+            form.on('radio(horizontalRadio)', function () {
+                if (selectedRoamCamera == roamHorizontalCamera){
+                    return;
+                }
+
+                selectedRoamCamera = roamHorizontalCamera;
+                flydata.camera = selectedRoamCamera;
+                roamLine.setCameraOptions(selectedRoamCamera)
+            })
+    })
+</script>
+</html>

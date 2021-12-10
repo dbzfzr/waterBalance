@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zy.gis.mapper.PumpStationFlexDataMapper" >
+  <resultMap id="BaseResultMap" type="com.zy.gis.pojo.flexem.PumpStationFlexData" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="box_no" property="boxNo" jdbcType="VARCHAR" />
+    <result column="water_temperature" property="waterTemperature" jdbcType="VARCHAR" />
+    <result column="ammonia_nitrogen" property="ammoniaNitrogen" jdbcType="VARCHAR" />
+    <result column="cod" property="cod" jdbcType="VARCHAR" />
+    <result column="conductivity" property="conductivity" jdbcType="VARCHAR" />
+    <result column="ph" property="ph" jdbcType="VARCHAR" />
+    <result column="suspended_solid" property="suspendedSolid" jdbcType="VARCHAR" />
+    <result column="turbidity" property="turbidity" jdbcType="VARCHAR" />
+    <result column="pump_sump_level" property="pumpSumpLevel" jdbcType="VARCHAR" />
+    <result column="outlet_tank_liquid_level" property="outletTankLiquidLevel" jdbcType="VARCHAR" />
+    <result column="effluent_flow" property="effluentFlow" jdbcType="VARCHAR" />
+    <result column="cumulative_flow" property="cumulativeFlow" jdbcType="VARCHAR" />
+    <result column="valve_delay_open_time" property="valveDelayOpenTime" jdbcType="VARCHAR" />
+    <result column="valve_numbers" property="valveNumbers" jdbcType="INTEGER" />
+    <result column="valve_state" property="valveState" jdbcType="VARCHAR" />
+    <result column="pump_numbers" property="pumpNumbers" jdbcType="INTEGER" />
+    <result column="pump_state" property="pumpState" jdbcType="VARCHAR" />
+    <result column="pattern" property="pattern" jdbcType="VARCHAR" />
+    <result column="flexem_time_stamp" property="flexemTimeStamp" jdbcType="VARCHAR" />
+    <result column="flexem_message_id" property="flexemMessageId" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, box_no, water_temperature, ammonia_nitrogen, cod, conductivity, ph, suspended_solid, 
+    turbidity, pump_sump_level, outlet_tank_liquid_level, effluent_flow, cumulative_flow, 
+    valve_delay_open_time, valve_numbers, valve_state, pump_numbers, pump_state, pattern, 
+    flexem_time_stamp, flexem_message_id
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from pump_station_flex_data
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <!--202111081039 Wangchong 查询最新的一条数据记录-->
+  <select id="selectLatestData" parameterType="java.lang.String" resultType="com.zy.gis.pojo.flexem.PumpStationFlexData">
+    select  <include refid="Base_Column_List" />
+    from pump_station_flex_data where box_no = #{boxNo}
+    order by flexem_time_stamp desc limit 1
+  </select>
+
+  <!--20211102 Wangchong 查询多条泵站数据-->
+  <select id="selectPumpStationFlexDataList" resultType="com.zy.gis.pojo.flexem.PumpStationFlexData">
+    select  <include refid="Base_Column_List" />  from pump_station_flex_data
+    <where>
+      <if test="boxNo != null and boxNo != ''">
+        box_no = #{boxNo}
+      </if>
+      <if test="startTime != null and endTime != null">
+        and flexem_time_stamp between #{startTime} and #{endTime}
+      </if>
+    </where>
+    order by flexem_time_stamp desc
+    <if test="limit != null and offset != null">
+      limit #{offset}, #{limit}
+    </if>
+  </select>
+
+  <select id="selectPumpStationFlexDataCount" resultType="java.lang.Integer">
+    select count(*) from pump_station_flex_data
+    <where>
+      <if test="boxNo != null and boxNo != ''">
+        box_no = #{boxNo}
+      </if>
+      <if test="startTime != null and endTime != null">
+        and flexem_time_stamp between #{startTime} and #{endTime}
+      </if>
+    </where>
+  </select>
+
+  <!--20211110 Wangchong 查询多条泵站历史数据-->
+  <select id="selectPumpStationFlexHistoryDataList" resultType="com.zy.gis.pojo.flexem.PumpStationFlexData">
+    select  <include refid="Base_Column_List" />  from history_pump_station_flex_data
+    <where>
+      <if test="boxNo != null and boxNo != ''">
+        box_no = #{boxNo}
+      </if>
+      <if test="startTime != null and endTime != null">
+        and flexem_time_stamp between #{startTime} and #{endTime}
+      </if>
+    </where>
+    order by flexem_time_stamp desc
+    <if test="limit != null and offset != null">
+      limit #{offset}, #{limit}
+    </if>
+  </select>
+
+  <select id="selectPumpStationFlexHistoryDataCount" resultType="java.lang.Integer">
+    select count(*) from history_pump_station_flex_data
+    <where>
+      <if test="boxNo != null and boxNo != ''">
+        box_no = #{boxNo}
+      </if>
+      <if test="startTime != null and endTime != null">
+        and flexem_time_stamp between #{startTime} and #{endTime}
+      </if>
+    </where>
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from pump_station_flex_data
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zy.gis.pojo.flexem.PumpStationFlexData" >
+    insert into pump_station_flex_data (id, box_no, water_temperature, 
+      ammonia_nitrogen, cod, conductivity, 
+      ph, suspended_solid, turbidity, 
+      pump_sump_level, outlet_tank_liquid_level, effluent_flow, 
+      cumulative_flow, valve_delay_open_time, valve_numbers, 
+      valve_state, pump_numbers, pump_state, 
+      pattern, flexem_time_stamp, flexem_message_id
+      )
+    values (#{id,jdbcType=INTEGER}, #{boxNo,jdbcType=VARCHAR}, #{waterTemperature,jdbcType=VARCHAR}, 
+      #{ammoniaNitrogen,jdbcType=VARCHAR}, #{cod,jdbcType=VARCHAR}, #{conductivity,jdbcType=VARCHAR}, 
+      #{ph,jdbcType=VARCHAR}, #{suspendedSolid,jdbcType=VARCHAR}, #{turbidity,jdbcType=VARCHAR}, 
+      #{pumpSumpLevel,jdbcType=VARCHAR}, #{outletTankLiquidLevel,jdbcType=VARCHAR}, #{effluentFlow,jdbcType=VARCHAR}, 
+      #{cumulativeFlow,jdbcType=VARCHAR}, #{valveDelayOpenTime,jdbcType=VARCHAR}, #{valveNumbers,jdbcType=INTEGER}, 
+      #{valveState,jdbcType=VARCHAR}, #{pumpNumbers,jdbcType=INTEGER}, #{pumpState,jdbcType=VARCHAR}, 
+      #{pattern,jdbcType=VARCHAR}, #{flexemTimeStamp,jdbcType=VARCHAR}, #{flexemMessageId,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.zy.gis.pojo.flexem.PumpStationFlexData" >
+    insert into pump_station_flex_data
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="boxNo != null" >
+        box_no,
+      </if>
+      <if test="waterTemperature != null" >
+        water_temperature,
+      </if>
+      <if test="ammoniaNitrogen != null" >
+        ammonia_nitrogen,
+      </if>
+      <if test="cod != null" >
+        cod,
+      </if>
+      <if test="conductivity != null" >
+        conductivity,
+      </if>
+      <if test="ph != null" >
+        ph,
+      </if>
+      <if test="suspendedSolid != null" >
+        suspended_solid,
+      </if>
+      <if test="turbidity != null" >
+        turbidity,
+      </if>
+      <if test="pumpSumpLevel != null" >
+        pump_sump_level,
+      </if>
+      <if test="outletTankLiquidLevel != null" >
+        outlet_tank_liquid_level,
+      </if>
+      <if test="effluentFlow != null" >
+        effluent_flow,
+      </if>
+      <if test="cumulativeFlow != null" >
+        cumulative_flow,
+      </if>
+      <if test="valveDelayOpenTime != null" >
+        valve_delay_open_time,
+      </if>
+      <if test="valveNumbers != null" >
+        valve_numbers,
+      </if>
+      <if test="valveState != null" >
+        valve_state,
+      </if>
+      <if test="pumpNumbers != null" >
+        pump_numbers,
+      </if>
+      <if test="pumpState != null" >
+        pump_state,
+      </if>
+      <if test="pattern != null" >
+        pattern,
+      </if>
+      <if test="flexemTimeStamp != null" >
+        flexem_time_stamp,
+      </if>
+      <if test="flexemMessageId != null" >
+        flexem_message_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="boxNo != null" >
+        #{boxNo,jdbcType=VARCHAR},
+      </if>
+      <if test="waterTemperature != null" >
+        #{waterTemperature,jdbcType=VARCHAR},
+      </if>
+      <if test="ammoniaNitrogen != null" >
+        #{ammoniaNitrogen,jdbcType=VARCHAR},
+      </if>
+      <if test="cod != null" >
+        #{cod,jdbcType=VARCHAR},
+      </if>
+      <if test="conductivity != null" >
+        #{conductivity,jdbcType=VARCHAR},
+      </if>
+      <if test="ph != null" >
+        #{ph,jdbcType=VARCHAR},
+      </if>
+      <if test="suspendedSolid != null" >
+        #{suspendedSolid,jdbcType=VARCHAR},
+      </if>
+      <if test="turbidity != null" >
+        #{turbidity,jdbcType=VARCHAR},
+      </if>
+      <if test="pumpSumpLevel != null" >
+        #{pumpSumpLevel,jdbcType=VARCHAR},
+      </if>
+      <if test="outletTankLiquidLevel != null" >
+        #{outletTankLiquidLevel,jdbcType=VARCHAR},
+      </if>
+      <if test="effluentFlow != null" >
+        #{effluentFlow,jdbcType=VARCHAR},
+      </if>
+      <if test="cumulativeFlow != null" >
+        #{cumulativeFlow,jdbcType=VARCHAR},
+      </if>
+      <if test="valveDelayOpenTime != null" >
+        #{valveDelayOpenTime,jdbcType=VARCHAR},
+      </if>
+      <if test="valveNumbers != null" >
+        #{valveNumbers,jdbcType=INTEGER},
+      </if>
+      <if test="valveState != null" >
+        #{valveState,jdbcType=VARCHAR},
+      </if>
+      <if test="pumpNumbers != null" >
+        #{pumpNumbers,jdbcType=INTEGER},
+      </if>
+      <if test="pumpState != null" >
+        #{pumpState,jdbcType=VARCHAR},
+      </if>
+      <if test="pattern != null" >
+        #{pattern,jdbcType=VARCHAR},
+      </if>
+      <if test="flexemTimeStamp != null" >
+        #{flexemTimeStamp,jdbcType=VARCHAR},
+      </if>
+      <if test="flexemMessageId != null" >
+        #{flexemMessageId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <!--20211110 Wangchong 插入历史泵站数据-->
+  <insert id="insertHistorySelective" parameterType="com.zy.gis.pojo.flexem.PumpStationFlexData" >
+    insert into history_pump_station_flex_data
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="boxNo != null" >
+        box_no,
+      </if>
+      <if test="waterTemperature != null" >
+        water_temperature,
+      </if>
+      <if test="ammoniaNitrogen != null" >
+        ammonia_nitrogen,
+      </if>
+      <if test="cod != null" >
+        cod,
+      </if>
+      <if test="conductivity != null" >
+        conductivity,
+      </if>
+      <if test="ph != null" >
+        ph,
+      </if>
+      <if test="suspendedSolid != null" >
+        suspended_solid,
+      </if>
+      <if test="turbidity != null" >
+        turbidity,
+      </if>
+      <if test="pumpSumpLevel != null" >
+        pump_sump_level,
+      </if>
+      <if test="outletTankLiquidLevel != null" >
+        outlet_tank_liquid_level,
+      </if>
+      <if test="effluentFlow != null" >
+        effluent_flow,
+      </if>
+      <if test="cumulativeFlow != null" >
+        cumulative_flow,
+      </if>
+      <if test="valveDelayOpenTime != null" >
+        valve_delay_open_time,
+      </if>
+      <if test="valveNumbers != null" >
+        valve_numbers,
+      </if>
+      <if test="valveState != null" >
+        valve_state,
+      </if>
+      <if test="pumpNumbers != null" >
+        pump_numbers,
+      </if>
+      <if test="pumpState != null" >
+        pump_state,
+      </if>
+      <if test="pattern != null" >
+        pattern,
+      </if>
+      <if test="flexemTimeStamp != null" >
+        flexem_time_stamp,
+      </if>
+      <if test="flexemMessageId != null" >
+        flexem_message_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="boxNo != null" >
+        #{boxNo,jdbcType=VARCHAR},
+      </if>
+      <if test="waterTemperature != null" >
+        #{waterTemperature,jdbcType=VARCHAR},
+      </if>
+      <if test="ammoniaNitrogen != null" >
+        #{ammoniaNitrogen,jdbcType=VARCHAR},
+      </if>
+      <if test="cod != null" >
+        #{cod,jdbcType=VARCHAR},
+      </if>
+      <if test="conductivity != null" >
+        #{conductivity,jdbcType=VARCHAR},
+      </if>
+      <if test="ph != null" >
+        #{ph,jdbcType=VARCHAR},
+      </if>
+      <if test="suspendedSolid != null" >
+        #{suspendedSolid,jdbcType=VARCHAR},
+      </if>
+      <if test="turbidity != null" >
+        #{turbidity,jdbcType=VARCHAR},
+      </if>
+      <if test="pumpSumpLevel != null" >
+        #{pumpSumpLevel,jdbcType=VARCHAR},
+      </if>
+      <if test="outletTankLiquidLevel != null" >
+        #{outletTankLiquidLevel,jdbcType=VARCHAR},
+      </if>
+      <if test="effluentFlow != null" >
+        #{effluentFlow,jdbcType=VARCHAR},
+      </if>
+      <if test="cumulativeFlow != null" >
+        #{cumulativeFlow,jdbcType=VARCHAR},
+      </if>
+      <if test="valveDelayOpenTime != null" >
+        #{valveDelayOpenTime,jdbcType=VARCHAR},
+      </if>
+      <if test="valveNumbers != null" >
+        #{valveNumbers,jdbcType=INTEGER},
+      </if>
+      <if test="valveState != null" >
+        #{valveState,jdbcType=VARCHAR},
+      </if>
+      <if test="pumpNumbers != null" >
+        #{pumpNumbers,jdbcType=INTEGER},
+      </if>
+      <if test="pumpState != null" >
+        #{pumpState,jdbcType=VARCHAR},
+      </if>
+      <if test="pattern != null" >
+        #{pattern,jdbcType=VARCHAR},
+      </if>
+      <if test="flexemTimeStamp != null" >
+        #{flexemTimeStamp,jdbcType=VARCHAR},
+      </if>
+      <if test="flexemMessageId != null" >
+        #{flexemMessageId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <delete id="deleteAll">
+    delete from pump_station_flex_data
+  </delete>
+</mapper>

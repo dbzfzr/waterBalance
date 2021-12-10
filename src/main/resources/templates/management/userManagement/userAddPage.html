@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>添加用户</title>
+    <script type="text/javascript" th:src="@{/webjars/layui/2.6.8/layui.js}"></script>
+
+    <link rel="stylesheet" th:href="@{/webjars/layui/2.6.8/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/css/layuiForm.css}">
+    <script th:src="@{/webjars/jquery/3.5.1/jquery.js}"></script>
+    <script th:src="@{/js/jquery-easyui-1.9.4/jquery.easyui.min.js}"></script>
+    <link rel="stylesheet"  th:href="@{/js/jquery-easyui-1.9.4/themes/default/easyui.css}">
+    <link rel="stylesheet" th:href="@{/js/jquery-easyui-1.9.4/themes/icon.css}">
+    <link rel="stylesheet" th:href="@{/css/location.css}">
+    <link rel="stylesheet" th:href="@{/css/userAddPage.css}">
+    <style>
+
+
+
+     .textbox-focused{
+         background-color:transparent !important;}
+
+     .validatebox-invalid {
+         background-color: rgba(8, 55, 76, 0.5) !important;
+         border: #0E4A4D 1px solid !important;
+     }
+     .combo-panel{
+         background-color: rgba(8, 55, 76, 0.5) !important;
+         color:#FAFAFA;
+         border:none;
+     }
+     .textbox{
+         background-color:transparent;
+         border: #3399FF 2px solid !important;
+
+     }
+
+     .combo-arrow:hover{
+         background-color: #003E80 !important;
+     }
+
+     .layui-input-block{
+         margin-top: 60px !important;
+         margin-left: 250px !important;
+         position: absolute;
+     }
+
+     .layui-btn{
+         height: 45px !important;
+         box-shadow: 1px 1px #1C5ED2 , 1px 1px #1C5ED2  inset !important;
+         background: rgba(0, 128, 255, 0.2) linear-gradient(
+                 175deg, rgba(0, 110, 255, 0.5) 0%, rgba(0, 110, 255, 0) 100%);
+         border: 1px solid;
+         border-image: radial-gradient(circle, rgba(142, 174, 255, 1), rgba(142, 174, 255, 0.34), rgba(142, 174, 255, 0)) 1 1;
+     }
+
+     .layui-input-inline div-select{
+         border-color: #3399FF !important;
+         border-width: 1px !important;
+     }
+
+     .layui-form-select .layui-input{
+         border-color: #3399FF !important;
+         border-width: 1px !important;
+
+     }
+
+     input::-webkit-input-placeholder {
+         color: #dadada;
+     }
+
+     .textbox-text{
+         background: transparent !important;
+         color: rgba(255,255,255,.6);
+     }
+
+     .panel-body{
+         background-color: rgba(8, 55, 76, 0.5) !important;
+     }
+     .combo-arrow{
+         background-color: transparent;
+         position: absolute;
+         right: 10px;
+         top:18%;
+         width:32px;
+         height:32px;
+         margin-top: -3px;
+         cursor: pointer;
+         border:none !important;
+         background-image: url('/image/arrow-up-gray.png')  !important;
+
+         transition: all .3s;
+         -webkit-transition: all .3s;
+     }
+
+     .textbox-focused .combo-arrow{
+         transform: rotate(180deg);
+     }
+        /*添加弹框时所属区域组织树css样式*/
+     .tree-expanded{
+        background: url("../image/management_Center/arrowOpen.png") !important;
+     }
+     .tree-collapsed{
+         background: url("../image/management_Center/arrowOff.png") !important;
+     }
+     .tree-node-hover{
+         background: #124F95 !important;
+         color: #F5F7F9 !important;
+     }
+     .tree-node-selected{
+         background: #197BEA !important;
+         color: #F5F7F9 !important;
+     }
+     .tree-file{
+         background: none !important;
+     }
+     .tree-folder{
+         background: none !important;
+     }
+     .tree-folder-open{
+         background: none !important;
+     }
+    </style>
+</head>
+<body>
+
+<div class="layui-container" style="margin-top: 10px">
+    <div class="layui-form" lay-filter="add">
+
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span style="color: red;">*&nbsp;</span>用户名称：</label>
+            <div class="layui-input-inline">
+                <input style="border-color: #3399FF ; border-width: 1px;" type="text" name="userName"  id="userName" lay-verify="required|userName" placeholder="请输入用户名称" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span style="color: red;">*&nbsp;</span>密码：</label>
+            <div class="layui-input-inline" >
+                <input style="border-color: #3399FF ; border-width: 1px;" type="text"  name="password" id="password" value="123456" lay-verify="required|password" placeholder="请输入密码,默认123456" class="layui-input" autocomplete="off">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span style="color: red;">*&nbsp;</span>手机号码：</label>
+            <div class="layui-input-inline" >
+                <input style="border-color: #3399FF ; border-width: 1px;" type="text" id="phone" name="phone"  placeholder="请输入手机号码" lay-verify="required|phone" value="" class="layui-input" autocomplete="off">
+            </div>
+        </div>
+<!--        <div class="layui-form-item">-->
+<!--            <label class="layui-form-label">地址：</label>-->
+<!--            <div class="layui-input-inline">-->
+<!--                <input type="text" name="address"  placeholder="请输入用户地址" class="layui-input" autocomplete="off">-->
+<!--            </div>-->
+<!--        </div>-->
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">用户角色:</label>
+            <div class="layui-input-inline div-select">
+                <select name="roleId" noinputmsg="请选择角色" lay-filter="roleCheck" >
+                    <option th:each="roleInfo:${roleInfoList}"  th:value="${roleInfo.roleId}" ><span th:id="${roleInfo.roleId}" th:text="${roleInfo.roleName}"></span></option>
+                </select>
+            </div>
+        </div>
+
+        <div id="divArea" class="layui-form-item">
+            <label class="layui-form-label">所属区域:</label>
+            <div class="layui-input-inline div-select" >
+                <select lay-ignore id="cc" class="easyui-combotree" style="width:100%;height: 38px;" >
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">性别：</label>
+            <div class="layui-input-inline dev_type_group" id="devTypeGroup" style="color: #EBEEEF">
+                <input  name="sex" th:value="m" th:title="男" id="male" type="radio"  lay-verify="required" lay-skin="primary" checked/>
+                <input  name="sex" th:value="f" th:title="女"  id="female" type="radio" lay-verify="required" lay-skin="primary"/>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" id="confirm" lay-submit  lay-filter="confirmAdd"><i class="layui-icon layui-icon-release"></i>提交</button>
+                <button  class="layui-btn" id="reset" lay-reset lay-filter="confirmReset"><i class="layui-icon layui-icon-fonts-clear"></i>重置</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+<script th:inline="javascript">
+  $(function () {
+      if (parent.organizationInfoList == null){
+          $.ajax({
+              url : 'getOrganizeTree?pId=0',
+              success:function (res) {
+                  parent.organizationInfoList = res;
+                  $('#cc').combotree('loadData', res);
+              }
+          })
+      }else{
+          $('#cc').combotree('loadData', parent.organizationInfoList);
+      }
+  })
+
+    function getOrgNameByParentId(nodeId) {
+        var orgName = "";
+        var tempJson = (parent.organizationInfoList)[0];
+
+        while (null != tempJson){
+
+           if (tempJson.id !== nodeId){
+               orgName = orgName + tempJson.text;
+               tempJson = (tempJson.children)[0];
+           }else{
+               orgName = orgName + tempJson.text;
+               return orgName;
+           }
+        }
+    }
+
+    var phoneIsExist = false;
+    var roleInfoList = [[ ${roleInfoList} ]];
+    layui.use(['form','layer'],function () {
+
+        var form = layui.form;
+        var layer = layui.layer;
+
+        $("#reset").click(function () {
+            window.location.reload();//页面重新加载
+        })
+
+        // 202108231925 Wangchong 用户名和密码验证
+        form.verify({
+            userName: function(value, item){ //value：表单的值、item：表单的DOM对象
+
+                if(!new RegExp("^[a-zA-Z0-9_\u4e00-\u9fa5\\s·]+$").test(value)){
+                    userNameIsValid = false;
+                    return '用户名不能有特殊字符';
+                }
+                if(/(^\_)|(\__)|(\_+$)/.test(value)){
+                    userNameIsValid = false;
+                    return '用户名首尾不能出现下划线\'_\'';
+                }
+            }
+            //数组的两个值分别代表：[正则匹配、匹配不符时的提示文字]
+            ,password: [
+                /^[\S]{6,12}$/
+                ,'密码必须6到12位，且不能出现空格'
+            ]
+        });
+        // 202108231925 Wangchong 用户名改变时判断用户名的可用性
+        $("#userName").change(function () {
+            var value = $("#userName").val();
+            if(!new RegExp("^[a-zA-Z0-9_\u4e00-\u9fa5\\s·]+$").test(value)){
+
+                layer.msg('用户名不能有特殊字符', {icon:2});
+                return ;
+            }
+            if(/(^\_)|(\__)|(\_+$)/.test(value)){
+                layer.msg('用户名首尾不能出现下划线_', {icon:2});
+                return ;
+            }
+        })
+
+        // 202108231925 Wangchong 手机号改变时判断用户名的可用性
+        $("#phone").change(function () {
+            var value = $("#phone").val();
+            if ("" == value){
+                return;
+            }
+            var paramJson = {}
+            paramJson.phone = value;
+
+            $.ajax({
+                url:'getUserInfoList',
+                type:'post',
+                contentType:'application/json;charset=utf-8',
+                data:JSON.stringify(paramJson),
+                success:function (result) {
+                    if (result.count > 0){
+                        phoneIsExist = true;
+                        layer.tips('手机号已注册,请重新输入', '#phone', {
+                            tips: 2
+                        });
+                    }else{
+                        phoneIsExist = false;
+                    }
+                }
+            })
+        })
+
+        form.on('submit(confirmAdd)', function(data){
+            if (phoneIsExist){
+                layer.tips('手机号已注册,请重新输入', '#phone', {
+                    tips: 2
+                });
+                return false;
+            }
+            var index = layer.load();
+            var userData = data.field;
+
+           for (var i=0 ;i<roleInfoList.length; i++){
+               if (userData.roleId == roleInfoList[i].roleId){
+                   userData.roleName = roleInfoList[i].roleName;
+                   break;
+               }
+           }
+
+           var selectedAreaNode = $('#cc').combotree('tree').tree('getSelected');
+
+           userData.address = getOrgNameByParentId(selectedAreaNode.id);
+
+           userData.organizationCode = selectedAreaNode.id;
+
+            $.ajax({
+                url :'addUser',
+                type:'post',
+                contentType:'application/json;charset=UTF-8',
+                data:JSON.stringify(userData),
+                success:function (result) {
+                    layer.close(index)
+                    if (result.code > 0){
+                        layer.msg("添加用户成功!",{icon:1});
+                        //当你在iframe页面关闭自身时
+                        setTimeout(function () {
+                            var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                            parent.layer.close(index); //再执行关闭
+                            parent.tableIndex.reload();
+                        },2000)
+
+                    }else{
+                        layer.msg("添加用户失败!",{icon:2});
+                    }
+                },
+                failed:function (data) {
+                    layer.close(index)
+                    layer.msg(data);
+                }
+            })
+            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+        })
+    })
+</script>
+</html>

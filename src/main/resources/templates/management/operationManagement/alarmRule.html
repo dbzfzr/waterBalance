@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>报警事件规则</title>
+    <script th:src="@{/webjars/jquery/3.5.1/jquery.js}"></script>
+    <script type="text/javascript" th:src="@{/webjars/layui/2.6.8/layui.js}"></script>
+    <script type="text/javascript" th:src="@{/js/myjs.js}"></script>
+    <link rel="stylesheet" th:href="@{/webjars/layui/2.6.8/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/css/layuiTable.css}">
+    <link rel="stylesheet" th:href="@{/css/layuiLayerNoIframe.css}">
+    <link rel="stylesheet" th:href="@{/css/toolBarIcon.css}">
+    <link rel="stylesheet" th:href="@{/css/layuiForm.css}">
+    <link rel="stylesheet" th:href="@{/css/alarmRecordCalendar.css}">
+    <style>
+        @font-face {
+            font-family: PangMenZhengDao-3;
+            src: url(../fonts/PangMenZhengDao-3.ttf);
+        }
+
+        .layui-breadcrumb a:hover{
+            color: #01AAED !important;
+        }
+
+        .layui-table-box{
+            margin-top: -20px;
+            /*overflow-x: auto;*/
+        }
+        table{
+            border-collapse: separate;
+            border-spacing: 1px;
+        }
+        .layui-table-tool-panel {
+            background-color: #14325B;
+        }
+
+        .layui-table-tool-panel li:hover{
+            background-color: #041634!important;
+        }
+        .layui-input, .layui-select {
+            height: 28px;
+            width: 10vw;
+            line-height: 28px;
+        }
+
+        .layui-laypage input {
+            color: #303030;
+        }
+
+        .layui-text h1, .layui-text h2, .layui-text h3 , .define-label{
+            color: #5AB8E3;
+
+        }
+
+        .layui-form-select dl {
+            height: 12vw;
+        }
+
+        .layui-table-page .layui-laypage{
+            margin: 4px !important;
+        }
+        input::-webkit-input-placeholder {
+            color: #dadada !important;
+        }
+        .layui-form-select .layui-input{
+            border-color: #3399FF !important;
+            border-width: 1px !important;
+        }
+        .body{
+            background-color: rgba(2,21,56,0.5);
+        }
+
+        .layui-form-item .layui-input-inline {
+
+            width: 140px !important;
+        }
+
+        .layui-form-item  .layui-input-inline input{
+            width: 140px !important;
+            background-image: url("../../image/homePage/filterbox.png");
+            height: 32px !important;
+            font-weight: bold;
+        }
+
+        .layui-form-select .layui-edge{
+            background-image: url("../../image/section.png")!important;
+            width: 14px !important;
+            height: 20px !important;
+            top: 45% !important;
+        }
+        .layui-form{
+            padding-left: 5px;
+            position: relative;
+
+        }
+        .layui-btn{
+            box-shadow: 1px 1px rgba(2,18,50,0), 1px 1px rgba(2,18,50,0) inset;
+        }
+        /*查看详情弹框背景颜色*/
+        .layui-layer-page {
+            color: #fff;
+            padding: 1vw 1vh;
+            /*background: rgba(0, 128, 255, 0.2) linear-gradient(175deg, rgba(0, 110, 255, 0.5) 0%, rgba(0, 110, 255, 0) 100%) !important;*/
+            background: rgba(3, 37, 72, 0.8)10% linear-gradient(175deg, rgba(0, 41, 78, 0.8) 50%, rgba(0, 76, 158, 0.8) 100%) !important;
+            border: 1px solid;
+            border-radius: 2px;
+            border-image: radial-gradient(circle, rgba(142, 174, 255, 1), rgba(142, 174, 255, 0.34), rgba(142, 174, 255, 0)) 1 1;
+            opacity: 0.8;
+        }
+
+        .layui-layer-page .layui-layer-content{
+            height: 92% !important;
+            width: fit-content;
+        }
+
+        /*table表格鼠标悬停显示颜色css样式*/
+        .layui-table-hover td{
+            background-color: rgba(30,159,255,0.1) !important;
+        }
+
+        .layui-table tbody tr:hover, .layui-table-hover{
+            background-color: rgba(30,159,255,0.1) !important;
+        }
+
+        /*弹框信息css样式*/
+        .layui-text h3{
+            color:#EEF1F4 !important;
+        }
+        .define-label{
+            color:#EEF1F4 !important;
+        }
+
+        .layui-form-label{
+            padding: 2px 15px !important;
+        }
+        .layui-layer-page .layui-layer-title{
+            font-size: 18px;
+            margin-top: -17px;
+            border-bottom: 2px solid #176DE0;
+            background: rgba(8,67,160,1);
+            width: 82%;
+            margin-left:-8px;
+            border-top: 2px solid  #176DE0;
+        }
+        .layui-layer-page .layui-layer-setwin{
+            top:2.0vh !important;
+        }
+        .layui-form-item .layui-input-inline input{
+            color: #EEF1F3;
+        }
+
+        /*下拉框样式*/
+        .layui-form-select dl{
+            background-color: rgba(0,26,51,0.6)!important;
+            border: 1px solid #001A33;
+            width: 1px;
+        }
+        .layui-form-select dl dd.layui-this{
+            background-image: url("../../image/homePage/filterbox.png")!important;
+            background-color: rgba(25,66,55,0) !important;
+        }
+        .layui-form-select dl dd.layui-select-tips{
+            color: #04CCFB !important;
+        }
+
+        .define-label{
+            width: 70px !important;
+            height: 19px !important;
+            font-size: 14px !important;
+            font-family: MicrosoftYaHei !important;
+            color: #CCDDFF !important;
+            line-height: 26px !important;
+        }
+    </style>
+</head>
+<body class="body">
+<p style="color:rgba(204, 221, 255, 1);font-weight: bold;font-size:19px;margin-left: 20px;margin-top: revert">新增报警规则</p>
+<div class="layui-form" style="display: flex;
+            justify-content: space-between;margin-top: 2vh;margin-right: 4vw;" lay-filter="alarmRuleSettingForm">
+
+    <div class="layui-form-item" style="width: 520px;">
+        <label class="layui-form-label define-label" style="font-size: 15px">系统类型:</label>
+        <div class="layui-input-inline" >
+            <select id="systemSelect" lay-filter="systemSelect">
+                <option value="">请选主控系统类型</option>
+                <option value="污水监测点">污水监测点</option>
+                <option value="雨水监测点">雨水监测点</option>
+                <option value="泵站">泵站</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item" style="width: 520px;">
+        <label class="layui-form-label define-label" style="font-size: 15px">设备类型:</label>
+        <div class="layui-input-inline" >
+            <select id="deviceSelect" lay-filter="deviceSelect">
+                <option value="">请选择设备类型</option>
+                <option value="流量计">流量计</option>
+                <option value="液位计">液位计</option>
+                <option value="水质仪">水质仪</option>
+                <option value="雨量计">雨量计</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item" style="width: 520px;">
+        <label class="layui-form-label define-label" style="font-size: 15px">报警类型 :</label>
+        <div class="layui-input-inline">
+            <select name="alarmType"  id="alarmType">
+                <option value="">请选择报警类型</option>
+<!--                <option value="设备故障">设备故障</option>-->
+                <option value="暴雨积水">暴雨积水</option>
+                <option value="管网堵塞">管网堵塞</option>
+                <option value="管网破损">管网破损</option>
+                <option value="污水偷排">污水偷排</option>
+                <option value="管网错接">管网错接</option>
+                <option value="水质浓度升高">水质浓度升高</option>
+                <option value="污水浓度降低">污水浓度降低</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item" style="width: 520px;position: relative;">
+        <label class="layui-form-label define-label" style="font-size: 15px;">报警参数:</label>
+        <div class="layui-input-inline" >
+            <select name="alarmParameter" id="alarmParameterSelect">
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item" style="width: 56vw;position: relative;">
+        <div class="layui-inline">
+            <label class="layui-form-label">报警范围:</label>
+            <div class="layui-input-inline" style="width: 100px;">
+                <input id="lowerLimit"  type="number" placeholder="请输入报警下限" autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-form-mid">-</div>
+            <div class="layui-input-inline" style="width: 100px;">
+                <input  id="superiorLimit"  type="number" placeholder="请输入报警上限" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+    <button id="confirmAdd" style="width: 105px;
+height: 35px;
+background: rgba(0, 128, 255, 0.2) linear-gradient(
+175deg, rgba(0, 110, 255, 0.5) 0%, rgba(0, 110, 255, 0) 100%);
+border: 1px solid;
+border-image: linear-gradient(180deg, rgba(0, 128, 255, 0.16), rgba(58, 157, 255, 0.3)) 1 1; font-size: 12px;
+    font-family: MicrosoftYaHei;
+    color: #F0FAFF;
+    line-height: 16px;">确认添加</button>
+</div>
+<div  style="margin-top: 1vh; padding: 10px;">
+    <table id="table" cellspacing="1" lay-filter="infoTable"></table>
+</div>
+</body>
+<script>
+    //获取最顶层父页面的body
+    var parentBody = window.parent.parent.document.body;
+    parentBody.style="background-image:url(\'../image/management_Center/backgroundPicture.png\')";
+</script>
+<!-- 操作栏 -->
+<script type="text/html" id="recordBar">
+    <a class="layui-btn layui-btn-xs" lay-event="view" style="color:#1E9FFF; border: 1px solid transparent"><i class="layui-icon">&#xe642;</i>编辑</a>
+    <a class="layui-btn layui-btn-xs" lay-event="" style="color:#1E9FFF; border: 1px solid transparent"><i class="layui-icon">&#xe642;</i>删除</a>
+</script>
+
+<script type="text/html" id="No.">
+    {{d.LAY_TABLE_INDEX+1}}
+</script>
+<script>
+
+    // 报警事件规则添加时可选的设置项内容
+    var alarmItemCanSelectArray = [
+        {
+            device: '流量计',
+            alarmParameterNoUnit: ['瞬时流量', '累计流量'],
+            alarmParameter:['瞬时流量(m³/h)', '累计流量(m³)']
+        },
+        {
+            device: '液位计',
+            alarmParameterNoUnit: ['液位'],
+            alarmParameter: ['液位(m)']
+        },
+        {
+            device: '水质仪',
+            alarmParameterNoUnit: ['电导率', 'PH', 'COD', '固体悬浮物', '氨氮', '浊度', '水温'],
+            alarmParameter: ['电导率(S/m)', 'PH', 'COD(mg/L)', '固体悬浮物(S/m)', '氨氮(mg/L)', '浊度(NTU)', '水温(℃)']
+        },
+        {
+            device: '雨量计',
+            alarmParameterNoUnit: ['雨量'],
+            alarmParameter: ['雨量(mm/h)']
+        }
+    ]
+
+    var lastSelectedDevice = "";
+    var table,layer;
+    var tableIndex;
+    var form;
+
+    layui.use(['table', 'form', 'layer'], function () {
+        table = layui.table;
+        layer = layui.layer;
+        form = layui.form;
+
+        tableIndex = table.render({
+            elem: '#table'
+            , url: 'listGetAlarmRule' //数据接口
+            ,defaultToolbar:["filter", "exports", "print"]//头部工具栏右侧图标 筛选图标 导出图标 打印图标
+            ,where:{}
+            , page: true // 开启分页
+            ,skin: 'nob'// 无边框风格
+            , method: "post"
+            ,height: 'full-200'
+            ,even: true // 开启隔行背景
+            ,limits:[5, 10, 20]
+            ,event:true
+            , contentType: 'application/json'
+                , cols: [
+                [ //表头
+                    {field: 'id', title: 'ID', width: 80, sort: true, hide: true},
+                    {field: 'No.',fixed:'left', title: '序号', width: 80, type:'numbers' }
+                    , {field: 'controlSystemType', title: '工控系统类型',width: 160,align:"center",sort:true}
+                    , {field: 'deviceType', title: '设备类型',width: 260,align:"center",sort:true}
+                    , {field: 'alarmType', title: '报警类型', align: "center", sort: true, width:240}
+                    , {field: 'alarmParameter', title: '报警参数', event: 'row', align: 'center',width:260,sort:true}
+                    , {field: 'alarmLowerLimit', title: '下限', event: 'row', align: 'center', width: 60}
+                    , {field: 'alarmSuperiorLimit', title: '上限', event: 'row', align: 'center', width: 60}
+                    , {field: 'enable', title: '启用状态', event: 'row', align: 'center', width: 100}
+                    , {field: 'createTime', title: '创建时间', event: 'row', align: 'center', sort: true, width: 240}
+                    ,{fixed:'right', toolbar: '#recordBar',title:'操作',align:"center"}
+                ]
+            ]
+            , done: function (res, curr, count) {
+            }
+        });
+
+        // 操作栏事件
+        table.on('tool(infoTable)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+            var data = obj.data; //获得当前行数据
+            var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+            switch (layEvent) {
+                case 'view':
+                    viewInfo(data);
+                    break;
+            }
+        });
+
+        // 查看详情
+        function viewInfo(data){
+            layer.open({
+                type: 1,
+                area: ['465px', '540px'],
+                title:'事件详情',
+                content: $('#alarmRecordDetail')
+            })
+        }
+
+        var lastSelectedSystemType = "";
+
+        form.on('select(systemSelect)', function (data) {
+            if (lastSelectedSystemType == data.value){
+                return;
+            }
+            var systemType = data.value;
+            lastSelectedSystemType = systemType;
+
+            var options = "<option value=''>请先选择设备类型</option>";
+
+            var deviceSelect = $("#deviceSelect");
+            deviceSelect.empty();
+            $("#alarmParameterSelect").empty();
+
+            if (systemType == "污水监测点"){
+                   options += "<option value='液位计'>液位计</option>";
+                   options += "<option value='流量计'>流量计</option>";
+                   options += "<option value='水质仪'>水质仪</option>";
+
+                   deviceSelect.append(options);
+                    form.render('select', 'alarmRuleSettingForm');
+                    return;
+            }
+
+            if (systemType == "雨水监测点"){
+                options += "<option value='液位计'>液位计</option>";
+                options += "<option value='流量计'>流量计</option>";
+                options += "<option value='水质仪'>水质仪</option>";
+                options += "<option value='雨量计'>雨量计</option>";
+                deviceSelect.append(options);
+                form.render('select', 'alarmRuleSettingForm');
+                return;
+            }
+
+            // if (systemType == "雨污分流器"){
+            //     options += "<option value='液位计'>液位计</option>";
+            //     options += "<option value='流量计'>流量计</option>";
+            //     options += "<option value='雨量计'>雨量计</option>";
+            //     deviceSelect.append(options);
+            //     form.render('select', 'alarmRuleSettingForm');
+            //     return;
+            // }
+
+            if (systemType == "泵站"){
+                options += "<option value='雨量计'>水质仪</option>";
+                options += "<option value='液位计'>液位计</option>";
+                options += "<option value='流量计'>流量计</option>";
+
+                deviceSelect.append(options);
+                form.render('select', 'alarmRuleSettingForm');
+                return;
+            }
+        })
+
+        // 设备类型下拉框选择
+        form.on('select(deviceSelect)', function(data){
+            if (lastSelectedDevice == data.value){
+                return;
+            }
+            lastSelectedDevice = data.value;
+            $("#superiorLimit").val("");
+            $("#lowerLimit").val("");
+
+            for (var i=0; i<alarmItemCanSelectArray.length; i++){
+                if (alarmItemCanSelectArray[i].device != data.value){
+                    continue;
+                }
+
+                $("#alarmParameterSelect").empty();
+                var alarmParameterArray = alarmItemCanSelectArray[i].alarmParameter;
+
+                var alarmParameterNoUnitArray = alarmItemCanSelectArray[i].alarmParameterNoUnit;
+                var  options = "";
+                for (var j=0; j<alarmParameterArray.length; j++){
+                    options = options + "<option value='" + alarmParameterNoUnitArray[j] + "'>" + alarmParameterArray[j] + "</option>"
+                }
+            }
+            $("#alarmParameterSelect").append(options);
+            form.render('select', 'alarmRuleSettingForm');
+            return;
+        });
+    });
+
+    $("#superiorLimit").blur(function () {
+        var value = this.value;
+
+        if (value == ""){
+            return;
+        }
+
+        if (value < 0){
+            layer.msg("上限不能为负值");
+            $(this).val("")
+            return;
+        }
+
+        var lowerLimit = $("#lowerLimit").val();
+        if (lowerLimit == ""){
+            return;
+        }
+
+        if (value < lowerLimit){
+            layer.msg("上限不能小于下限");
+            $(this).val("")
+        }
+    })
+
+    $("#lowerLimit").blur(function () {
+        var value = this.value;
+
+        if (value == ""){
+            return;
+        }
+
+        if (value < 0){
+            layer.msg("上限不能为负值");
+            $(this).val("")
+            return;
+        }
+
+        var superiorLimit = $("#superiorLimit").val();
+
+        if (superiorLimit == ""){
+            return;
+        }
+
+        if (value > superiorLimit){
+            layer.msg("下限不能大于下限");
+            $(this).val("")
+        }
+    })
+
+    // 确认添加
+    $("#confirmAdd").click(function () {
+        var systemType = $("#systemSelect").val();
+
+        if (systemType == ""){
+            layer.msg("请选择工控系统类型");
+            return;
+        }
+        var deviceType = $("#deviceSelect").val();
+        if (deviceType == ""){
+            layer.msg("请选择设备类型");
+            return;
+        }
+
+        var alarmType = $("#alarmType").val();
+        if (alarmType == ""){
+            layer.msg("请选择报警类型");
+            return;
+        }
+
+        var alarmParameter = $("#alarmParameterSelect").val();
+        if (alarmParameter == ""){
+            layer.msg("请选择报警参数");
+            return;
+        }
+
+        var alarmSuperiorLimit = $("#superiorLimit").val();
+
+        var alarmLowerLimit = $("#lowerLimit").val();
+        var json = {controlSystemType:systemType, deviceType: deviceType, alarmType: alarmType, alarmParameter: alarmParameter, alarmSuperiorLimit: alarmSuperiorLimit, alarmLowerLimit: alarmLowerLimit}
+        $.ajax({
+            url: 'insertAlarmRule',
+            type: 'post',
+            contentType: 'application/json;charset=utf-8;',
+            data: JSON.stringify(json),
+            success: function (res) {
+                if (res.code > 0){
+                    layer.msg("添加成功");
+                    tableIndex.reload()
+                }else{
+                    layer.msg(res.message);
+                }
+            }
+        })
+    })
+</script>
+</html>

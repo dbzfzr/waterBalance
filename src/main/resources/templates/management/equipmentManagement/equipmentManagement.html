@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>主页</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <!-- layui 图表扩展css-->
+    <script th:src="@{/webjars/jquery/3.5.1/jquery.js}"></script>
+    <script type="text/javascript" th:src="@{/webjars/layui/2.6.8/layui.js}"></script>
+    <link rel="stylesheet" th:href="@{/webjars/layui/2.6.8/css/layui.css}">
+    <!--EasyUI_Tree 样式-->
+    <script type="text/javascript" th:src="@{/js/jquery-easyui-1.9.4/jquery.easyui.min.js}"></script>
+    <link rel="stylesheet" type="text/css" th:href="@{/js/jquery-easyui-1.9.4/themes/default/easyui.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/js/jquery-easyui-1.9.4/themes/icon.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/js/jquery-easyui-1.9.4/themes/gray/tree.css}">
+    <link rel="stylesheet" th:href="@{/css/my-easyui-tree.css}">
+    <link rel="stylesheet" th:href="@{/css/flexemTreeCss.css}">
+    <link rel="stylesheet" th:href="@{/css/equipmentManagement/equipmentPage.css}">
+    <style>
+          /*系统类型下拉框按钮css样式*/
+        .layui-form-checkbox[lay-skin=primary] i{
+            background:url("../image/treeIcon/organizatinTreeCheckButton.png") !important;
+            border-color: rgba(19,92,193,0) !important;
+        }
+        .layui-form-checked[lay-skin=primary] i{
+            background: url("../image/treeIcon/organizatinTreeCheckButton1.png")!important;
+            border-color: rgba(19,92,193,0) !important;
+        }
+        .layui-form-checkbox[lay-skin=primary] i:hover{
+            border-color: rgba(19,92,193,0) !important;
+        }
+        .layui-icon-ok:before{
+            content: none !important;
+        }
+          .layui-form-checkbox[lay-skin=primary] span{
+              color: #FFFFFF !important;
+          }
+
+
+    </style>
+</head>
+<body>
+<div class="main-frame">
+    <div class="left">
+        <div class="top-frame" id="searchBox">
+            <input class="search-input" id="area"  name="searchDevice" placeholder="请输入区域名称(小区名称)"  >
+            <button type="button" class="search-button" id="search" style="cursor: pointer">搜索</button>
+            <button class="reset-button active" id="reset" style="cursor: pointer" >重置</button>
+        </div>
+        <div style="color: #FFFFFF;margin-top: 10px;display: flex;">
+            <span style="color: #B0C2E4">系统类型：</span>
+            <button id="whole" lay-event="w" style="margin-left: -5px;background-color:rgba(0,31,66,0.5);border: 0;opacity: 0.5">
+                <i class="layui-icon"  style="color: #F6F8FA">&#xe623;</i>
+            </button>
+            <div class="system-icon">
+                <div class="icon-example" id="systemOrigin">
+                    <img class="icon-image" src="../image/map_point_icon/icon_yellow.png" id="oilWater" ><!--油水分离器-->
+                    <img class="icon-image" src="../image/map_point_icon/icon_point_green.png" id="sewage" ><!--污水监测点-->
+                    <img class="icon-image" src="../image/map_point_icon/icon_orange.png" id="rainPollution" ><!--雨污分流器-->
+                    <img class="icon-image" src="../image/homePage/rainMonitor.png" id="rain" ><!--雨水监测点-->
+                    <img class="icon-image" src="../image/homePage/pumpStation.png" id="pumpingStation" ><!--泵站-->
+                </div>
+            </div>
+        </div>
+        <div id="typeInfo" style="height: 140px;width: 110px;background-color:#000D27;
+                              margin-left: 70px; margin-top: 10px; display: none;position: absolute">
+            <form id="form" class="layui-form" style="color: #ffffff">
+
+                <input type="checkbox" name="allSel"  id="allSelect" style="margin-left: 20px;color:#FFFFFF;!important;" lay-verify="required" lay-filter="allChooses" lay-skin="primary">全部
+                <input style="width: 100px;" th:each="systemTypeInfo:${SystemTypeInfoList}" name="systemTypeName"
+                       th:value="${systemTypeInfo.id}" th:title="${systemTypeInfo.systemTypeName}" type="checkbox"
+                       lay-verify="required" lay-skin="primary" lay-filter = "systemTypeInfo" checked/>
+            </form>
+
+            <button type="button" id="confirms" style="margin-left: 70px;background: rgba(0, 128, 255, 0.2) linear-gradient(
+175deg, rgba(0, 110, 255, 0.5) 0%, rgba(0, 110, 255, 0) 100%); width: 37px;margin-top: 3px;border: 1px solid #013F8D;color: #ffffff;">确认</button>
+        </div>
+        <div class="region-manager" style="margin-top: 10px;overflow: auto;height: 90%;">
+            <ul id="organizeTree" style="color: #FFFFFF"></ul>
+        </div>
+    </div>
+
+    <div class="right">
+        <div  id="top-bar">
+            <li class="active"><a id="" href="mapShowManagement" target="equipmentManagementIframe">地图展示</a></li>
+            <li class><a  href="devDataManagement" target="equipmentManagementIframe">数据监控</a></li>
+            <th:block th:if="${session.users.roleName ne '运维操作人员'}">
+              <li class><a  href="/alarmRecordPage" target="equipmentManagementIframe">预警记录</a></li>
+            </th:block>
+            <li class><a  href="historicalDataManagement" target="equipmentManagementIframe">历史数据</a></li>
+        </div>
+        <div class="iframe">
+            <iframe id="iframe" name="equipmentManagementIframe" frameborder="0" scrolling="no" style="width:105%;height:105%;position: absolute;left: -35px;" src="mapShowManagement"></iframe>
+<!--                        //frameborder:是否显示边框 scrolling：是否滚动-->
+       </div>
+    </div>
+</div>
+</body>
+
+<script type="text/javascript">
+
+
+    var navLis = $("#top-bar li");
+    for (var i=0; i<navLis.length; i++){
+        if($(navLis[i]).children().html() == '地图展示'){
+            $(navLis[i]).addClass("active");
+        }
+    }
+
+    $("#top-bar li").click(function () {
+        for (var i=0; i<navLis.length; i++){
+            console.info($(navLis[i]).attr("class").indexOf("active"));
+            if ($(navLis[i]).attr("class").indexOf("active") >= 0){
+                $(navLis[i]).removeClass("active");
+            }
+            if($(this).children().html() == '地图展示'){
+                $("#iframe").css({'width':'105%','height':'105%','position':'absolute','left':'-35px'});
+            }else{
+                $("#iframe").css({'width':'100%','height':'100%','position':'relative','left':'0px'});
+            }
+        }
+        $(this).addClass("active");
+        console.info()
+    });
+
+    //搜索设备名称
+    $("#search").click(function () {
+
+        var  searchDevice  =  $("input[name='searchDevice']").val();
+        console.info(searchDevice);
+        $('#organizeTree').tree({
+            url: 'getSearchDevice?searchDevice=' + searchDevice,
+            onLoadSuccess:function () {//	当数据加载成功时触发
+                var root = $('#organizeTree').tree('getRoots');//获取根节点，返回节点数组。
+                if (root.length == 0){
+                    layer.msg(
+                        '名称不存在,请重新输入!'
+                    );
+                }
+                console.log(root);
+            }
+        });
+    })
+
+
+    //重置系统类型
+    $("#reset").click(function () {
+        $('#organizeTree').tree({
+            url:'getDevOrganizeTree',
+            onLoadSuccess:function () {//加载成功时显示
+                $("#searchBox input").val("");//清除搜索框中的内容
+            }
+        });
+    })
+
+    var dt = 1;
+    $("#mapDisplay").click(function () {
+        if(dt%2==1){
+            $("#container").css('display','block');
+        }
+            if(dt%2==0){
+                $("#container").css('display','none');
+            }
+        dt++;
+    })
+
+    var i = 1;
+    $("#data").click(function () {
+        if(i%2==1){
+            // $("#monitor").css('display','block');
+            $("#monitor").attr('style','display:block;')
+        }
+        if(i%2==0){
+            // $("#monitor").css('display','none');
+            $("#monitor").attr('style','display:none;')
+        }
+        i++;
+    })
+
+    var j = 1;
+    $("#whole").click(function () {
+        console.info("----->"+j);
+        if(j%2==1){
+            $("#typeInfo").css('display','block');
+
+            var choice = $("#typeInfo").find('input[name="systemTypeName"][type="checkbox"]:checked');
+            var child = $("#typeInfo input[type='checkbox']");
+            if(choice.length == 0||($("#oilWater").css('display')!='none'&&$("#sewage").css('display')!='none'
+                &&$("#rainPollution").css('display')!='none'&&$("#rain").css('display')!='none'&&$("#pumpingStation").css('display')!='none'
+            )){
+                //系统类型默认全选
+                child.each(function (index,item) {
+                    item.checked = true;
+                });
+                form.render('checkbox');
+                $("#systemOrigin").css('display','block');
+            }
+
+
+            if( $("#oilWater").css('display')!='none'){
+                $($("#typeInfo").find('input[type="checkbox"][name="systemTypeName"]')[2]).prop("checked",true);
+                form.render();
+            }else{
+                $($("#typeInfo").find('input[type="checkbox"][name="systemTypeName"]')[2]).prop("checked",false);
+                form.render();
+            }
+
+            if( $("#sewage").css('display')!='none'){
+                $($("#typeInfo").find('input[type="checkbox"][name="systemTypeName"]')[3]).prop("checked",true);
+                form.render();
+            }else {
+                $($("#typeInfo").find('input[type="checkbox"][name="systemTypeName"]')[3]).prop("checked",false);
+                form.render();
+            }
+
+            if( $("#rainPollution").css('display')!='none'){
+                $($("#typeInfo").find('input[type="checkbox"][name="systemTypeName"]')[1]).prop("checked",true);
+                form.render();
+            }else{
+                $($("#typeInfo").find('input[type="checkbox"][name="systemTypeName"]')[1]).prop("checked",false);
+                form.render();
+            }
+
+            if( $("#rain").css('display')!='none'){
+                $($("#typeInfo").find('input[type="checkbox"][name="systemTypeName"]')[4]).prop("checked",true);
+                form.render();
+            }else{
+                $($("#typeInfo").find('input[type="checkbox"][name="systemTypeName"]')[4]).prop("checked",false);
+                form.render();
+            }
+
+            if( $("#pumpingStation").css('display')!='none'){
+                $($("#typeInfo").find('input[type="checkbox"][name="systemTypeName"]')[0]).prop("checked",true);
+                form.render();
+            }else{
+                $($("#typeInfo").find('input[type="checkbox"][name="systemTypeName"]')[0]).prop("checked",false);
+                form.render();
+            }
+
+            if(($("#oilWater").css('display')!='none'&&$("#sewage").css('display')!='none'
+                &&$("#rainPollution").css('display')!='none'&&$("#rain").css('display')!='none'&&$("#pumpingStation").css('display')!='none'
+            )){
+                $($("#typeInfo").find('input[type="checkbox"]')[0]).prop("checked",true);
+                form.render();
+            }else{
+                $($("#typeInfo").find('input[type="checkbox"]')[0]).prop("checked",false);
+                form.render();
+            }
+
+            $("#whole").find("i").html('&#xe625');
+
+        }
+        if(j%2==0){
+            $("#typeInfo").css('display','none');
+            $("#whole").find("i").html('&#xe623');
+        }
+        j++;
+    })
+
+    var form;
+    layui.use(['form','jquery','table','element'], function () {
+        form = layui.form;
+        var $ = layui.jquery;  //获取模块
+        var table = layui.table;
+        var element = layui.element;
+
+        form.on('checkbox(allChooses)',function (data) {
+            var child = $("#typeInfo input[type='checkbox']");
+            child.each(function (index,item) {//item 表示遍历后的当前对象
+                item.checked = data.elem.checked;
+            });
+            form.render('checkbox');
+        })
+
+
+        form.on('checkbox(systemTypeInfo)',function (data) {
+            var s = $("#typeInfo").find('input[name="systemTypeName"][type="checkbox"]:checked').length;
+            var total = $("#typeInfo").find('input[name="systemTypeName"][type="checkbox"]').length;
+            if(s != total){
+                $($("#typeInfo").find('input[type="checkbox"]')[0]).prop("checked",false);
+                form.render();
+            }else{
+                $($("#typeInfo").find('input[type="checkbox"]')[0]).prop("checked",true);
+                form.render();
+            }
+        })
+    });
+
+    // 选中的组织树节点
+    var organizeTreeClickedNodeAttributes = null;
+
+    //组织树加载
+    $('#organizeTree').tree({
+        url: 'getDevOrganizeTree',
+        onClick:function (node) {
+            var attributes = node.attributes;
+
+            if ("" != attributes){
+                organizeTreeClickedNodeAttributes = JSON.parse(attributes);
+                organizeTreeClickedNodeAttributes.boxAlias = node.text;
+            }else {
+                organizeTreeClickedNodeAttributes = null;
+            }
+
+            var iframeWindow = $("#iframe")[0].contentWindow;
+
+            // 地图展示
+            if (iframeWindow.location.href.indexOf("mapShowManagement") >= 0){
+                if ("" == attributes){
+                    return;
+                }
+                var parameter = JSON.parse(attributes);
+                parameter.boxAlias = node.text;
+                iframeWindow.showFlexemDevice(parameter);
+                return;
+            }
+
+            // 数据监控
+            if (iframeWindow.location.href.indexOf("devDataManagement") >= 0){
+                if ("" == attributes){
+                    return;
+                }
+                iframeWindow.renderFlexemDataTable(JSON.parse(attributes));
+                return;
+            }
+
+            // 报警记录
+            if (iframeWindow.location.href.indexOf("alarmRecordPage") >= 0){
+                if ("" == attributes){
+                    return;
+                }
+                iframeWindow.devNodeClickReloadFunction(JSON.parse(attributes));
+                return;;
+            }
+
+            // 历史记录
+            if (iframeWindow.location.href.indexOf("historicalDataManagement") >= 0){
+                if ("" == attributes){
+                    return;
+                }
+                iframeWindow.renderFlexemDataTable(JSON.parse(attributes));
+                return;
+            }
+        }
+    });
+
+    $("#confirms").click(function () {
+        $("#typeInfo").css('display', 'none');
+        $("#whole").find("i").html('&#xe623');
+        j++;
+        var choice = $("#typeInfo").find('input[name="systemTypeName"][type="checkbox"]:checked');
+        var notChoice=$("#typeInfo").find('input[name="systemTypeName"]').not("input:checked");
+
+        var data = [];
+        for (var k = 0; k < choice.length; k++) {
+            data.push(choice[k].title)
+            switch (choice[k].title) {
+                case "油水分离器":
+                    $("#oilWater").css('display','inline-block');
+                    break;
+                case "污水监测点":
+                    $("#sewage").css('display','inline-block');
+                    break;
+                case "雨污分流器":
+                    $("#rainPollution").css('display','inline-block');
+                    break;
+                case "雨水监测点":
+                    $("#rain").css('display','inline-block');
+                    break;
+                case "泵站":
+                    $("#pumpingStation").css('display','inline-block');
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        for (var i = 0; i < notChoice.length; i++) {
+            switch (notChoice[i].title) {
+                case "油水分离器":
+                    $("#oilWater").css('display','none');
+                    break;
+                case "污水监测点":
+                    $("#sewage").css('display','none');
+                    break;
+                case "雨污分流器":
+                    $("#rainPollution").css('display','none');
+                    break;
+                case "雨水监测点":
+                    $("#rain").css('display','none');
+                    break;
+                case "泵站":
+                    $("#pumpingStation").css('display','none');
+                    break;
+                default:
+                    break;
+            }
+        }
+        console.info(data);
+        console.info(choice);
+        $('#organizeTree').tree({
+            url: 'getDevOrganizeTree?systemTypes='+data,
+        });
+        $("iframe")[0].contentWindow.drawPoint();
+    })
+</script>
+
+</html>

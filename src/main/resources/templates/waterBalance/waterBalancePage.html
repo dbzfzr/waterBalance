@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>水平衡信息</title>
+    <link rel="stylesheet" th:href="@{/webjars/layui/2.6.8/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/css/layuiTable.css}">
+    <link rel="stylesheet" th:href="@{/css/toolBarIcon.css}">
+    <link rel="stylesheet" th:href="@{/css/alarmRecordCalendar.css}">
+
+    <style>
+        .layui-table-page {
+            padding: 1px 7px 0;
+            background: rgba(0,31,66,0.5);
+        }
+
+        input::-webkit-input-placeholder{
+            color:#F8F9FA !important;
+        }
+
+        input::-webkit-input-placeholder{
+
+        }
+
+        .layui-table td, .layui-table th, .layui-table-col-set, .layui-table-fixed-r, .layui-table-grid-down, .layui-table-header, .layui-table-page, .layui-table-tips-main, .layui-table-tool, .layui-table-total, .layui-table-view, .layui-table[lay-skin=line], .layui-table[lay-skin=row] {
+            border-width: 1px;
+            border-style: solid;
+            border-left-style: none;
+            border-color: rgba(240, 240, 240, .1);
+            border-right-style: none;
+        }
+
+        /*table表格鼠标悬停显示颜色css样式*/
+        .layui-table-hover td{
+            background-color: rgba(30,159,255,0.1) !important;
+        }
+
+        .layui-table tbody tr:hover, .layui-table-hover{
+            background-color: rgba(30,159,255,0.1) !important;
+        }
+
+        .layui-laypage input {
+            color: #303030;
+        }
+
+        .layui-laypage input {
+            color: #CCD3DF;
+            border: 1px solid #086FAF;
+        }
+
+        .layui-table-page .layui-laypage input {
+            width: 40px;
+            background-color: #001F42 !important;
+        }
+
+        .layui-flow-more a *, .layui-laypage input, .layui-table-view select[lay-ignore] {
+            background-color: #001F42 !important;
+        }
+        .layui-flow-more a *, .layui-laypage input, .layui-table-view select[lay-ignore] {
+            display: inline-block;
+        }
+        .layui-form [lay-ignore] {
+            display: initial;
+        }
+        .layui-laypage a, .layui-laypage button, .layui-laypage input, .layui-laypage select, .layui-laypage span {
+            color: #CCD3DF;
+            border: 1px solid #086FAF;
+        }
+
+        element.style {
+        }
+        .layui-tab-card>.layui-tab-title li {
+            margin-right: -1px;
+            margin-left: -1px;
+        }
+
+        .layui-tab-title li {
+            color:#DDDDDD;
+        }
+
+        /*水平衡信息中污水平衡,雨水平衡按钮的css样式*/
+        .layui-tab-title .layui-this{
+            background: rgba(0, 128, 255, 0.2) linear-gradient(
+                    175deg, rgba(0, 110, 255, 0.5) 0%, rgba(0, 110, 255, 0) 100%) !important;
+            border-image: radial-gradient(circle, rgba(142, 174, 255, 1), rgba(142, 174, 255, 0.34), rgba(142, 174, 255, 0)) 1 1 !important;
+            color: #C9CFD7 !important;
+        }
+        .layui-tab-card{
+            border-style: none !important;
+        }
+        .layui-tab-card>.layui-tab-title{
+            background-color: rgba(22,66,55,0)!important;
+        }
+        .layui-tab-title{
+            border-bottom-style: none !important;
+        }
+        .layui-tab-card>.layui-tab-title .layui-this:after {
+            border: none !important;
+        }
+    </style>
+</head>
+<body>
+<div class="all_panel">
+    <p class="infoTitleLeft"></p>
+    <div id="sewageBalance" style="position: absolute;width: 100%;height: 90%;top: 52px;display: block;"></div>
+    <!--    <img src="../image/mainPage/waterbalance.png" style="position: absolute;pointer-events: none;" class="waterbalance">-->
+</div>
+
+<div class="all_panel">
+    <p class="infoTitleLeft"></p>
+    <div id="rainwaterBalance" style="position: absolute;width: 100%;height: 90%;top: 52px;display:block;"></div>
+    <!--    <img src="../image/mainPage/waterbalance.png" style="position: absolute;pointer-events: none;" class="waterbalance">-->
+</div>
+
+<div class="layui-tab layui-tab-card">
+    <ul class="layui-tab-title">
+       <li id="Sewage" class="layui-this" >污水平衡</li>
+       <li id="rainWater">雨水平衡</li>
+    </ul>
+    <!--    <div class="layui-tab-content" >-->
+    <!--    <div class="layui-tab-item layui-show">-->
+    <!--        <input style="width:40vw;color:#EEF1F3;height:3vw;position: absolute;left:3.5vw;top:17vh;z-index: 999;border: 1px solid #021D47;background-color: #021D47;-->
+    <!--" placeholder="起始时间~终止时间" id="sewageBalanceTimeInput"/>-->
+    <!--        <table id="sewageBalanceTable">-->
+    <!--        </table>-->
+    <!--    </div>-->
+    <!--    <div class="layui-tab-item">-->
+    <!--        <input style="width:40vw;color:#EEF1F3;height:3vw;position: absolute;left:3.5vw;top:17vh;z-index: 999;border: 1px solid #021D47;background-color: #021D47;-->
+    <!--" placeholder="起始时间~终止时间" id="rainBalanceTimeInput"/>-->
+    <!--        <table id="rainBalanceTable">-->
+
+    <!--        </table>-->
+    <!--    </div>-->
+    <!--</div>-->
+    </div>
+</body>
+<script type="text/html" id="No.">
+    {{d.LAY_TABLE_INDEX+1}}
+</script>
+
+<script type="text/javascript" th:src="@{/webjars/layui/2.6.8/layui.js}"></script>
+<script type="text/javascript" th:src="@{/js/myjs.js}"></script>
+<script th:src="@{/webjars/jquery/3.5.1/jquery.js}"></script>
+<script th:src="@{/js/echarts.min.js}"></script>
+<!--污水平衡-->
+<script>
+    var chartDom = document.getElementById('sewageBalance');
+    var myChart = echarts.init(chartDom);
+    var option;
+    option = {
+        title: {
+            text: '污水总平衡',
+            textStyle:{
+                color:'#FAFBFD',
+            },
+        },
+        tooltip: {
+            trigger: 'axis',
+            textStyle: {
+                color: "#FAFBFD",//设置文字颜色
+            },
+            axisPointer: {
+                type:'none'
+            },
+            borderColor:'rgba(25,66,55,0)',
+            backgroundColor: 'rgba(3,62,144,0.8)',
+        },
+        legend: {
+            data: ['A区域', 'B区域', 'C区域', 'D区域', 'E区域','F区域','G区域','污水总平衡'],
+            textStyle:{
+                color:'#F8F9FB',
+            },
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        // toolbox: {
+        //     feature: {
+        //         saveAsImage: {}
+        //     }
+        // },
+        xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            axisLabel:{
+                color:'#F8F9FB',
+            },
+            axisLine:{
+                lineStyle:{
+                    color:'#F8F9FB',
+                },
+            },
+            axisTick:{
+                show:false,
+            },
+
+        },
+        yAxis: {
+            type: 'value',
+            max:90,
+            min:0,
+            splitNumber:10,
+            splitLine:{
+                show:false,
+            },
+            axisLabel:{
+                color:'#F8F9FB',
+            },
+        },
+        series: [
+            {
+                name: 'A区域',
+                type: 'line',
+                smooth: true,
+                symbol: 'none',
+                data: [68, 75, 82, 71, 60, 75, 88]
+            },
+            {
+                name: 'B区域',
+                type: 'line',
+                smooth: true,
+                symbol: 'none',
+                data: [60, 72, 81, 64, 90, 60, 70]
+            },
+            {
+                name: 'C区域',
+                type: 'line',
+                smooth: true,
+                symbol: 'none',
+                data: [70, 42, 56, 64, 80, 70, 45]
+            },
+            {
+                name: 'D区域',
+                type: 'line',
+                smooth: true,
+                symbol: 'none',
+                data: [40, 55, 70, 75, 60, 80, 70]
+            },
+            {
+                name: 'E区域',
+                type: 'line',
+                smooth: true,
+                symbol: 'none',
+                data: [50, 82, 61, 73, 86, 39, 50]
+            },
+            {
+                name: 'F区域',
+                type: 'line',
+                smooth: true,
+                symbol: 'none',
+                data: [52, 63, 80, 73, 90, 58, 72]
+            },
+            {
+                name: 'G区域',
+                type: 'line',
+                smooth: true,
+                symbol: 'none',
+                data: [72, 83, 80, 73, 90, 60, 70]
+            },
+            {
+                name: '污水总平衡',
+                type: 'line',
+                smooth: true,
+                symbol: 'none',
+                data: [70, 62, 81, 74, 40, 80, 68]
+            }
+        ]
+    };
+
+    option && myChart.setOption(option);//加载数据图表
+</script>
+
+<!--雨水平衡-->
+<script>
+    var chartDom =  document.getElementById('rainwaterBalance')
+    var myCharts =   echarts.init(chartDom);
+    var option;
+    option = {
+        title: {
+            text: '雨水总平衡',
+            textStyle:{
+                color:'#FAFBFD',
+            }
+        },
+        tooltip: {
+            trigger: 'axis',
+            textStyle: {
+                color: "#FAFBFD",//设置文字颜色
+            },
+            axisPointer: {
+                type:'none'
+            },
+            borderColor:'rgba(25,66,55,0)',
+            backgroundColor: 'rgba(3,62,144,0.8)',
+        },
+        legend: {
+            textStyle:{
+                color:'#FAFBFD',
+            },
+            data: ['Y1区域', 'Y2区域', 'Y3区域','雨水总平衡']
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        // toolbox: {
+        //     feature: {
+        //         saveAsImage: {}
+        //     }
+        // },
+        xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            axisLine:{
+                lineStyle:{
+                    color:'#FAFBFD',
+                },
+            },
+            axisTick:{
+              show:false,
+            },
+
+        },
+        yAxis: {
+            type: 'value',
+            max:90,
+            min:0,
+            splitLine:{
+                show:false,
+            },
+            axisLabel:{
+                textStyle:{
+                    color:'#FAFBFD',
+                },
+            },
+        },
+        series: [
+            {
+                name: 'Y1区域',
+                type: 'line',
+                smooth: true,
+                symbol: 'none',
+                data: [56, 67, 81, 64, 90, 80, 41]
+            },
+            {
+                name: 'Y2区域',
+                type: 'line',
+                smooth: true,
+                symbol: 'none',
+                data: [52, 32, 81, 74, 90, 60, 73]
+            },
+            {
+                name: 'Y3区域',
+                type: 'line',
+                smooth: true,
+                symbol: 'none',
+                data: [65, 83, 80, 34, 70, 56, 44]
+            },
+            {
+                name: '雨水总平衡',
+                type: 'line',
+                smooth: true,
+                symbol: 'none',
+                data: [52, 32, 41, 65, 75, 59, 36]
+            }
+        ]
+    };
+
+    option && myCharts.setOption(option);
+ </script>
+<script>
+    $("#rainwaterBalance").css("display","none");
+    $("#rainWater").click(function () {
+        $("#sewageBalance").css("display","none");
+        $("#rainwaterBalance").css("display","block");
+    })
+    $("#Sewage").click(function () {
+        $("#sewageBalance").css("display","block");
+        $("#rainwaterBalance").css("display","none");
+    })
+
+    // var limitArray = [10, 20, 50, 100, 500];
+    // var table ;
+    // layui.use(['table', 'laydate'], function () {
+    //     table = layui.table;
+    //     var laydate = layui.laydate;
+    //     var sewageBalanceTableIndex = table.render({
+    //         elem: '#sewageBalanceTable'
+    //         ,url: 'sewageBalanceList' //数据接口
+    //         ,where:{}
+    //         ,skin: 'nob'// 无边框风格
+    //         ,method: "post"
+    //         ,even: true //开启隔行背景
+    //         ,page:true
+    //         ,limits:limitArray
+    //         ,height: 'full-90'
+    //         ,toolbar:true
+    //         ,event:true
+    //         , contentType: 'application/json'
+    //         , cols: [
+    //             [ //表头
+    //                 {field: 'id', title: 'ID', width: 80, sort: true, hide: true},
+    //                 {field: 'No.', title: '序号', width: 80, type:'numbers' }
+    //                 , {field: 'totalSewageBalance', title: '污水总平衡', align: "center", sort: true, width: 100}
+    //                 , {field: 'aAreaBalance', title: 'A区域', event: 'row', align: 'center'}
+    //                 , {field: 'bAreaBalance', title: 'B区域', event: 'row', align: 'center', width: 80}
+    //                 , {field: 'cAreaBalance', title: 'C区域', event: 'row', align: 'center', width: 140}
+    //                 , {field: 'dAreaBalance', title: 'D区域', event: 'row', align: 'center'}
+    //                 , {field: 'eAreaBalance', title: 'E区域', event: 'row', align: 'center'}
+    //                 , {field: 'fAreaBalance', title: 'F区域', event: 'row', align: 'center'}
+    //                 , {field: 'gAreaBalance', title: 'G区域', event: 'row', align: 'center', width: 100}
+    //                 , {field: 'createTime', title: '时间', event: 'row', align: 'center', width: 160}
+    //             ]
+    //         ]
+    //     })
+    //
+    //     var rainBalanceTableIndex = table.render({
+    //         elem: '#rainBalanceTable'
+    //         ,url: 'rainBalanceList' //数据接口
+    //         ,where:{}
+    //         ,skin: 'nob'// 无边框风格
+    //         ,method: "post"
+    //         ,even: true //开启隔行背景
+    //         ,page:true
+    //         ,limits:limitArray
+    //         ,height: 'full-90'
+    //         ,toolbar:true
+    //         ,event:true
+    //         , contentType: 'application/json'
+    //         , cols: [
+    //             [ //表头
+    //                 {field: 'id', title: 'ID', width: 80, sort: true, hide: true},
+    //                 {field: 'No.', title: '序号', width: 80, type:'numbers' }
+    //                 , {field: 'totalSewageBalance', title: '雨水总平衡', align: "center", sort: true, width: 130}
+    //                 , {field: 'y1AreaBalance', title: 'Y1区域', event: 'row', align: 'center'}
+    //                 , {field: 'y2AreaBalance', title: 'Y2区域', event: 'row', align: 'center',}
+    //                 , {field: 'y3AreaBalance', title: 'Y3区域', event: 'row', align: 'center'}
+    //                 , {field: 'createTime', title: '时间', event: 'row', align: 'center', width: 160}
+    //             ]
+    //         ]
+    //     })
+    //
+    //     // 污水双控件
+    //     laydate.render({
+    //         elem: '#sewageBalanceTimeInput' //指定元素
+    //         ,type: 'datetime'
+    //         ,trigger: 'click'
+    //         ,range: '~' //开启日期范围，默认使用“-”分割
+    //         ,max: DateUtil.dateformat(new Date(),"yyyy-MM-dd 23:59:59")
+    //         ,done: function(value, date, endDate){
+    //             var json = {};
+    //             var timeArray = value.split("~");
+    //             var queryStartTime = timeArray[0].substring(0, timeArray[0].length);
+    //             var queryEndTime = timeArray[1].substring(1);
+    //             json.startTime = queryStartTime;
+    //             json.endTime = queryEndTime;
+    //
+    //             //console.log(value)
+    //             sewageBalanceTableIndex.reload({
+    //                 where:json,
+    //                 page: {
+    //                     curr:1  //重新从第 1 页开始
+    //                 }
+    //             })
+    //         }
+    //         ,change: function(value, date, endDate){
+    //         }
+    //     });
+    //
+    //     // 雨水双控件
+    //     laydate.render({
+    //         elem: '#rainBalanceTimeInput' //指定元素
+    //         ,type: 'datetime'
+    //         ,trigger: 'click'
+    //         ,range: '~' //开启日期范围，默认使用“-”分割
+    //         ,max: DateUtil.dateformat(new Date(),"yyyy-MM-dd 23:59:59")
+    //         ,done: function(value, date, endDate){
+    //             var json = {};
+    //             var timeArray = value.split("~");
+    //             var queryStartTime = timeArray[0].substring(0, timeArray[0].length);
+    //             var queryEndTime = timeArray[1].substring(1);
+    //             json.startTime = queryStartTime;
+    //             json.endTime = queryEndTime;
+    //             rainBalanceTableIndex.reload({
+    //                 where:json,
+    //                 page: {
+    //                     curr:1  //重新从第 1 页开始
+    //                 }
+    //             })
+    //         }
+    //         ,change: function(value, date, endDate){
+    //         }
+    //     });
+    // })
+</script>
+</html>

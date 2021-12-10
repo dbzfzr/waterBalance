@@ -1,0 +1,58 @@
+
+
+#selectionBox .active{
+    /*background: url('../image/mainPage/menu_button_clicked.png') no-repeat 50% 50%;*/
+    /*background-size: 100% 100%;*/
+    background: rgba(0, 128, 255, 0.2) linear-gradient(175deg, rgba(0, 110, 255, 0.5) 0%, rgba(0, 110, 255, 0) 100%);
+    border: 1px solid;
+    border-image: radial-gradient(circle, rgba(142, 174, 255, 1), rgba(142, 174, 255, 0.34), rgba(142, 174, 255, 0)) 1 1;
+    opacity: 1;
+}
+
+#selectionBox .active a{
+    /*color:#1E9FFF;*/
+    color:#E5EBFF;
+    font-weight: bold;
+}
+
+#selectionBox li a{
+    color:#E5EBFF;
+    text-decoration: none;
+
+}
+
+#selectionBox li a:hover{
+    /*color:#1E9FFF;*/
+    color:#FFFFFF;
+    font-weight: bold;
+}
+#selectionBox li:hover{
+    opacity: 1;
+}
+
+.tree-checkbox0{
+    background:url("../image/treeIcon/organizatinTreeCheckButton.png") !important;
+}
+
+.tree-checkbox1{
+    background: url("../image/treeIcon/organizatinTreeCheckButton1.png")!important;
+}
+
+.tree-checkbox2{
+    background:url("../image/treeIcon/organizatinTreeCheckButton.png") !important;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

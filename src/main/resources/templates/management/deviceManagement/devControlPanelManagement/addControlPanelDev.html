@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="content-type" content="text/html">
+    <meta charset="UTF-8">
+    <title>新增工控屏</title>
+    <script type="text/javascript" th:src="@{/webjars/layui/2.6.8/layui.js}"></script>
+    <link rel="stylesheet" th:href="@{/webjars/layui/2.6.8/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/css/layuiForm.css}">
+    <script th:src="@{/webjars/jquery/3.5.1/jquery.js}"></script>
+    <script th:src="@{/js/formUtil.js}"></script>
+    <style>
+        input::-webkit-input-placeholder {
+            color: #dadada !important;
+        }
+        .layui-form-select .layui-input{
+            color: #dadada !important;
+        }
+        .layui-form-item .layui-input-inline{
+            border:1px solid #1775DA !important;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+<div  class="layui-container" style="margin-top: 10px">
+    <form id="form" class="layui-form" name="form">
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span style="color: red;">*&nbsp;</span>工控屏编号:</label>
+            <div class="layui-input-inline">
+                <input type="text" name="boxNo"  id="boxNo" lay-verify="required" placeholder="请输入工控屏编号" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span style="color: red;">*&nbsp;</span>设施类型:</label>
+            <div class="layui-input-inline div-select" id="facilityTypeDiv">
+                <select name="facilityType" noinputmsg="请选择设施类型" lay-filter="facilityType" >
+                    <option><span>点位</span></option>
+                    <option><span>管线</span></option>
+                </select>
+            </div>
+        </div>
+<!--        <div class="layui-form-item">-->
+<!--            <label class="layui-form-label"><span style="color: red;">*&nbsp;</span>设施编号:</label>-->
+<!--            <div class="layui-input-inline div-select" id="facilityNoDiv">-->
+<!--                <select name="facilityNo" noinputmsg="请选择设施编号" lay-filter="" >-->
+<!--                    <option><span>请选择设施编号</span></option>-->
+<!--                    <option th:each="networkPointInfo:${networkPointInfoList}"  th:value="${networkPointInfo.pointNo}" ><span th:text="${networkPointInfo.pointNo}"></span></option>-->
+<!--&lt;!&ndash;                    <option th:each="networkPipelineInfo:${networkPipelineInfoList}"  th:value="${networkPipelineInfo.pipelineNo}" ><span th:text="${networkPipelineInfo.pipelineNo}"></span></option>&ndash;&gt;-->
+<!--                </select>-->
+<!--            </div>-->
+<!--        </div>-->
+
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span style="color: red;">*&nbsp;</span>安装位置:</label>
+            <div class="layui-input-inline div-select" id="facilityNoDiv">
+                <select name="facilityNo" noinputmsg="请选择安装位置" lay-filter="facilityNo" >
+                    <option><span>请选择安装位置</span></option>
+                    <option th:each="networkPointInfo:${networkPointInfoList}"  th:value="${networkPointInfo.point_no}" ><span th:text="${networkPointInfo.point_name}"></span></option>
+                    <!--                    <option th:each="networkPipelineInfo:${networkPipelineInfoList}"  th:value="${networkPipelineInfo.pipelineNo}" ><span th:text="${networkPipelineInfo.pipelineNo}"></span></option>-->
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span style="color: red;">*&nbsp;</span>工控屏别名:</label>
+            <div class="layui-input-inline">
+                <input type="text" name="boxAlias" id="boxAlias" lay-verify="required" placeholder="请输入工控屏别名,默认是安装位置" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+<script th:inline="javascript">
+    var networkPointInfoList = [[${networkPointInfoList}]]; // 加上th:inline="javascript" 在js中获取后台model中传的数据
+    var networkPipelineInfoList = [[${networkPipelineInfoList}]];
+    layui.use(['table','layer','form','laydate'],function () {
+        var table = layui.table,
+            layer = layui.layer,
+            form = layui.form;
+
+        form.on('select(facilityType)', function (data) {
+            var facilityType = data.elem[data.elem.selectedIndex].text;
+            console.info("facilityType:"+facilityType)
+            $("select[name='facilityNo']").html('');
+            $('select[name=\'facilityNo\']').append(new Option('请选择安装位置', '请选择安装位置'));
+            if(facilityType == '点位'){
+                $.each(networkPointInfoList,function (index,item) {
+                    $('select[name=\'facilityNo\']').append(new Option(item.pointNo, item.pointNo));
+
+                })
+
+            }else if(facilityType == '管线'){
+                $.each(networkPipelineInfoList,function (index,item) {
+                    $('select[name=\'facilityNo\']').append(new Option(item.pipelineNo, item.pipelineNo));
+                })
+            }
+            layui.form.render('select');
+            //没有写这个,操作后没有效果
+        });
+
+        form.on('select(facilityNo)', function (data) {
+            console.info(data);
+            var facilityNo = data.elem[data.elem.selectedIndex].text;//得到被选中的值
+            console.info("facilityNo:"+facilityNo)
+            $("#boxAlias").val(facilityNo);
+            layui.form.render('select');
+        });
+
+
+
+
+    })
+    function initModifyView(data) {
+        console.info("initModifyView")
+        console.info(data)
+        // if(data.facilityType == '管线'){
+        //     $("select[name='facilityNo']").html('');
+        //     $.each(networkPipelineInfoList,function (index,item) {
+        //         $('select[name=\'facilityNo\']').append(new Option(item.pipelineNo, item.pipelineNo));
+        //     })
+        // }
+        // $("select[name='facilityType']").val(data.facilityType);
+        // $("select[name='facilityNo']").val(data.facilityNo);
+
+
+        $('[name="boxNo"]').attr('readonly', 'readonly');
+        $('[name="boxNo"]').click(function () {
+            layer.tips('无法修改', '[name="boxNo"]', {
+                tips: [1, '#3595CC'],
+                time: 1000
+            });
+        });
+
+        $("#facilityTypeDiv").html('');
+        $("#facilityTypeDiv").html('  <input type="text" name="facilityType"  id="facilityType" lay-verify="required" placeholder="请输入设施类型" autocomplete="off" class="layui-input">\n')
+        $('[name="facilityType"]').val(data.facilityType)
+        $('[name="facilityType"]').attr('readonly', 'readonly');
+        $('[name="facilityType"]').click(function () {
+            layer.tips('无法修改', '[name="facilityType"]', {
+                tips: [1, '#3595CC'],
+                time: 1000
+            });
+        });
+        $("#facilityNoDiv").html('');
+        $("#facilityNoDiv").html('  <input type="text" name="facilityNo"  id="facilityNo" lay-verify="required" placeholder="请输入设施编号" autocomplete="off" class="layui-input">\n')
+        $('[name="facilityNo"]').val(data.facilityNo)
+        $('[name="facilityNo"]').attr('readonly', 'readonly');
+        $('[name="facilityNo"]').click(function () {
+            layer.tips('无法修改', '[name="facilityNo"]', {
+                tips: [1, '#3595CC'],
+                time: 1000
+            });
+        });
+
+        //重新渲染表单,只有执行了这一步，部分表单元素才会自动修饰成功
+        layui.form.render('select');
+
+    }
+
+</script>
+</html>

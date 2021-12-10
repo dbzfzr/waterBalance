@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta charset="UTF-8">
+    <title>事件详情</title>
+    <style>
+        table {
+            width: 100%;
+            text-align: center;
+            font-family: PingFang-SC-Regular;
+            font-size: 15px;
+            font-weight: normal;
+            font-stretch: normal;
+            line-height: 35px;
+            letter-spacing: 1px;
+            color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+    <table>
+          <tr>
+              <td>报警类型</td>
+              <td th:text="${alarmRecord.alarmType}"></td>
+          </tr>
+        <tr>
+            <td>报警站点</td>
+            <td th:text="${alarmRecord.alarmStation}"></td>
+        </tr>
+        <tr>
+            <td>报警详情</td>
+            <td th:text="${alarmRecord.alarmDescription}"></td>
+        </tr>
+        <tr>
+            <td>报警时间</td>
+            <td th:text="${alarmRecord.alarmTime}"></td>
+        </tr>
+        <tr>
+            <td>处理状态</td>
+            <td th:text="${alarmRecord.handleState}"></td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

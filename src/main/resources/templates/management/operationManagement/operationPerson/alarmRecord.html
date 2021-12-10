@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>运维人员查看的预警记录</title>
+    <script th:src="@{/webjars/jquery/3.5.1/jquery.js}"></script>
+    <script type="text/javascript" th:src="@{/webjars/layui/2.6.8/layui.js}"></script>
+    <script type="text/javascript" th:src="@{/js/myjs.js}"></script>
+    <link rel="stylesheet" th:href="@{/webjars/layui/2.6.8/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/css/layuiTable.css}">
+    <link rel="stylesheet" th:href="@{/css/layuiLayerNoIframe.css}">
+    <link rel="stylesheet" th:href="@{/css/layuiForm.css}">
+    <link rel="stylesheet" th:href="@{/css/alarmRecordCalendar.css}">
+    <style>
+        .layui-breadcrumb a:hover{
+            color: #01AAED !important;
+        }
+
+        table{
+            border-collapse: separate;
+            border-spacing: 1px;
+        }
+
+        .layui-table-tool-panel {
+            background-color: #14325B;
+        }
+
+        .layui-table-tool-panel li:hover{
+            background-color: #041634!important;
+        }
+
+        .layui-form-item .layui-input-inline {
+            float: left;
+            width: 4vw;
+            margin-right: 10px;
+        }
+
+        .layui-input, .layui-select {
+            height: 28px;
+            width: 10vw;
+            line-height: 28px;
+        }
+
+        .layui-laypage input {
+            color: #303030;
+        }
+
+        .layui-timeline {
+            padding-left: 3vw;
+        }
+
+        .layui-text h1, .layui-text h2, .layui-text h3 , .define-label{
+            color: #5AB8E3;
+
+        }
+
+        .layui-form-select dl {
+            height: 12vw;
+        }
+
+        .layui-layer-page {
+            color: #fafafa;
+            padding: 1vw 1vh;
+            /*background: rgba(0, 128, 255, 0.2) linear-gradient(175deg, rgba(0, 110, 255, 0.5) 0%, rgba(0, 110, 255, 0) 100%) !important;*/
+            background: rgba(3, 37, 72, 0.8)10% linear-gradient(175deg, rgba(0, 41, 78, 0.8) 50%, rgba(0, 76, 158, 0.8) 100%) !important;
+            border: 1px solid;
+            border-radius: 2px;
+            border-image: radial-gradient(circle, rgba(142, 174, 255, 1), rgba(142, 174, 255, 0.34), rgba(142, 174, 255, 0)) 1 1;
+            opacity: 0.8;
+        }
+        .layui-form-item  .layui-input-inline input{
+
+            background-image: url("../../image/homePage/filterbox.png");
+            font-weight: bold;
+            width: 140px !important;
+            border: 1px solid #1275DC;
+            color: #EEF1F3;
+        }
+
+        .layui-form-select .layui-edge{
+            background-image: url("../../image/section.png")!important;
+            width: 14px !important;
+            height: 20px !important;
+            top: 45% !important;
+            left: 112px;
+        }
+
+        .layui-btn{
+            border: 1px solid transparent!important;
+            background-color:rgba(25,65,25,0)!important;
+            /*color: #1998D4;*/
+            background: rgba(0, 128, 255, 0.2) linear-gradient(
+                    175deg, rgba(0, 110, 255, 0.5) 0%, rgba(0, 110, 255, 0) 100%);
+            border-image: radial-gradient(circle, rgba(142, 174, 255, 1), rgba(142, 174, 255, 0.34), rgba(142, 174, 255, 0)) 1 1;
+            box-shadow: 1px 1px rgba(2,18,50,0), 1px 1px rgba(2,18,50,0) inset;
+        }
+        input::-webkit-input-placeholder {
+            color: #dadada !important;
+        }
+        .layui-table-hover td{
+            background-color: rgba(30,159,255,0.1) !important;
+        }
+
+        .layui-table tbody tr:hover, .layui-table-hover{
+            background-color: rgba(30,159,255,0.1) !important;
+        }
+
+        .body{
+            background-color: rgba(1,11,33,0.5);
+        }
+
+        /*<!--table表格下分页css样式 -->*/
+        .layui-table-page>div {
+            margin-top: 2px;
+        }
+
+        .layui-table-page .layui-laypage span{
+            color:#FFFFFF !important;
+        }
+
+        .layui-table-page .layui-laypage input {
+            width: 40px;
+            background-color: #001F42 !important;
+        }
+        .layui-table-page .layui-laypage button{
+            background-color: #001F42 !important;
+        }
+
+        .layui-table-page .layui-laypage button, .layui-table-page .layui-laypage input{
+            color: #CCD3DF;
+            border: 1px solid #086FAF;
+        }
+
+        .layui-laypage a, .layui-laypage button, .layui-laypage input, .layui-laypage select, .layui-laypage span{
+            color:  #CCD3DF;
+            border:  1px solid #086FAF;
+        }
+
+        .layui-flow-more a *, .layui-laypage input, .layui-table-view select[lay-ignore]{
+            background-color: #001F42 !important;
+        }
+
+        .layui-table-page{
+            padding: 1px 7px 0;
+            background: rgba(0,31,66,0.5);
+            bottom: 40px;
+            left: 20px;
+        }
+
+        /*弹框信息css样式*/
+        .layui-text h3{
+            color:#EEF1F4 !important;
+        }
+        .define-label{
+            color:#EEF1F4 !important;
+        }
+
+        .layui-form-label{
+            padding: 2px 15px !important;
+        }
+
+        .layui-layer-page .layui-layer-title{
+            font-size: 18px;
+            margin-top: -17px;
+            border-bottom: 2px solid #176DE0;
+            background: rgba(8,67,160,1);
+            width: 82%;
+            margin-left:-8px;
+            border-top: 2px solid  #176DE0;
+        }
+        .layui-layer-page .layui-layer-setwin{
+            top:2.0vh !important;
+        }
+
+        .layui-timeline-item{
+            padding-bottom: 2px !important;
+        }
+
+        .layui-timeline-content{
+            padding-top: 16px !important;
+        }
+
+        /*处理按钮弹框css样式*/
+        .layui-layer-prompt .layui-layer-content{
+            width: 425px !important;
+        }
+
+        .layui-layer-content .layui-layer-input{
+            background: rgba(3,13,39,0.1) !important;
+            border: 1px solid #013063;
+            resize: none;
+            font-size: 15px;
+            color: #F8F9FB;
+        }
+
+        /*运维管理下拉框样式*/
+        .layui-form-select dl{
+            background-color: rgba(0,26,51,0.6)!important;
+            border: 1px solid #001A33;
+
+        }
+        .layui-form-select dl dd.layui-this{
+            background-image: url("../../image/homePage/filterbox.png")!important;
+            background-color: rgba(25,66,55,0) !important;
+        }
+
+        .layui-table-box{
+            left: 20px;
+        }
+    </style>
+</head>
+<body class="body">
+<script>
+    //获取最顶层父页面的body
+    var parentBody = window.parent.parent.document.body;
+    parentBody.style="background-image:url(\'../image/management_Center/backgroundPicture.png\')";
+</script>
+
+<!--<ul id="handleStateBlock">-->
+<!--    <li class="handleState">全部  <span id="alarmRecordTotal" class="handleStateCount">0</span></li>-->
+<!--    <li class="handleState">未处理<span id="alarmRecordNoHandle" class="handleStateCount">0</span></li>-->
+<!--    <li class="handleState">处理中<span id="alarmRecordDealing" class="handleStateCount">0</span></li>-->
+<!--    <li class="handleState">已处理<span id="alarmRecordHandled" class="handleStateCount">0</span></li>-->
+<!--</ul>-->
+<div class="layui-form" style="display: flex;
+            justify-content: space-between;margin-top: 15vh;margin-right: 40vw;" lay-filter="queryCondition">
+
+    <div class="layui-form-item" >
+        <div class="layui-input-inline" style="width: 4vw;left: 40px;">
+            <input style="width: 18vw;" id="timeSelect" name="timeSelect" type="text"  placeholder="报警时间" class="layui-input" autocomplete="off">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-inline div-select" >
+            <select name="alarmType"  >
+                <option value="">预警类型</option>
+                <option value="设备故障">设备故障</option>
+            </select>
+        </div>
+    </div>
+
+<!--    <div class="layui-form-item">-->
+<!--        <div class="layui-input-inline div-select" >-->
+<!--            <select  name="alarmLevel" >-->
+<!--                <option value="">预警级别</option>-->
+<!--                <option value="红色">红色</option>-->
+<!--                <option value="黄色">黄色</option>-->
+<!--                <option value="橙色">橙色</option>-->
+<!--            </select>-->
+<!--        </div>-->
+<!--    </div>-->
+
+    <div class="layui-form-item">
+        <div class="layui-input-inline div-select" >
+            <select name="handleState"  >
+                <option value="">处置状态</option>
+                <option value="未处理">未处理</option>
+                <option value="处理中">处理中</option>
+                <option value="已处理">已处理</option>
+            </select>
+        </div>
+    </div>
+
+    <button id="search" style="background-color:rgba(1,30,65,0.3);width:32px;height:32px;border: 1px solid #0E417A"><i class="layui-icon" style="color: #E6EEFF ; font-size: 20px" >&#xe615;</i></button>
+
+</div>
+<div style="margin-top: 1vh;">
+    <table id="alarmRecordTable" cellspacing="1" lay-filter="alarmRecordTable"></table>
+</div>
+
+<!--报警记录信息弹窗 -->
+<div id="alarmRecordDetail" style="display: none;">
+    <ul class="layui-timeline">
+        <li class="layui-timeline-item">
+            <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
+            <div class="layui-timeline-content layui-text">
+                <h3 class="layui-timeline-title">预警<span id="alarmTime" style="color:#FAFAFA;"></span></h3>
+            </div>
+
+            <div class="layui-form">
+                <div class="layui-form-item">
+                    <label class="layui-form-label define-label" >事件类型 :</label>
+                    <label class="layui-form-label" id="alarmType" style="margin-left: -75px;font-size: 15px"></label>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label define-label">预警站点 :</label>
+                    <label class="layui-form-label" id="alarmStation" style="margin-left: -25px;font-size: 15px;width:255px;text-align: left"></label>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label define-label">预警详情 :</label>
+                    <label class="layui-form-label" id="alarmDescription" style="text-align:left; margin-left: -25px;font-size: 15px;width: 64%"></label>
+                </div>
+            </div>
+        </li>
+        <li class="layui-timeline-item">
+            <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
+            <div class="layui-timeline-content layui-text">
+                <h3 class="layui-timeline-title">下派</h3>
+            </div>
+            <div class="layui-form" lay-filter="user">
+                <div class="layui-form-item">
+                    <label class="layui-form-label define-label">派单状态 :</label>
+                    <label class="layui-form-label" id="alarmDispatchType" style="margin-left: -25px;font-size: 15px;width: 60%;text-align: left;"></label>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label define-label">下派说明 :</label>
+                    <div class="layui-input-inline" style="width: 18vw;">
+                        <textarea name="dispatchDescription" class="layui-input" autocomplete="off" style="width: 210px;height: 100px;
+                                    background-color: #002B5A;margin-left: 130px; margin-top: -25px;border: 1px solid #0050A8;resize: none">
+
+                        </textarea>
+                    </div>
+                </div>
+
+                <button id="confirmDispatchBtn" class="layui-btn">确认收到</button>
+                <button id="handleBtn" class="layui-btn layui-hide" style="font-size: 18px;">处理</button>
+            </div>
+        </li>
+    </ul>
+</div>
+
+</body>
+<script>
+    $(function () {
+        $(window.parent.$(".layui-nav-item .layui-nav-child").children()[0]).addClass('layui-this');//选中'报警记录'菜单
+        $(window.parent.$(".layui-nav-item")[0]).addClass("layui-nav-itemed")//默认打开设备导航栏
+
+    });
+    // $(function () {
+    //      $.ajax({
+    //          url: 'statisticAlarmHandleStateCount',
+    //          success:function (res) {
+    //              for (var i=0; i<res.length; i++){
+    //                  if (res[i].handleState == 'total'){
+    //                      $("#alarmRecordTotal").text(res[i].recordCount);
+    //                  }
+    //
+    //                  if (res[i].handleState == '未处理'){
+    //                      $("#alarmRecordNoHandle").text(res[i].recordCount);
+    //                  }
+    //
+    //                  if (res[i].handleState == '处理中'){
+    //                      $("#alarmRecordDealing").text(res[i].recordCount);
+    //                  }
+    //
+    //                  if (res[i].handleState == '已处理'){
+    //                      $("#alarmRecordHandled").text(res[i].recordCount);
+    //                  }
+    //              }
+    //          }
+    //      })
+    // })
+</script>
+<!-- 操作栏 -->
+<!--<script type="text/html" id="recordBar">-->
+<!--    <a class="layui-btn layui-btn-xs" lay-event="view" style="background-color: #1E9FFF;"><i class="layui-icon">&#xe642;</i>查看详情</a>-->
+<!--</script>-->
+<script type="text/html" id="No.">
+    {{d.LAY_TABLE_INDEX+1}}
+</script>
+<script>
+    var table,layer;
+    var tableIndex;
+    var form
+
+    var selectedAlarmRecord;
+    var layerIndex;
+
+    layui.use(['table', 'form', 'layer', 'laydate'], function () {
+        table = layui.table;
+        layer = layui.layer;
+
+        form = layui.form;
+
+        var laydate = layui.laydate;
+
+        // 双控件
+        laydate.render({
+            elem: '#timeSelect' //指定元素
+            ,type: 'datetime'
+            ,trigger: 'click'
+            ,range: '~' //开启日期范围，默认使用“-”分割
+            ,max: DateUtil.dateformat(new Date(),"yyyy-MM-dd 23:59:59")
+        });
+        //用户信息表
+        tableIndex = table.render({
+            elem: '#alarmRecordTable'
+            ,title:'报警记录'
+            , url: 'getAlarmRecordList' //数据接口
+            ,defaultToolbar:["filter", "exports", "print"]
+            ,where:{}
+            , page: true //开启分页
+            ,skin: 'nob'// 无边框风格
+            ,method: "post"
+            ,height: 'full-180'
+            ,even: true //开启隔行背景
+            ,page:true
+            ,limits:[5, 10, 20]
+            ,event:true
+            , contentType: 'application/json'
+            , cols: [
+                [ //表头
+                    {field: 'id', title: 'ID', width: 80, sort: true, hide: true},
+                    {field: 'No.',fixed:'left', title: '序号', width: 80, type:'numbers' }
+                    , {field: 'alarmStation', title: '报警站点',width: 160}
+                    , {field: 'alarmDescription', title: '报警详情',width: 210}
+                    , {field: 'alarmType', title: '报警类型', align: "center", sort: true, width: 120,}
+                    , {field: 'alarmDevCode', title: '报警设备编码', event: 'row', align: 'center',width:160}
+                    , {field: 'alarmValue', title: '报警数值', event: 'row', align: 'center', width: 100}
+                    , {field: 'handleResult', title: '处理结果', event: 'row', align: 'center', width: 100}
+                    , {field: 'alarmTime', title: '报警时间', event: 'row', align: 'center', sort: true, width: 200}
+                    , {field: 'updateTime', title: '更新时间', event: 'row', align: 'center', sort: true, width: 200}
+                    , {fixed:'right', title:'操作', align:"center",templet:function (res) {
+                        if (res.handleState == "未处理"){
+                            return '<a class="layui-btn layui-btn-xs" lay-event="confirm"  style="background-color: #1E9FFF;"><i class="layui-icon">&#xe642;</i>确认收到</a>' +
+                                '<a class="layui-btn layui-btn-xs" lay-event="view"  style="background-color: #1E9FFF;"><i class="layui-icon">&#xe642;</i>查看</a>';
+                        }
+                        if (res.handleState == "处理中"){
+                            return '<a class="layui-btn layui-btn-xs" lay-event="view"  style="background-color: #1E9FFF;"><i class="layui-icon">&#xe642;</i>查看</a>' +
+                            '<a class="layui-btn layui-btn-xs" lay-event="handle"  style="background-color: #1E9FFF;"><i class="layui-icon">&#xe642;</i>处理</a>';
+                        }
+
+                        if (res.handleState == '已处理') {
+                            return '<p style="color:#4AC4FD">已处理</p>';
+                        }
+                    }}
+                ]
+            ]
+            , done: function (res, curr, count) {
+            }
+        });
+
+        //操作栏事件
+        table.on('tool(alarmRecordTable)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+            var data = obj.data; //获得当前行数据
+            var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+            switch (layEvent) {
+                case 'view':
+                    viewInfo(data);
+                    break;
+                case 'confirm':
+                    confirmDispatch(data);
+                    break;
+                case 'handle':
+                    handleAlarmRecord(data);
+                    break;
+            }
+        });
+
+        // 清空报警信息弹窗的内容
+        function clearAlarmDetailLayer() {
+            $("#alarmTime").text("");
+            $("#alarmType").text("");
+            $("#alarmStation").text("");
+            $("#alarmDescription").text("");
+            $("#alarmDispatchType").text("");
+        }
+
+        // 查看详情
+        function viewInfo(data){
+            clearAlarmDetailLayer();
+
+            $("#alarmStation").text(data.alarmStation);
+            $("#alarmTime").text(data.alarmTime);
+            $("#alarmType").text(data.alarmType);
+            $("#alarmDescription").text(data.alarmDescription);
+            $("#alarmDispatchType").text("自动派单");
+            selectedAlarmRecord = data;
+
+            if (data.handleState == "未处理"){
+                $("#handleBtn").addClass("layui-hide");
+            }
+
+            if (data.handleState == "处理中"){
+                $("#confirmDispatchBtn").addClass("layui-hide");
+                $("#handleBtn").removeClass("layui-hide");
+            }
+
+            if (data.handleState == "已处理"){
+                $("#confirmDispatchBtn").addClass("layui-hide");
+                $("#handleBtn").addClass("layui-hide");
+            }
+
+            layerIndex = layer.open({
+                type: 1,
+                area: ['468px', '540px'],
+                title:'事件详情',
+                content: $('#alarmRecordDetail')
+            })
+        }
+
+        // 确认收到派单
+        function confirmDispatch(data){
+           var json = {};
+           json.userId = parent.user.userId;
+           json.alarmRecordId = data.id;
+
+           $.ajax({
+               url: 'confirmDispatch',
+               type: 'post',
+               data:JSON.stringify(json),
+               contentType:'application/json',
+               success:function (res) {
+                   if (res.code > 0){
+                       layer.msg("确认成功");
+                       tableIndex.reload();
+                       if (layerIndex > 0){
+                           layer.close(layerIndex);
+                       }
+                   }else{
+                       layer.msg("确认失败");
+                   }
+               }
+           })
+        }
+
+        $("#confirmDispatchBtn").click(function () {
+             confirmDispatch(selectedAlarmRecord);
+        })
+
+        $("#handleBtn").click(function () {
+            handleAlarmRecord(selectedAlarmRecord);
+        })
+
+        function handleAlarmRecord(data) {
+            layer.prompt({
+                formType: 2,
+                title: '请输入处理结果',
+                area: ['300px', '240px'] //自定义文本域宽高
+            }, function(value, index, elem){
+                layer.close(index);
+
+                var json = {};
+                json.userId = parent.user.userId;
+                json.alarmRecordId = data.id;
+                json.handleResult = value;
+
+                $.ajax({
+                    url: 'handleDispatchAlarm',
+                    type: 'post',
+                    data:JSON.stringify(json),
+                    contentType:'application/json',
+                    success:function (res) {
+                        if (res.code > 0){
+                            layer.msg("处理成功");
+                            tableIndex.reload();
+                            if (layerIndex > 0){
+                                layer.close(layerIndex);
+                            }
+                        }else{
+                            layer.msg("处理失败");
+                        }
+                    }
+                })
+            });
+        }
+
+        // 搜索
+        $("#search").click(function () {
+            var data = form.val("queryCondition");
+            var json = {}
+
+            if (data.timeSelect != ""){
+                var timeArray = data.timeSelect.split("~");
+                var queryStartTime = timeArray[0].substring(0, timeArray[0].length);
+                var queryEndTime = timeArray[1].substring(1);
+                json.queryStartTime = queryStartTime;
+                json.queryEndTime = queryEndTime;
+            }
+
+            if (data.alarmType != ""){
+                json.alarmType = data.alarmType;
+            }
+
+            // if (data.alarmLevel != ""){
+            //     json.alarmLevel = data.alarmLevel;
+            // }
+            if (data.handleState != ""){
+                json.handleState = data.handleState;
+            }
+            tableIndex.reload({
+                where:json,
+                page: {
+                    curr:1  //重新从第 1 页开始
+                }
+            });
+        })
+    });
+</script>
+</html>

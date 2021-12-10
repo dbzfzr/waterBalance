@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <!--项目名称-->
+    <projectName>智慧管网水平衡系统</projectName>
+	
+		<!--雨污分流_子系统-->
+    <yuwufenliuName>智慧管网_雨污分流可视化</yuwufenliuName>
+	    <!--油水分离_子系统-->
+	<youshuifenliName>智慧管网_油水分离可视化</youshuifenliName>
+
+    <!--三维模型数据host地址 20211018 Wangchong-->
+    <gisModelHost>http://112.124.16.160:9000</gisModelHost>
+
+    <!--20211207 Wangchong 多长时间未收到在线消息 繁易屏设备设置为离线状态 默认6分钟-->
+    <howLongNoReceiveOnlineMessageSetFlexemOffline>360000</howLongNoReceiveOnlineMessageSetFlexemOffline>
+</config>

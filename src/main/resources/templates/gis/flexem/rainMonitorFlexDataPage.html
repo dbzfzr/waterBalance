@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta charset="UTF-8">
+    <title>雨水监测点</title>
+
+    <style>
+        table {
+            width: 100%;
+            text-align: center;
+            font-family: PingFang-SC-Regular;
+            font-size: 15px;
+            font-weight: normal;
+            font-stretch: normal;
+            line-height: 35px;
+            letter-spacing: 1px;
+            color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+<!--<div th:if="${ rainMonitorFlexData == null}"><h3>无数据</h3></div>-->
+<div th:if="${ flexState != null}">
+    <table cellspacing="1" style="color: #FAFAFA;">
+
+        <!--    <tr>-->
+        <!--        <td>设备编号</td>-->
+        <!--        <td th:text="${flexState.boxNo}"></td>-->
+        <!--    </tr>-->
+        <!--    <tr>-->
+        <!--        <td>系统类型</td>-->
+        <!--        <td >雨水监测点</td>-->
+        <!--    </tr>-->
+        <tr>
+            <td>在线状态</td>
+            <!--        <td th:text="${flexState.flexemOnlineSta eq 1 ? '在线': '离线'}"></td>-->
+            <th:block th:switch="${flexState.flexemOnlineSta}">
+                <td th:case="1" style="color: #5FB878;">在线</td>
+                <td th:case="0" style="color: #FF5722;">离线</td>
+            </th:block>
+        </tr>
+
+        <tr>
+            <td>信号强度</td>
+            <!--        <td th:text="${flexState.flexemWireless}"></td>-->
+            <!--        <td><img th:src="@{/image/management/4G_1.png}" /></td>-->
+            <th:block>
+                <td th:if="${flexState.flexemWireless gt 0 and flexState.flexemWireless le 2}"><img
+                        th:src="@{/image/management/4G_1.png}"/></td>
+                <td th:if="${flexState.flexemWireless gt 2 and flexState.flexemWireless le 4}"><img
+                        th:src="@{/image/management/4G_2.png}"/></td>
+                <td th:if="${flexState.flexemWireless gt 4 and flexState.flexemWireless le 6}"><img
+                        th:src="@{/image/management/4G_3.png}"/></td>
+                <td th:if="${flexState.flexemWireless gt 6}"><img th:src="@{/image/management/4G_4.png}"/></td>
+            </th:block>
+        </tr>
+
+        <th:block th:if="${ flexState.flexemOnlineSta eq 1}">
+            <tr>
+                <td>水质仪</td>
+                <!--        <td th:text="${flexState.flexemOnlineSta eq 1 ? '在线': '离线'}"></td>-->
+                <th:block th:switch="${flexState.waterQualityMeterState}">
+                    <td th:case="1" style="color: #5FB878;">正常</td>
+                    <td th:case="0" style="color: #FF5722;">故障</td>
+                </th:block>
+            </tr>
+
+            <tr>
+                <td>液位计</td>
+                <!--        <td th:text="${flexState.flexemOnlineSta eq 1 ? '在线': '离线'}"></td>-->
+                <th:block th:switch="${flexState.liquidLevelMeterState}">
+                    <td th:case="1" style="color: #5FB878;">正常</td>
+                    <td th:case="0" style="color: #FF5722;">故障</td>
+                </th:block>
+            </tr>
+            <tr>
+                <td>流量计</td>
+                <!--        <td th:text="${flexState.flexemOnlineSta eq 1 ? '在线': '离线'}"></td>-->
+                <th:block th:switch="${flexState.flowMeterState}">
+                    <td th:case="1" style="color: #5FB878;">正常</td>
+                    <td th:case="0" style="color: #FF5722;">故障</td>
+                </th:block>
+            </tr>
+
+            <tr>
+                <td>雨量计</td>
+                <!--        <td th:text="${flexState.flexemOnlineSta eq 1 ? '在线': '离线'}"></td>-->
+                <th:block th:switch="${flexState.rainGaugeState}">
+                    <td th:case="1" style="color: #5FB878;">正常</td>
+                    <td th:case="0" style="color: #FF5722;">故障</td>
+                </th:block>
+            </tr>
+        </th:block>
+
+        <tr th:if="${ flexState.flexemOnlineSta eq 0}">
+            <td>离线时间</td>
+            <td style="color: #FF5722;" th:text="${flexState.updateTime}"></td>
+        </tr>
+
+        <th:block th:if="${flexState.flexemOnlineSta eq 1 and rainMonitorFlexData != null}">
+            <tr>
+                <td>水温</td>
+                <td th:text="${rainMonitorFlexData.waterTemperature} + '℃'"></td>
+            </tr>
+
+            <tr>
+                <td>氨氮</td>
+                <td th:text="${rainMonitorFlexData.ammoniaNitrogen} + 'mg/L'"></td>
+            </tr>
+            <tr>
+                <td>化学需氧量</td>
+                <td th:text="${rainMonitorFlexData.cod} + 'mg/L'"></td>
+            </tr>
+            <tr>
+                <td>电导率</td>
+                <td th:text="${rainMonitorFlexData.conductivity} + 'S/m'"></td>
+            </tr>
+            <tr>
+                <td>酸碱度</td>
+                <td th:text="${rainMonitorFlexData.ph}"></td>
+            </tr>
+            <tr>
+                <td>固体悬浮物</td>
+                <td th:text="${rainMonitorFlexData.suspendedSolid}"></td>
+            </tr>
+            <tr>
+                <td>浊度</td>
+                <td th:text="${rainMonitorFlexData.turbidity} + ' NTU'"></td>
+            </tr>
+            <tr>
+                <td>液位</td>
+                <td th:text="${rainMonitorFlexData.liquidLevel}"></td>
+            </tr>
+            <tr>
+                <td>流量</td>
+                <td th:text="${rainMonitorFlexData.currentFlow}"></td>
+            </tr>
+            <tr>
+                <td>雨量</td>
+                <td th:text="${rainMonitorFlexData.currentRainfall}"></td>
+            </tr>
+        </th:block>
+    </table>
+</div>
+</body>
+</html>

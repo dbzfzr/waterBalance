@@ -1,0 +1,241 @@
+<!-- 通用JS -->
+
+<div th:fragment="footer" xmlns:th="">
+    <!-- layui 图表扩展css-->
+    <script th:src="@{/webjars/jquery/3.5.1/jquery.js}"></script>
+    <script>
+        $(function () {
+            $('.layui-side.layui-bg-black').find('dd').find('a').css('padding-left', '36px');
+
+            var t = null;
+            t = setTimeout(time, 1);//開始运行
+            function time() {
+                clearTimeout(t);//清除定时器
+                dt = new Date();
+                var year = dt.getFullYear();
+                var month = dt.getMonth() + 1;//(0-11,0代表1月)
+                var date = dt.getDate();//获取天
+                var num = dt.getDay();//获取星期
+                var weekday = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
+                var hour = dt.getHours();//获取时
+                var minute = dt.getMinutes();//获取分
+                var second = dt.getSeconds();//获取秒
+                //分秒时间是一位数字，在数字前补0。
+                date = extra(date);
+                month = extra(month);
+                minute = extra(minute);
+                second = extra(second);
+                var type;
+                if(hour>12){
+                    type='PM';
+                }else{
+                    type='AM';
+                }
+                // document.getElementById("start").innerHTML = year + " . " + month + " . " + date + '\xa0\xa0' +type + " "+ hour + "：" + minute + "：" + second + " " + weekday[num];
+
+                if(document.getElementById("realTime")!=null){
+                    document.getElementById("realTime").innerHTML = year + "." + month + "." + date + '\xa0\xa0' + hour + ":" + minute + ":" + second + '\xa0\xa0' + weekday[num];
+                    t = setTimeout(time, 1000); //设定定时器，循环运行
+                }
+            }
+
+            console.info("include 初始化")
+        });
+
+        //补位函数。
+        function extra(x) {
+            //如果传入数字小于10，数字前补一位0。
+            if (x < 10) {
+                return "0" + x;
+            }
+            else {
+                return x;
+            }
+        }
+
+        function modifyPSW() {
+            layer.open({
+                type: 2,
+                zIndex: 999,
+                offset: 'rt',
+                title: '修改密码',
+                area: ['360px', '360px'],
+                content: ['user/newPWDView', 'no'],
+                // content: 'devInfoManager/add',
+                btn: ['确认', '取消']
+                , yes: function (index, layero) {
+                    var body = layer.getChildFrame('body', index);
+                    var form = body.find('#form');
+                    var data = formUtilEL.serializeObject(form);
+                    for (var key in data) {
+                        console.log(key, data[key]);
+                        if (data[key] == '') {
+                            layer.msg(body.find('[name="' + key + '"]').attr('placeholder'));
+                            /*layer.open({
+                                type: 4,
+                                content: body.find('[name="' + key + '"]').attr('placeholder'),
+                            })*/
+                            return;
+                        }
+                    }
+
+                    console.log(data.password.length<6);
+                    console.log(data.newPassword.length<6);
+                    if((data.password.length < 6) || (data.newPassword.length < 6)){
+                        console.log('密码不足6位');
+                        /*layer.open({
+                            type: 4,
+                            zIndex: 999,
+                            offset: 't',
+                            area: ['160px', '60px'],
+                            content: '密码不足6位',
+                        })*/
+                        MyUtil.msg('密码不足6位');
+                        return;
+                    }
+
+                    if(data.newPassword != data.confirmPassword){
+                        /*layer.open({
+                            type: 4,
+                            zIndex: 999,
+                            offset: 't',
+                            area: ['160px', '60px'],
+                            content: '确认密码与新密码不一致',
+                        })*/
+                        MyUtil.msg('确认密码与新密码不一致');
+                        return;
+                    }
+
+                    if(data.password == data.newPassword){
+                        /*layer.open({
+                            type: 4,
+                            zIndex: 999,
+                            offset: 't',
+                            area: ['160px', '60px'],
+                            content: '新密码不能与旧密码相同',
+                        })*/
+                        MyUtil.msg('新密码不能与旧密码相同');
+                        return;
+                    }
+                    var loading = layer.load(1, {shade: [0.1, '#fff']});
+                    $.post('updatePassword',data,function (res) {         //post提交数据
+                        console.log("res.code=" + res.code) //object
+                        if(res.code > 0){
+                            layer.close(index);
+                            // reloadTB();       //重载表格
+                            $.post('logout', function (res) {
+                                layer.close(loading);
+                                layer.msg('退出成功', {time: 800}, function () {
+                                    window.location.href = "index"
+                                })
+                            }).fail(function (xhr) {
+                                layer.msg('退出失败 ' + xhr.status);
+                            }).always(function () {
+                                layer.close(loading);
+                            })
+                        }
+                        layer.msg(res.message);
+                    }).fail(function (xhr) {
+                        layer.msg('添加失败 '+xhr.status);
+                    }).always(function () {
+                        layer.close(loading);
+                    })
+                }
+            })
+        }
+        function exit() {
+            layer.confirm("确认退出登录？",
+                {icon: 3, title: "", closeBtn: false,offset: '100px'}, function (index) {
+                    var loading = layer.load(1);
+                    $.post('logout', function (res) {
+                        layer.close(loading);
+                        layer.msg('退出成功', {time: 800}, function () {
+                            window.location.href = "/"
+                        })
+                    }).fail(function (xhr) {
+                        layer.msg('退出失败 ' + xhr.status);
+                    }).always(function () {
+                        layer.close(loading);
+                    })
+                    layer.close(index);
+                }
+            );
+
+        }
+
+        function getDatetime(Date) {
+            var d =  Date;
+            var year = d.getFullYear();
+            var month = change(d.getMonth() + 1);
+            var day = change(d.getDate());
+            var hour = change(d.getHours());
+            var minute = change(d.getMinutes());
+            var second = change(d.getSeconds());
+
+            function change(t) {
+                if (t < 10) {
+                    return "0" + t;
+                } else {
+                    return t;
+                }
+            }
+
+            var time = year + '-' + month + '-' + day + ' '
+                + hour + ':' + minute + ':' + second;
+            return time;
+        }
+
+        function render() {
+            layui.use('element', function(){
+                var element = layui.element
+
+                element.render("#menuUl")
+            });
+        }
+    </script>
+
+</div>
+
+<!-- layui -->
+<div th:fragment="header(title)" xmlns:th="http://www.w3.org/1999/xhtml">
+    <title th:text="${title}"></title>
+    <meta http-equiv="content-type" content="text/event-stream">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <link rel="icon" th:href="@{/hk/image/logo.ico}" href="/assert/hk/image/logo.ico" type="image/x-icon"/>
+    <script type="text/javascript" th:src="@{/webjars/layui/2.6.8/layui.js}"></script>
+    <link rel="stylesheet" th:href="@{/webjars/layui/2.6.8/css/layui.css}">
+
+    <base th:href="@{${#request.getScheme()}+'://'+${#request.getServerName()}+':'+${#request.getServerPort()}+${#request.getContextPath()}+'/'}">
+
+    <!--DIY-->
+    <link rel="stylesheet" type="text/css" th:href="@{/css/include.css}">
+</div>
+
+<!-- 左侧菜单 -->
+<div th:fragment="menus" xmlns:th="">
+    <div id="menuLine" class="layui-header" style="padding-left: 0px;width:230px;position:fixed;bottom:0px;height:100%;background-color: #041634!important;overflow-y: auto;
+transition: all ease-in-out .5s;">
+    </div>
+
+    <div style="margin-left:230px;background-color: #041634;height:60px;">
+<!--        <button class="layui-nav-item" id="hideMenu" style="width: 30px;height:30px;">hide</button>-->
+        <!-- 头部区域（可配合layui已有的水平导航） -->
+        <ul class="layui-nav"
+            style="background-color: #041634;z-index: 9999;position: absolute;top:0px;right:20px;">
+
+
+            <li class="layui-nav-item" ><a class="realTime" id="realTime" style="font-family: Microsoft YaHei; font-size: 16px; font-weight: 400;"></a></li>
+            <li class="layui-nav-item"  th:Object="${session.users}">
+                <a href="javascript:;">[[*{userName}]]</a>
+                <dl class="layui-nav-child">
+                    <dd id="modifyPSW" onclick="modifyPSW()"><a>修改密码</a></dd>
+                    <dd><a class="quit"  onclick="exit()">退出登录</a></dd>
+                </dl>
+            </li>
+        </ul>
+    </div>
+</div>
+

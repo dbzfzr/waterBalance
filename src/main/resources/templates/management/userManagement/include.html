@@ -1,0 +1,53 @@
+<!-- 左侧菜单 -->
+<div th:fragment="menus" xmlns:th="http://www.w3.org/1999/xhtml">
+
+    <div id="menuLine" class="layui-header" style="padding-left: 0px;width:205px;position:fixed;bottom:0px;height:100%;background-color: rgba(4,22,52,0.3)!important;overflow-y: auto;
+transition: all ease-in-out .5s;">
+        <div onmouseover="show(this,'')" >
+            <p style="line-height:60px;font-size: 18px;font-family: 'PangMenZhengDao-3';font-weight: 400;color: #D3EBFF;opacity: 0.5;" id="a" th:text="${projectName}"></p>
+            <ul class="layui-nav layui-nav-tree " lay-shrink="all" lay-filter="test" >
+                <li class="layui-nav-item " >
+                    <a href="userManagement" target="content"><i class="layui-icon" ><img src="../image/umbrella.png"></i><span >用户管理</span></a>
+                </li>
+                <li class="layui-nav-item ">
+                    <a   href="roleManagement" target="content"><i class="layui-icon" ><img src="../image/umbrella.png"></i><span>角色管理</span></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <script>
+
+        //导航栏悬停效果
+        function show(obj,id) {
+            var left = (obj.offsetWidth-32)/2 + obj.offsetLeft+'px';//鼠标位置
+            if(obj.classList.contains('layui-nav')||obj.classList.contains('layui-nav-item')){
+                $(".header-item-checked").css({'left':left,'opacity':1})
+            }else {
+                $(".header-item-checked").css({'opacity':0})
+            }
+        }
+        //导航栏点击效果
+        function clicked(obj,id) {
+            var itemNum = 0;
+            $.each($("#"+id+"").parent().children(),function (index,item) {
+                itemNum++;
+            })
+            for(var i=1; i<itemNum; i++){
+                var otherId = "li"+i+"";
+                if(otherId != id){
+                    $("#"+otherId+" .first-item").css("opacity",0.5)
+                }
+            }
+            $("#"+id+" .first-item").css("opacity",1)
+        }
+    </script>
+</div>
+
+<div th:fragment="header(title)" xmlns:th="http://www.w3.org/1999/xhtml">
+    <script th:src="@{/webjars/jquery/3.5.1/jquery.js}"></script>
+    <script type="text/javascript" th:src="@{/webjars/layui/2.6.8/layui.js}"></script>
+    <script th:src="@{/js/formUtil.js}"></script>
+    <link rel="stylesheet" th:href="@{/webjars/layui/2.6.8/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/css/layuiTable.css}">
+    <link rel="stylesheet" th:href="@{/css/layuiLayer.css}">
+</div>

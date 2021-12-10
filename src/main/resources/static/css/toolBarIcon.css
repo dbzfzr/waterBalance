@@ -1,0 +1,150 @@
+/*.layui-table-tool-self{*/
+
+/*}*/
+
+.layui-icon-cols:before {
+
+    content: url("../image/toolBarIcon/filterIcon.png");
+}
+
+.layui-icon-export:before{
+
+    content: url("../image/toolBarIcon/exportIcon.png");
+}
+
+.layui-icon-print:before{
+    content: url("../image/toolBarIcon/printIcon.png");
+}
+
+.layui-table-tool .layui-inline[lay-event]{
+    border: none;
+    padding: 2px;
+
+}
+
+.layui-table-tool .layui-inline[lay-event]{
+    width: 37px;
+    height: 36px;
+}
+
+.layui-table-page .layui-laypage span{
+    color:#FFFFFF !important;
+}
+
+.layui-table-page .layui-laypage input {
+    width: 40px;
+    background-color: #001F42 !important;
+}
+.layui-table-page .layui-laypage button{
+    background-color: #001F42 !important;
+}
+
+.layui-table-page .layui-laypage button, .layui-table-page .layui-laypage input{
+    color: #CCD3DF;
+    border: 1px solid #086FAF !important;
+}
+
+.layui-laypage a, .layui-laypage button, .layui-laypage input, .layui-laypage select, .layui-laypage span{
+    color:  #CCD3DF;
+    border:  1px solid #086FAF;
+}
+
+.layui-flow-more a *, .layui-laypage input, .layui-table-view select[lay-ignore]{
+    background-color: #001F42 !important;
+    border: 1px solid #086FAF;
+
+}
+
+.layui-table-page{
+    padding: 1px 7px 0;
+    background: rgba(0,31,66,0.5);
+
+
+}
+
+.layui-table-page .layui-laypage{
+    margin-top: 3px;
+}
+
+
+
+/*table表格鼠标hover显示的背景样式*/
+.layui-table-hover td{
+    background-color: rgba(30,159,255,0.1) !important;
+}
+
+.layui-table tbody tr:hover, .layui-table-hover{
+    background-color: rgba(30,159,255,0.1) !important;
+}
+
+
+/*table右上角三个图标css样式*/
+.layui-table-tool .layui-table-tool-self .layui-table-tool-panel{
+    background-color: rgba(2,20,53,0.5);
+    border: 1px solid #061E46;
+}
+.layui-form-checkbox[lay-skin=primary] span{
+    color: #ECEEF3;
+}
+
+.layui-table-tool-panel li:hover{
+    background-color: rgba(76,120,200,0.5);
+}
+
+/*table表格右上角三个按钮弹框css样式*/
+.layui-form-checkbox[lay-skin=primary] i{
+    background:url("../image/treeIcon/organizatinTreeCheckButton.png") !important;
+    border-color: rgba(19,92,193,0) !important;
+}
+.layui-form-checked[lay-skin=primary] i{
+    background: url("../image/treeIcon/organizatinTreeCheckButton1.png")!important;
+    border-color: rgba(19,92,193,0) !important;
+}
+.layui-form-checkbox[lay-skin=primary] i:hover{
+    border-color: rgba(19,92,193,0) !important;
+}
+.layui-icon-ok:before{
+    content: none !important;
+}
+
+/*!*编辑弹框css样式*!*/
+.layui-layer-title{
+    background: #115BC6 !important;
+    color: #F6F8FA !important;
+    border-top: 1px solid #F6F8FA !important;
+    border-bottom: 1px solid #115BC6 !important;
+    font-size: 17px !important;
+}
+.layui-layer-btn{
+    background: #115BC6;
+    position: relative;
+    /*width: 97%;*/
+    /*left: -8px;*/
+   /* bottom: 3px;*/
+}
+
+.layui-layer-btn .layui-layer-btn0{
+
+    background-image: url("../image/toolBarIcon/antframe.png")!important;
+    background-color: #115BC6 !important;
+    border-image: url("../image/toolBarIcon/antframe1.png");
+    position: relative;
+    /*top: 5px;*/
+
+}
+.layui-layer-btn a{
+    background-image: url("../image/toolBarIcon/antframe.png")!important;
+    border-image: url("../image/toolBarIcon/antframe1.png");
+    background-color: #115BC6 !important;
+    color: #F6F8FB !important;
+    position: relative;
+    /*top: 5px;*/
+}
+.layui-layer-dialog .layui-layer-content{
+    background: #114496 !important;
+    color: #F6F8FB;
+}
+
+
+
+

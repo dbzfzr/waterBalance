@@ -1,0 +1,57 @@
+/*报警时间-更新时间日历样式*/
+.layui-laydate, .layui-laydate-hint{
+
+    border: 1px solid #162B62 !important;
+    box-shadow: 0 2px 4px rgb(0 0 0 / 12%) !important;
+    background-color: #162B62 !important;
+    color: #ffffff !important;
+}
+
+.layui-laydate-header i{
+    color: #ffffff !important;
+}
+
+.layui-laydate-range .laydate-main-list-1 .layui-laydate-header{
+    border-left: 1px solid #162B62 !important;
+}
+.layui-laydate-header{
+    border-bottom: 1px solid #162B62 !important;
+}
+.layui-laydate-footer{
+    border-top: 1px solid #162B62 !important;
+}
+.layui-laydate-footer span{
+    background: rgba(0, 128, 255, 0.2) linear-gradient(
+            175deg, rgba(0, 110, 255, 0.5) 0%, rgba(0, 110, 255, 0) 100%) !important;
+    border: 1px solid #0E36A2 !important;
+}
+a, body{
+    color: #F9FAFD !important;
+}
+.layui-laydate-content th{
+    color: #ffffff !important;
+}
+
+.layui-laydate .layui-this{
+    background-color: #1E56EB !important;
+}
+.layui-laydate-list{
+    background-color: rgba(23,52,130,0.8) !important;
+}
+.layui-laydate-range .laydate-main-list-1 .layui-laydate-content, .layui-laydate-range .laydate-main-list-1 .layui-laydate-header{
+    border-left: 1px solid #173482 !important;
+}
+
+.laydate-time-list p{
+    color: #ffffff !important;
+}
+.laydate-time-list li ol{
+    color: #ffffff !important;
+    border: 1px solid #16337C !important;
+}
+layui-laydate-footer span{
+    color: #ffffff !important;
+}
+.layui-laydate-footer span.layui-laydate-preview{
+    color: #ffffff !important;
+}

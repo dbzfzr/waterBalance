@@ -1,0 +1,62 @@
+
+#monitor button{
+    margin-right: 10px;
+    /*height: 40px;*/
+    /*width: 105px;*/
+    opacity:0.8;
+    height: 38px;
+    line-height: 38px;
+    border: 1px solid transparent;
+    padding: 0 18px;
+    background-color: #022152;
+    color: #fff;
+    white-space: nowrap;
+    border-image: radial-gradient(circle, rgba(142, 174, 255, 1), rgba(142, 174, 255, 0.34), rgba(142, 174, 255, 0)) 1 1;
+    text-align: center;
+    font-size: 15px;
+    border-radius: 2px;
+    cursor: pointer;
+
+}
+
+#monitor .active{
+    background: rgba(0, 128, 255, 0.2) linear-gradient(175deg, rgba(0, 110, 255, 0.5) 0%, rgba(0, 110, 255, 0) 100%);
+    border: 1px solid;
+    border-image: radial-gradient(circle, rgba(142, 174, 255, 1), rgba(142, 174, 255, 0.34), rgba(142, 174, 255, 0)) 1 1;
+    opacity: 1;
+}
+
+#monitor .active button{
+    color:#E5EBFF;
+    font-weight: bold;
+}
+
+
+#monitor button:hover{
+    color:#FFFFFF;
+    font-weight: bold;
+    opacity: 1;
+}
+
+
+
+
+
+.layui-form input{
+
+    color: #F4F6F8;
+}
+
+.layui-form-checkbox[lay-skin=primary] span{
+    color: #EFF1F4;
+
+}
+
+
+
+
+
+
+
+
+

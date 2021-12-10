@@ -1,0 +1,14 @@
+.map{
+    height: 125%;
+    width:105%;
+    position:absolute;
+    left:0px;
+    top:0px;
+    padding:0px;
+    z-index: 0;
+    color: rgb(0, 0, 0);
+    background-image: none !important;
+}
+
+/*去除百度地图LOGO*/
+.anchorBL{display:none;}

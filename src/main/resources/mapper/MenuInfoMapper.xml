@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zy.gis.mapper.MenuInfoMapper">
+  <!--20201019 Wangchong 获取菜单信息-->
+ <select id="selectMenuInfo" resultType="com.zy.gis.pojo.MenuInfo">
+    select id, name, type, url, tag, permission, level, sort, parent_id
+    from menu_info
+    <where>
+      <if test="menuIds != null and menuIds.size > 0">
+        id in
+        <foreach collection="menuIds" item="menuId" open="(" separator="," close=")">
+          #{menuId}
+        </foreach>
+      </if>
+    </where>
+    order by level, sort
+    </select>
+
+<!--    &lt;!&ndash;20210916 Wangchong 条件查询菜单信息&ndash;&gt;-->
+<!--    <select id="selectMenuInfoList" resultType="com.zy.gis.pojo.MenuInfo">-->
+<!--        select id, name, type, url, tag, permission, level, sort, parent_id-->
+<!--       from menu_info-->
+<!--        <where>-->
+<!--            <if test="id != null">-->
+<!--                and id = #{id}-->
+<!--            </if>-->
+<!--            <if test="name != null">-->
+<!--                and name = #{name}-->
+<!--            </if>-->
+<!--            <if test="level != null">-->
+<!--                and level = #{level}-->
+<!--            </if>-->
+<!--            <if test="parentId != null">-->
+<!--                and parent_id = #{parentId}-->
+<!--            </if>-->
+<!--        </where>-->
+<!--        order by level, sort-->
+<!--    </select>-->
+
+    <!--20201020 Wangchong 获取菜单名称-->
+    <select id="selectMenuName" resultType="java.lang.String">
+        select name, sort, level
+        from menu_info
+        <where>
+            <if test="menuIds != null and menuIds.size > 0">
+                id in
+                <foreach collection="menuIds" item="menuId" open="(" separator="," close=")">
+                    #{menuId}
+                </foreach>
+            </if>
+        </where>
+        order by level, sort
+    </select>
+
+    <select id="selectAllMenuIds" resultType="java.lang.Integer">
+        select id from menu_info
+    </select>
+
+<!--20201019 Wangchong 获取权限信息 -->
+  <select id="selectPermissionInfo" resultType="java.lang.String">
+    select permission
+    from menu_info
+    <where>
+      type = 2
+      <if test="menuIds != null and menuIds.size > 0">
+        and id in
+        <foreach collection="menuIds" item="menuId" open="(" separator="," close=")">
+          #{menuId}
+        </foreach>
+      </if>
+    </where>
+  </select>
+
+    <resultMap id="Menu_Info_EasyTree_Map" type="com.zy.gis.pojo.EasyUITreeInfo">
+    <id property="id" column="id" />
+    <result property="text" column="name" />
+    <result property="parentId" column="parent_id" />
+   </resultMap>
+
+    <!--20210916 Wangchong 获取主菜单 level为1 parentId为0的菜单信息封装为easytree-->
+    <select id="selectPrimaryNavigation" resultMap="Menu_Info_EasyTree_Map">
+         select id, name, parent_id from menu_info where parent_id = 0 and level = 1 order by sort
+    </select>
+
+    <!--根据parentId 获取 主菜单下的子菜单-->
+    <select id="selectMenuByParentId" parameterType="java.lang.Integer" resultMap="Menu_Info_EasyTree_Map">
+         select id, name, parent_id from menu_info where parent_id = #{parentId} order by sort
+    </select>
+
+    <!--20211111 Wangchong 查询菜单信息-->
+    <select id="selectMenuInfoList" resultType="com.zy.gis.pojo.MenuInfo">
+        select id, name, url, parent_id from menu_info
+        <where>
+            <if test="parentId != null">
+                parent_id = #{parentId}
+            </if>
+            <if test="name != null and name != ''">
+                name = #{name}
+            </if>
+        </where>
+        order by sort
+    </select>
+</mapper>

@@ -1,0 +1,167 @@
+/**
+  *@日期 2019/12/24
+  *@作者 YDY
+  *@描述 组织树界面样式
+  */
+
+.my-tree-div{
+    position: fixed;
+    top: 75px;
+    /*bottom: 0px;*/
+    width: 200px;
+    border: 1px solid #cccccc;
+    border-right-style: none;
+    border-bottom-style: none;
+    height: 91%;
+    /*padding: 10px;*/
+    /*display: inline-block;*/
+    /*vertical-align: top;*/
+    overflow-x: auto;
+    overflow-y: auto;
+}
+
+.my-tree-body-div{
+    position: fixed;
+    left: 415px;
+    right: 15px;
+    top: 75px;
+    bottom: 0px;
+    border: 1px solid #cccccc;
+    display: inline-block;
+    vertical-align: top;
+    padding: 10px;
+    overflow-y: auto;
+}
+
+strong {
+    margin: 0 10px;
+}
+
+.my-tree-div-modify{
+    padding: 4px 15px;
+    margin: 10px 0;
+    color: #31708f;
+    background-color: #d9edf7;
+    border-color: #bce8f1;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+.my-tree-div-add{
+    padding: 4px 15px;
+    margin: 10px 0;
+    color: #8a6d3b;
+    background-color: #fcf8e3;
+    border-color: #faebcc;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+.minWidthDiv{
+    min-width: 100px;
+}
+.maxWidthForm{
+    max-width: 400px;
+}
+.my-tree-body{
+    width: 300px;
+    border:1px solid #ccc;
+    border-right-style: none;
+    height: 96%;
+    padding: 10px;
+
+    display: inline-block;
+    vertical-align: top;
+}
+.my-organize-body{
+    width: 100%;
+    height: 96%;
+    border: 1px solid #cccccc;
+
+    display: inline-block;
+    vertical-align: top;
+    margin-right: -300px;
+    float: right;
+}
+.tree-node:hover{
+    background-color: #EEEEEE;
+}
+.tree-node-selected{
+    background-color: #EEEEEE;
+}
+.my-tree-icon-1{
+    /*background : url("../image/treeIcon/my-tree-icon-1.jpg") no-repeat center center;*/
+    /*background-size : 16px 18px;*/
+    background-size: 8px 9px;
+    background : none;
+}
+.my-tree-icon-2{
+    /*background : url("../image/treeIcon/my-tree-icon.jpg") no-repeat center center;*/
+    /*background-size : 16px 18px;*/
+    background : none;
+}
+.my-tree-icon-3{
+    /*background : url("../image/treeIcon/my-tree-icon.jpg") no-repeat center center;*/
+    /*background-size : 16px 18px;*/
+    background : none;
+}
+.my-tree-icon-4{
+    /*background : url("../image/treeIcon/my-tree-icon.jpg") no-repeat center center;*/
+    /*background-size : 16px 18px;*/
+    background : none;
+}
+.my-tree-icon-5{
+    /*background : url("../image/treeIcon/my-tree-icon.jpg") no-repeat center center;*/
+    /*background-size : 16px 18px;*/
+    background : none;
+}
+.my-tree-icon-6{
+    /*background : url("../image/treeIcon/my-tree-icon.jpg") no-repeat center center;*/
+    /*background-size : 16px 18px;*/
+    background : none;
+}
+.my-tree-icon-7{
+    background : none;
+}
+.my-tree-icon-8{
+    background : none;
+}
+.my-iconset {
+    text-align: center;
+    background: url("../image/treeIcon/icon_base.png") no-repeat center center;
+    width: 26px;
+    height: 26px;
+    display: inline-block;
+    line-height: 26px;
+    margin: 2px;
+    cursor: pointer;
+    position: relative;
+}
+.my-iconset:active{
+    top: 2px;
+}
+.my-iconset:hover{
+    background-color: #eee;
+}
+.my-icon-addArea{
+    background-position: -145px -15px;
+}
+.my-icon-addVideo{
+    background-position: -172px -15px;
+}
+.my-icon-del{
+    background-position: -95px -15px;
+}
+/*展开箭头*/
+.tree-expanded{
+    background: url('../image/management_Center/arrowOpen.png') no-repeat center center;
+    /*transform: rotateX(-180deg);*/
+}
+/*闭合箭头*/
+.tree-collapsed {
+    background: url('../image/management_Center/arrowOff.png') no-repeat center center;
+    /*transform: rotate(90deg);*/
+}
+
+.tree-node:hover,.tree-node-selected ,.add_node_icon:hover,.edit_node_icon:hover,.del_node_icon:hover{/*鼠标悬浮*/ /*鼠标点击选中*/
+    background: #ffffff00;/*背景透明*/
+    color: #00DBFF;/*字体颜色*/
+}

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>创建日常维护记录</title>
+    <style>
+        .layui-input{
+            height: 6vh !important;
+            line-height: 5vh !important;
+        }
+        .layui-laypage input {
+            color: #303030;
+        }
+        #infoTable{
+            width: 100%;
+            text-align: center;
+            background-color: #0D3580;
+            font-family: PingFang-SC-Regular;
+            font-size: 15px;
+            font-weight: normal;
+            font-stretch: normal;
+            line-height: 35px;
+            letter-spacing: 1px;
+            color: #fafafa;
+        }
+
+        .needInfo{
+            color: red;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-form" lay-filter="parameterLayuiForm">
+    <div class="layui-form-item" >
+        <label class="layui-form-label"><span class="needInfo">*</span>时间</label>
+        <div class="layui-input-block">
+            <input id="timeSelect" name="timeSelect" type="text" placeholder="时间" class="layui-input" autocomplete="off">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label"><span class="needInfo">*</span>区划</label>
+        <div class="layui-input-block">
+            <select name="organizationCode" id="organizationCode">
+                <option value="">请选择区划</option>
+                <option th:value="${organizeInfo.id}"><span th:text="${organizeInfo.organizeName}"></span></option>
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label"><span class="needInfo">*</span>设备安装位置</label>
+        <div class="layui-input-block">
+            <select name="point" id="pointSelect" lay-filter="pointSelect">
+                <option value="">请选择设备安装位置</option>
+                <th:block th:if="${gisPointHaveFlexemInfoList != null}">
+                    <option th:each="gisPointHaveFlexemInfo:${gisPointHaveFlexemInfoList}" th:value="${gisPointHaveFlexemInfo.pointNo}"><span th:text="${gisPointHaveFlexemInfo.pointName}"></span></option>
+                </th:block>
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label"><span class="needInfo">*</span>设备</label>
+        <div class="layui-input-block">
+            <select name="device" id="deviceSelect" lay-filter="deviceSelect">
+                <option value="">请先选择设备安装位置</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<div class="layui-inline" style="position: relative;left: 75px;">
+    <label class="layui-form-label"><span class="needInfo">*</span>维修人员</label>
+    <div class="layui-input-block">
+        <table id="operationPeopleTable" cellspacing="2" style="color:#F8F9FA;position: relative;top: -5px;">
+            <tr>
+                <td th:text="${user.userName}"></td>
+<!--                <td th:text="${user.phone}"></td>-->
+<!--                <td th:text="${user.userId}"></td>-->
+            </tr>
+        </table>
+    </div>
+</div>
+<div class="layui-form">
+    <div class="layui-form-item">
+        <label class="layui-form-label"><span class="needInfo">*</span>故障情况描述</label>
+        <div class="layui-input-block">
+            <textarea id="breakdownDescription" placeholder="请输入故障情况描述" class="layui-textarea"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label"><span class="needInfo">*</span>维修/处理情况</label>
+        <div class="layui-input-block">
+            <textarea id="repairDescription" placeholder="请输入维修/处理情况" class="layui-textarea"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">遗留问题或其他需说明的情况</label>
+        <div class="layui-input-block">
+            <textarea id="remark" placeholder="请输入遗留问题或其他需说明的情况" class="layui-textarea"></textarea>
+        </div>
+    </div>
+</div>
+    <button id="submit" class="layui-btn layui-btn-normal">确定添加</button>
+</body>
+<script th:src="@{/webjars/jquery/3.5.1/jquery.js}"></script>
+<script type="text/javascript" th:src="@{/webjars/layui/2.6.8/layui.js}"></script>
+<script type="text/javascript" th:src="@{/js/myjs.js}"></script>
+<link rel="stylesheet" th:href="@{/webjars/layui/2.6.8/css/layui.css}">
+<link rel="stylesheet" th:href="@{/css/deviceRepairRecord.css}">
+<link rel="stylesheet" th:href="@{/css/alarmRecordCalendar.css}">
+<script th:inline="javascript">
+
+    var gisPointHaveFlexemInfoList = [[ ${ gisPointHaveFlexemInfoList }]];
+    /**
+     * 创建设备维修记录页面 js
+     * @author Wangchong
+     * @date 202112031108
+     */
+    var table, layer;
+    var tableIndex;
+
+    // 区划名称
+    var organizeName;
+
+    layui.use(['table', 'form', 'layer', 'laydate'], function () {
+        table = layui.table;
+        layer = layui.layer;
+
+        var form = layui.form;
+        var laydate = layui.laydate;
+
+        laydate.render({
+            elem: '#timeSelect' //指定元素
+            , type: 'datetime'
+            , trigger: 'click'
+            , max: DateUtil.dateformat(new Date(), "yyyy-MM-dd HH:mm:ss")
+            , done: function (value, date, endDate) {
+            }
+            , change: function (value, date, endDate) {
+            }
+        });
+
+        // 设备安装位置下拉框选择
+        form.on('select(pointSelect)', function(data){
+            var deviceSelect = $("#deviceSelect");
+            deviceSelect.empty();
+             if (data.value == ""){
+                 var option = "<option value=''>请先选择设备安装位置</option>";
+                 deviceSelect.append(option);
+
+                 form.render('select', 'parameterLayuiForm');
+                 return;
+             }
+             for (var i=0 ;i<gisPointHaveFlexemInfoList.length; i++){
+                 if (data.value == gisPointHaveFlexemInfoList[i].pointNo){
+
+                     var option = "<option value='" + gisPointHaveFlexemInfoList[i].boxNo + "'>" +
+                     gisPointHaveFlexemInfoList[i].boxAlias + "</option>";
+                     deviceSelect.append(option);
+
+                     form.render('select', 'parameterLayuiForm');
+                     return;
+                 }
+             }
+        });
+
+        // 确定添加设备维修记录
+        $("#submit").click(function () {
+            // 点位
+            var pointNo = $("#pointSelect").val();
+
+            if (pointNo == ""){
+                layer.msg("请选择设备安装位置");
+                return;
+            }
+
+            var organizationCode = $("#organizationCode").val();
+            var organizationName = $("#organizationCode option:selected").text()
+
+            var createTime = $("#timeSelect").val();
+
+            if (createTime == ""){
+                layer.msg("请选择时间");
+                return;
+            }
+
+            var userArray = [];
+            // 人员
+            var operationPeopleTableTrs = $("#operationPeopleTable tr");
+            for (var i=0; i<operationPeopleTableTrs.length; i++){
+                var tds = $(operationPeopleTableTrs[i]).children("td");
+                var userJson = {};
+                userJson.userName = tds.get(0).innerHTML;
+                userJson.phone = tds.get(1).innerHTML;
+                userJson.userId = tds.get(2).innerHTML;
+
+                userArray.push(userJson);
+            }
+
+            var boxNo = $("#deviceSelect").val();
+
+            if (boxNo == ""){
+                layer.msg("请选择设备");
+                return;
+            }
+
+            var breakdownDescription = $("#breakdownDescription").val();
+            if (breakdownDescription == ""){
+                layer.msg("请输入故障情况描述");
+                return;
+            }
+
+            var repairDescription = $("#repairDescription").val();
+            if (repairDescription == ""){
+                layer.msg("请输入维修/处理情况");
+                return;
+            }
+
+            var remark = $("#remark").val();
+
+            var paramJson = {createTime:createTime, organizationCode: organizationCode, organizationName: organizationName,
+                userArrayStr: JSON.stringify(userArray), userId: userArray[0].userId, pointNo: pointNo, breakdownDescription: breakdownDescription,
+                repairDescription: repairDescription, remark: remark, boxNo: boxNo};
+            $.ajax({
+                url: 'addDeviceRepairRecord',
+                type: 'post',
+                contentType: 'application/json;charset=utf-8;',
+                data: JSON.stringify(paramJson),
+                success:function (res) {
+                    if (res.code > 0){
+                        layer.msg("添加成功");
+                        parent.tableIndex.reload();
+                    }else{
+                        layer.msg("添加失败");
+                    }
+                },
+                error:function (res) {
+                    console.log(res)
+                    layer.msg("添加失败")
+                }
+            });
+        })
+    });
+</script>
+</html>

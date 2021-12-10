@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="content-type" content="text/html">
+    <meta charset="UTF-8">
+    <title>新增系统类型</title>
+    <script type="text/javascript" th:src="@{/webjars/layui/2.6.8/layui.js}"></script>
+    <link rel="stylesheet" th:href="@{/webjars/layui/2.6.8/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/css/layuiForm.css}">
+    <script th:src="@{/webjars/jquery/3.5.1/jquery.js}"></script>
+    <script th:src="@{/js/formUtil.js}"></script>
+    <style>
+        input::-webkit-input-placeholder {
+            color: #dadada !important;
+        }
+        .layui-form-checkbox[lay-skin=primary] span{
+            color: #EAEAEB  !important;
+        }
+        .layui-form-item .layui-input-inline input{
+            border:1px solid #1775DA !important;
+            border-radius: 4px;
+        }
+
+        /*新增和编辑弹框中按钮的css样式*/
+        .layui-form-checkbox[lay-skin=primary] i{
+            background:url("../image/treeIcon/organizatinTreeCheckButton.png") !important;
+            border-color: rgba(19,92,193,0) !important;
+        }
+        .layui-form-checked[lay-skin=primary] i{
+            background: url("../image/treeIcon/organizatinTreeCheckButton1.png")!important;
+            border-color: rgba(19,92,193,0) !important;
+        }
+        .layui-form-checkbox[lay-skin=primary] i:hover{
+            border-color: rgba(19,92,193,0) !important;
+        }
+        .layui-icon-ok:before{
+            content: none !important;
+        }
+    </style>
+</head>
+<body>
+<div  class="layui-container" style="margin-top: 10px">
+    <form id="form" class="layui-form" name="form">
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span style="color: red;">*&nbsp;</span>系统类型名称：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="systemTypeName"  id="systemTypeName" lay-verify="required" placeholder="请输入系统类型名称" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">设备类型：</label>
+            <div class="layui-input-inline dev_type_group" id="devTypeGroup">
+                <input  th:each="devTypeInfo:${devTypeInfoList}" name="devTypeIdGroup" th:value="${devTypeInfo.id}" th:title="${devTypeInfo.devTypeName}" type="checkbox" lay-verify="required" lay-skin="primary"/>
+            </div>
+            <input id="devTypeNameGroup" name="devTypeNameGroup" class="layui-input layui-hide" value=""
+                   placeholder="请选择设备类型">
+        </div>
+    </form>
+</div>
+</body>
+
+<script>
+
+    /*动态渲染已选中的设备类型的CheckBox*/
+    function initModifyView(data) {
+        console.info(data)
+        var ids = data.devTypeIdGroup.includes(",") ?  data.devTypeIdGroup.split(",") : data.devTypeIdGroup;
+
+        for(var i=0; i < $('input[name = "devTypeIdGroup"]').length; i++){
+            if(ids.length > 1){
+                for(var j=0; j < ids.length; j++){
+                    console.info($($('input[name = "devTypeIdGroup"]')[i]).val())
+                    if(ids[j] == $($('input[name = "devTypeIdGroup"]')[i]).val()){
+                        $($('input[name = "devTypeIdGroup"]')[i]).prop("checked", true);
+                    }
+                }
+            }else{
+                if(ids == $($('input[name = "devTypeIdGroup"]')[i]).val()){
+                    $($('input[name = "devTypeIdGroup"]')[i]).prop("checked", true);//checkbox动态渲染
+                }
+            }
+        }
+        //重新渲染表单,只有执行了这一步，部分表单元素才会自动修饰成功
+        layui.form.render('checkbox');
+    }
+
+
+    /*保存选中的设备类型名称*/
+    function SaveSelect() {
+        console.info("saveSelect")
+        for(var i = 0; i<$('.dev_type_group .layui-form-checked').length; i++){
+            var checkedDevTypeName = $($('.dev_type_group .layui-form-checked')[i]).find('span').html();
+
+            var devTypeNameGroup = $("#devTypeNameGroup").val();
+            if(devTypeNameGroup != ''){
+                devTypeNameGroup = devTypeNameGroup + ",";
+            }
+            devTypeNameGroup = devTypeNameGroup + checkedDevTypeName;
+            console.info("devTypeNameGroup:"+devTypeNameGroup);
+            $("#devTypeNameGroup").val(devTypeNameGroup);
+        }
+    }
+</script>
+</html>

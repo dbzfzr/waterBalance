@@ -1,0 +1,338 @@
+* {
+	margin: 0;
+	padding: 0;
+}
+
+html,
+body {
+	width: 100%;
+	height: 100%;
+	background: url(../image/login/login-bg.png) no-repeat center center!important;
+	font-family: "Microsoft YaHei"!important;
+	background-size: 100% 100%!important;
+}
+
+@font-face {
+	font-family:FZZZHJT;
+	src:url(../fonts/方正正准黑简体.TTF);
+}
+.h1{
+	font-size:19px;
+	font-family:wending;
+}
+
+
+.wrapper {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+}
+
+.wrapper .header {
+	width: 720px;
+	height: 72px;
+	line-height: 72px;
+	font-size: 56px;
+	color: #00fff6;
+	font-family: FZZZHJT;
+	margin: 80px auto 0px auto;
+	text-align: center;
+}
+.header .img_logo {
+	width: 97px;
+	height: 72px;
+	background: url(../image/login/logo-login.png);
+	float: left;
+}
+
+.header .img_logo img {
+	width: 100%;
+	height: 100%;
+}
+
+.header .title{
+	/*font-family: FZZZHUNHJW--GB1-0;*/
+	font-family: PangMenZhengDao-3;
+	font-size: 52px;
+	font-weight: normal;
+	font-stretch: normal;
+	line-height: 75px;
+	letter-spacing: 10px;
+	color: #00fff6;
+}
+
+.wrapper .contentWrap {
+	width:  433px;
+	height:  445px;
+	margin: 80px auto 0px auto;
+	background: url(../image/login/login-bg-username.png);
+}
+
+.wrapper .content,.wrapper .content form {
+	width:  100%;
+	height:  100%;
+	/*position:  relative;*/
+}
+
+.content .loginCon {
+	width:  100%;
+	box-sizing: border-box;
+	float: right;
+}
+
+.loginCon .welcome {
+	padding-top: 50px;
+	width: 96px;
+	height: 23px;
+	font-family: PingFang-SC-Medium;
+	font-size: 24px;
+	font-weight: normal;
+	font-stretch: normal;
+	letter-spacing: 0px;
+	color: #97e3f4;
+	margin: 0px auto 34px auto;
+}
+
+.loginCon #errorMsgLabel {
+	padding-top: 50px;
+	width: 160px;
+	height: 23px;
+	font-family: "PangMenZhengDao-3";
+	font-size: 16px;
+	font-weight: normal;
+	font-stretch: normal;
+	letter-spacing: 1px;
+	color: red;
+	margin: 0px auto 34px auto;
+}
+
+
+.loginCon .input-wrap {
+	width: 433px;
+	height: 97px;
+	/*text-align: center;*/
+}
+
+.input-wrap .input-bg{
+    width: 305px;
+    height: 56px;
+    background-image: url("../image/login/login-bg-input-username.png");
+    margin: 0 auto;
+}
+.input-wrap .ico {
+
+}
+
+.input-wrap .ico.ico-user {
+	width: 21px;
+	height: 23px;
+	position: absolute;
+
+	margin-left: 264px;
+	margin-top: 19px;
+	background-image: url(../image/login/icon-username.png);
+	/*background-position: 0 0;*/
+}
+
+.input-wrap .ico.ico-lock {
+    width: 40px;
+    height: 41px;
+    position: absolute;
+    margin-left: 254px;
+    margin-top: 10px;
+	background-image: url(../image/login/icon-password.png);
+}
+
+
+
+.input-wrap input[type="text"],
+.input-wrap input[type="password"] {
+	/*line-height: 54px;*/
+	border: 0px solid #ccc;
+	border-radius: 2px;
+	/*font-size: 14px;*/
+	color: #FFFFFF;
+	width: 280px;
+	height: 54px;
+	background-color: rgba(255, 255, 255, 0);
+
+
+	font-family: MicrosoftYaHei;
+	font-size: 16px;
+	font-weight: normal;
+	font-stretch: normal;
+	line-height: 48px;
+	letter-spacing: 1px;
+    margin-top: 1px;
+    margin-left: 23px;
+}
+/*input提示语颜色样式*/
+input.required::-webkit-input-placeholder{
+	color:  #a4d6ef;
+}
+input.required:-moz-placeholder{
+	color:  #a4d6ef;
+}
+input.required::-moz-placeholder{
+	color:  #a4d6ef;
+}
+input.required:-ms-input-placeholder{
+	color:  #a4d6ef;
+}
+.loginCon .remember{
+
+    line-height: 14px;
+    margin: -15px 62px auto auto;
+    float: right;
+
+}
+/*.remember .input-checkbox{*/
+/*    width: 13px;*/
+/*    height: 13px;*/
+/*    border: 1px solid rgba(0,184,255, 0.5);*/
+/*    background-color: #00b8ff;*/
+/*    opacity: 0.5;*/
+/*}*/
+/*选定前*/
+#rememberAccount + label::before{     /*设置label标签的伪元素*/
+    content: "\a0";      /*不换行空格*/
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    font-size: 13px;
+    font-weight: bold;
+    color: rgb(68, 171, 247);
+    border: 1px solid rgba(0,184,255, 0.5);
+}
+/*选定时*/
+#rememberAccount:checked + label::before{
+    content: "\2713";    /*√*/
+    text-align: center;
+}
+
+/*取消默认框*/
+#rememberAccount{
+    display: none;
+}
+.remember label{
+    content: "\a0";
+    margin-left: 5px;
+    width: 58px;
+    height: 14px;
+    font-family: MicrosoftYaHei;
+    font-size: 14px;
+    font-weight: normal;
+    font-stretch: normal;
+    letter-spacing: 0px;
+    color: #00b8ff;
+    opacity: 0.7;
+}
+
+.loginCon .login-btn {
+
+    display: block;
+    border-radius: 2px;
+
+    width: 305px;
+    height: 47px;
+    background-image: linear-gradient(0deg,
+    #0060ff 0%,
+    #0096ff 100%),
+    linear-gradient(
+            #00cedc,
+            #00cedc);
+    background-blend-mode: normal, normal;
+    margin: 26px auto 0px auto;
+    text-align: center;
+    line-height: 47px;
+}
+.loginCon .login-btn a{
+    text-align: center;
+    font-family: MicrosoftYaHei;
+    font-size: 20px;
+    font-weight: normal;
+    font-stretch: normal;
+    letter-spacing: 20px;
+    color: #ffffff;
+}
+.loginCon .login-btn:hover {
+	background: #3876cb;
+	filter: progid:DXImageTransform.Microsoft.Gradient(gradientType=1, startColorStr=#28aef0, endColorStr=#196dd9) !important;
+	background-image: -webkit-linear-gradient(left, #53bef3, #478ae1) !important;
+	background-image: -ms-linear-gradient(left, #53bef3, #478ae1) !important;
+	background-image: linear-gradient(left, #53bef3, #478ae1) !important;
+}
+
+.loginCon .tip-error {
+	color: #f00;
+	position: absolute;
+	bottom: 108px;
+	/* left: 36px; */
+	text-align:  center;
+	width: 280px;
+}
+
+.loginCon .login-security {
+	vertical-align: middle;
+	margin-left: 3px;
+	margin-right: -20px;
+	cursor: pointer;
+	font-size: 15px;
+	color: #666;
+	border: 1px solid #ccc;
+}
+
+.middle,
+.top {
+	position: absolute;
+	transition: all 1s;
+	background-size: 100% 100%!important;
+	display:none;
+}
+
+.middle img,
+.top img {
+	width: 100%;
+	height: 100%;
+}
+
+
+::-webkit-input-placeholder { /* WebKit browsers */
+	color:    #A9A9A9;
+}
+:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+	color:    #A9A9A9;
+	opacity:  1;
+}
+::-moz-placeholder { /* Mozilla Firefox 19+ */
+	color:    #A9A9A9;
+	opacity:  1;
+}
+:-ms-input-placeholder { /* Internet Explorer 10+ */
+	color:    #A9A9A9;
+}
+input::-ms-input-placeholder {
+	color:    #A9A9A9;
+}
+
+@media only screen and (max-width: 1440px) {
+	.wrapper .header {
+		font-size: 32px;
+		padding: 40px 0 0 40px;
+	}
+	.header .logo {
+		width: 40px;
+		height: 40px;
+		margin-top: -4px;
+	}
+
+}
+
+.input-bg :hover {
+	box-shadow: 2px 2px 4px #0F859D;
+}
+
+@font-face {
+	font-family: PangMenZhengDao-3;
+	src: url(../fonts/PangMenZhengDao-3.ttf);
+}

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>管线设施管理</title>
+    <th:block th:include="management/deviceManagement/include :: header('')"/>
+    <link rel="stylesheet" th:href="@{/css/toolBarIcon.css}">
+    <style>
+        .MyTable {
+            padding: 38px 20px 20px 20px;
+        }
+        .layui-breadcrumb a:hover{
+            color:#FFFFFF !important;
+            font-weight: bold;
+        }
+
+    </style>
+</head>
+<body>
+<span style="position:relative;left:2vw;top:3vh;" class="layui-breadcrumb">
+  <a id="previousMenu"></a>
+  <a id="thisMenu">></a>
+</span>
+<div class="MyTable">
+    <table id="myTable" cellspacing="1" lay-filter="myTable"></table>
+</div>
+
+</body>
+<!-- 头部工具栏 -->
+<script type="text/html" id="toolBar">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-xs" lay-event="add" style=" background: rgba(0, 128, 255, 0.2) linear-gradient(175deg, rgba(0, 110, 255, 0.5) 0%, rgba(0, 110, 255, 0) 100%);height: 32px;width: 84px"><i class="layui-icon" style="font-weight: bold">&#xe654;</i>新增</button>
+    </div>
+</script>
+<!-- 操作栏 -->
+<script type="text/html" id="ctrlBar">
+    <a class="layui-btn layui-btn-xs" lay-event="detail" style="background-color:rgba(25,66,58,0); color: #0493E0"><i class="layui-icon"></i>详情(未实现)</a>
+    <a class="layui-btn layui-btn-xs" lay-event="edit" style="background-color: rgba(25,66,58,0); color: #0493E0"><i class="layui-icon"></i>编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" style="background-color: rgba(25,66,58,0);color:#E5091E "><i class="layui-icon"></i>删除</a>
+</script>
+<script type="text/html" id="No.">
+    {{d.LAY_TABLE_INDEX+1}}
+</script>
+<script>
+    $(function () {
+        var previousMenu = window.parent.$(".layui-this").parent().parent().children().find('span').html();//获取当前页面所在目录上一级
+        var thisMenu = window.parent.$(".layui-this").find('span').text();//获取当前页面所在目录
+        $('#previousMenu').text(previousMenu);
+        $('#thisMenu').text(thisMenu);
+    })
+    var table,layer;
+    var tableIndex;
+    layui.use(['table', 'form', 'layer'], function () {
+        table = layui.table;
+        layer = layui.layer;
+        //用户信息表
+        tableIndex = table.render({
+            elem: '#myTable'
+            , title: '管网管线列表'
+            , url: 'getAllNetworkPipeline' //数据接口
+            , toolbar: '#toolBar' //开启头部工具栏，并为其绑定左侧模板
+            , defaultToolbar: ["filter", "exports", "print"] //头部工具栏右侧图标 筛选图标 导出图标 打印图标
+            , where: {}
+            , skin: 'nob' // 无边框风格
+            , method: "post"
+            , even: true //开启隔行背景 隔行换色
+            , page: true //开启分页
+            , limits: [10, 20, 50]
+            , limit: 10
+            , height: 'full-58'
+            , event: true //自定义单元格点击事件名
+            , contentType: 'application/json'
+            , cols: [
+                [ //表头
+                    {field: 'id', title: 'ID', width: 80, sort: true, hide: true},
+                    {field: 'No.', title: '序号', width: 80, type: 'numbers'}
+                    , {field: 'pipelineNo', title: '管线编号', align: "center", sort: true, width: 200}
+                    , {field: 'startPointNo', title: '起始点号', align: "center", sort: true, width: 200}
+                    , {field: 'endPointNo', title: '终止点号', align: "center", sort: true, width: 200}
+                    , {field: 'addressName', title: '所属地点', align: "center", sort: true, width: 300}
+                    , {field: 'addressId', title: '所属地点ID', align: "center", sort: true, hide: true}
+                    , {field: 'networkType', title: '管网类型', align: "center", sort: true, width: 200}
+                    , {field: 'networkLevel', title: '管网级别', align: "center", sort: true, width: 200}
+                    , {field: 'systemType', title: '系统类型', align: "center", sort: true, width: 200}
+                    , {field: 'material', title: '材质', align: "center", sort: true, width: 200}
+                    , {field: 'specs', title: '规格(mm)', align: "center", sort: true, width: 200}
+                    , {field: 'startLongitude', title: '起点经度', align: "center", sort: true, width: 200}
+                    , {field: 'startLatitude', title: '起点纬度', align: "center", sort: true, width: 200}
+                    , {field: 'endLongitude', title: '终点经度', align: "center", sort: true, width: 200}
+                    , {field: 'endLatitude', title: '终点纬度', align: "center", sort: true, width: 200}
+                    , {field: 'startTopDepth', title: '起点顶高程(m)', align: "center", sort: true, width: 200}
+                    , {field: 'startBottomDepth', title: '起点底高程(m)', align: "center", sort: true, width: 200}
+                    , {field: 'endTopDepth', title: '终点顶高程(m)', align: "center", sort: true, width: 200}
+                    , {field: 'endBottomDepth', title: '终点底高程(m)', align: "center", sort: true, width: 200}
+                    , {field: 'completionDate', title: '竣工日期', align: "center", sort: true, width: 200}
+                    , {field: 'createTime', title: '创建时间', event: 'row', align: 'center', sort: true, width: 200}
+                    , {field: 'updateTime', title: '更新时间', event: 'row', align: 'center', sort: true, width: 200}
+                    , {fixed: 'right', toolbar: '#ctrlBar', title: '操作', align: "center", width: 300}
+                ]
+            ]
+            , done: function (res, curr, count) {
+
+            }
+        });
+        //重新渲染
+        function reloadTB() {
+            tableIndex.reload();
+        }
+        //头工具栏事件
+        table.on('toolbar(myTable)', function (obj) {
+            switch (obj.event) {
+                case 'add':
+                    add();
+                    break;
+                default:
+                    break;
+            }
+        });
+        //操作栏事件
+        table.on('tool(myTable)', function (obj) { //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+            var data = obj.data; //获得当前行数据
+            var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+            switch (layEvent) {
+                case 'edit':
+                    edit(data);
+                    break;
+                case 'del':
+                    del(data);
+                    break;
+            }
+        });
+
+        function add() {
+            layer.open({
+                type: 2,
+                zIndex: 999,
+                title: '管网管线新增',
+                area: ['468px', '540px'],
+                content: ['toAddNetworkPipelinePage', 'no'],
+                btn: ['确认', '取消']
+                , yes: function (index, layero) {
+                    var body  = layer.getChildFrame('body', index);
+                    var form = body.find('#form');
+                    var data  = formUtilEL.serializeObject(form);
+                    //判断字段是否空
+                    for(var key in data) {
+                        console.log(key,data[key]);
+                        if (data[key] == '') {
+                            layer.msg(body.find('[name="' + key + '"]').attr('placeholder'));
+                            return;
+                        }
+                        //系统类型非必选
+                        if(key == 'systemType' && data[key].includes("请选择")){
+                            data[key] = '';
+                        }
+                        if (data[key].includes("请选择")) {
+                            layer.msg(data[key]);
+                            return;
+                        }
+                    }
+                    var loading = layer.load(1, {shade: [0.1,'#fff']});
+                    $.post('insertNetworkPipelineData',data,function (res) {         //post提交数据
+                        console.log(res.code+ "--res--" + res.message) //object
+                        if(res.code > 0){
+                            layer.close(index);
+                            reloadTB();       //重载表格
+                        }
+                        layer.msg(res.message);
+                    }).fail(function (xhr) {
+                        layer.msg('添加失败 '+xhr.status);
+                    }).always(function () {
+                        layer.close(loading);
+                    })
+
+                }
+            })
+        }
+
+        function edit(data) {
+            layer.open({
+                type: 2,
+                title:'管网管线编辑',
+                area: ['468px', '540px'],
+                fixed: false,           //不固定
+                content: 'toAddNetworkPipelinePage?id=' + data.id,     //添加、修改同一页面
+                btn:['确认','取消']
+                ,success:function (layero, index) {
+                    //console.log(data);
+                    var body = layer.getChildFrame('body', index);
+                    var form = body.find('#form');
+                    body.find('input[name="addressName"]').val(data.addressName);
+                    body.find('input[name="pipelineNo"]').val(data.pipelineNo);
+                    body.find('input[name="startLongitude"]').val(data.startLongitude);
+                    body.find('input[name="startLatitude"]').val(data.startLatitude);
+                    body.find('input[name="startTopDepth"]').val(data.startTopDepth);
+                    body.find('input[name="startBottomDepth"]').val(data.startBottomDepth);
+                    body.find('input[name="endLongitude"]').val(data.endLongitude);
+                    body.find('input[name="endLatitude"]').val(data.endLatitude);
+                    body.find('input[name="endTopDepth"]').val(data.endTopDepth);
+                    body.find('input[name="endBottomDepth"]').val(data.endBottomDepth);
+                    var childWindow = $(layero.find('iframe'))[0].contentWindow;
+                    childWindow.initModifyView(data);
+                }
+                ,yes: function (index, layero) {
+                    var body = layer.getChildFrame('body', index);
+                    var form = body.find('#form');
+                    var newData = formUtilEL.serializeObject(form);
+
+                    for(var key in newData) {
+                        console.log(key,newData[key]);
+                        if (newData[key] == '') {
+                            layer.msg(body.find('[name="' + key + '"]').attr('placeholder'));
+                            return;
+                        }
+                        //系统类型非必选
+                        if(key == 'systemType' && newData[key].includes("请选择")){
+                            data[key] = '';
+                        }
+                        if (newData[key].includes("请选择")) {
+                            layer.msg(newData[key]);
+                            return;
+                        }
+                    }
+                    var loading = layer.load(1, {shade: [0.1,'#fff']});
+                    newData.id = data.id;
+                    $.post('updateNetworkPipelineData',newData,function (res) {
+                        if(Number(res.code) > 0){
+                            layer.close(index);
+                            reloadTB();
+                        }
+                        layer.msg(res.message);
+                    }).fail(function (xhr) {
+                        layer.msg('修改失败'+xhr.status)
+                    }).always(function () {
+                        layer.close(loading);
+                    });
+                }
+            });
+        }
+        function del(data) {
+            console.log(data)
+            layer.confirm('确定删除该管网管线？', function(index){
+                var loading = layer.load(1, {shade: [0.1,'#fff']});
+                $.post('delNetworkPipelineData',{id:data.id,pipelineNo:data.pipelineNo},function (res) {
+                    if(res.code > 0){
+                        layer.close(index);
+                        reloadTB();       //重载表格
+                    }
+                    layer.msg(res.message);
+                }).fail(function (xhr) {
+                    layer.msg('删除失败 '+xhr.status);
+                    console.log(xhr.status);
+                }).always(function () {
+                    layer.close(loading);
+                });
+            });
+        }
+    })
+
+</script>
+</html>

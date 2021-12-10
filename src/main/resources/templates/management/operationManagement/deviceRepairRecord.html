@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>设备维修记录页面</title>
+    <link rel="stylesheet" th:href="@{/css/toolBarIcon.css}">
+    <link rel="stylesheet" th:href="@{/css/deviceRepairRecord.css}">
+    <link rel="stylesheet" th:href="@{/css/alarmRecordCalendar.css}">
+    <style>
+        table {
+            width: 100%;
+            text-align: left;
+            font-family: PingFang-SC-Regular;
+            font-size: 15px;
+            font-weight: normal;
+            font-stretch: normal;
+            line-height: 45px;
+            letter-spacing: 2px;
+            color: #F6F7F9;
+        }
+        .layui-table-tool-panel {
+            background-color: #14325B;
+        }
+
+        .layui-table-tool-panel li:hover{
+            background-color: #041634!important;
+        }
+
+        .layui-form-item .layui-input-inline {
+            float: left;
+            width: 10vw;
+            margin-right: 10px;
+        }
+
+        .layui-input, .layui-select {
+            height: 28px;
+            width: 10vw;
+            line-height: 28px;
+        }
+
+        .layui-laypage input {
+            color: #303030;
+        }
+
+        .layui-timeline {
+            padding-left: 3vw;
+        }
+
+        .layui-layer-page {
+            color: #fafafa;
+        }
+
+        .layui-text h1, .layui-text h2, .layui-text h3 , .define-label{
+            color: #5AB8E3;
+        }
+
+        .layui-form-select dl {
+            height: 12vw;
+        }
+        .layui-table-page{
+            top: 20px;
+
+        }
+        .body{
+            background-color: rgba(2,21,56,0.5);
+        }
+        .layui-table-box{
+            top: 15px;
+        }
+        /*操作栏查看详情css样式*/
+        .layui-btn{
+            background-color: transparent !important;
+        }
+
+        /*确认和取消按钮css样式*/
+        .layui-layer-btn0{
+            background-image: url("../image/toolBarIcon/antframe.png")!important;
+            background-color: #115BC6 !important;
+            border-image: url("../image/toolBarIcon/antframe1.png");
+            position: relative;
+            top: 5px;
+            height: 35px;
+            width: 60px;
+            cursor: pointer;
+            color:  #F6F8FB;
+        }
+        .layui-layer-btn1{
+            background-image: url("../image/toolBarIcon/antframe.png")!important;
+            border-image: url("../image/toolBarIcon/antframe1.png");
+            background-color: #115BC6 !important;
+            color: #F6F8FB !important;
+            position: relative;
+            top: 5px;
+            height: 35px;
+            cursor: pointer;
+            width: 60px;
+            left:20px;
+        }
+
+    </style>
+</head>
+<body class="body">
+<div style="margin-top: 1vh;position:relative;left: 20px;top: 40px;">
+    <th:block th:if="${session.users.roleName eq '运维操作人员'}">
+         <button id="add" style="width: 84px;position: absolute;
+height: 32px;margin-left: 20px;margin-top: -25px;
+background: linear-gradient(180deg, #0080FF 0%, #004D99 100%) ,linear-gradient(180deg, #00CAFF 0%, rgba(0, 77, 153, 0) 100%);
+border: 1px solid;
+border-image: linear-gradient(180deg, rgba(0, 128, 255, 0.16), rgba(58, 157, 255, 0.3)) 1 1;font-size: 12px;
+font-family: MicrosoftYaHei;
+color: #F0FAFF;
+line-height: 16px;"><i class="layui-icon">&#xe624;</i>新建</button>
+    </th:block>
+    <table id="infoTable" cellspacing="1" lay-filter="infoTable"></table>
+</div>
+<!--记录详情-->
+<div id="detailDiv"  style="color: rgba(0, 77, 153, 1); display: none;">
+    <table cellpadding="2" cellspacing="3" style="top: 20px;">
+        <tr>
+            <td>时间:</td>
+            <td id="timeTd"></td>
+        </tr>
+        <tr>
+            <td>区划:</td>
+            <td id="orgTd"></td>
+        </tr>
+        <tr>
+            <td>设备:</td>
+            <td id="boxAliasTd"></td>
+        </tr>
+        <tr>
+            <td>人员:</td>
+            <td id="userTd"></td>
+        </tr>
+        <tr>
+            <td>故障情况描述:</td>
+            <td id="breakdownDescriptionTd"></td>
+        </tr>
+        <tr>
+            <td>维修/处理情况:</td>
+            <td id="repairDescriptionTd"></td>
+        </tr>
+        <tr>
+            <td style="line-height: 25px;">遗留问题或<br>其他需说明的情况:</td>
+            <td id="remarkTd"></td>
+        </tr>
+    </table>
+    <div style="position: absolute; left: 350px; bottom: 35px;">
+        <button id="confirm" class="layui-layer-btn0" >确认</button><button id="cancel" class="layui-layer-btn1">取消</button>
+    </div>
+</div>
+</body>
+<script th:src="@{/webjars/jquery/3.5.1/jquery.js}"></script>
+<script type="text/javascript" th:src="@{/webjars/layui/2.6.8/layui.js}"></script>
+<script type="text/javascript" th:src="@{/js/myjs.js}"></script>
+<link rel="stylesheet" th:href="@{/webjars/layui/2.6.8/css/layui.css}">
+<link rel="stylesheet" th:href="@{/css/layuiTable.css}">
+<script type="text/javascript" th:src="@{/js/htmlPage/operationManagement/deviceRepairRecord.js}"></script>
+<!-- 操作栏 -->
+<script type="text/html" id="recordBar">
+    <a class="layui-btn layui-btn-xs" lay-event="view" style="color: #1E9FFF;border: 1px solid transparent;"><i class="layui-icon">&#xe642;</i>查看详情</a>
+</script>
+<script type="text/html" id="No.">
+    {{d.LAY_TABLE_INDEX+1}}
+</script>
+<script>
+    $(function (){
+        $(window.parent.$(".layui-nav-item")[0]).addClass("layui-nav-itemed")//默认打开设备导航栏
+    });
+
+    $("#confirm").click(function () {
+        layer.closeAll();
+    })
+    $("#cancel").click(function () {
+        layer.closeAll();
+    })
+</script>
+</html>

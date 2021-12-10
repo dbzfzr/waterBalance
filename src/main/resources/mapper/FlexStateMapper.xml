@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zy.gis.mapper.FlexStateMapper" >
+  <resultMap id="BaseResultMap" type="com.zy.gis.pojo.flexem.FlexState" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="box_no" property="boxNo" jdbcType="VARCHAR" />
+    <result column="alarm_state" property="alarmState" jdbcType="VARCHAR" />
+    <result column="flexem_connect_sta" property="flexemConnectSta" jdbcType="INTEGER" />
+    <result column="flexem_wireless" property="flexemWireless" jdbcType="INTEGER" />
+    <result column="flexem_net_type" property="flexemNetType" jdbcType="INTEGER" />
+    <result column="flexem_online_sta" property="flexemOnlineSta" jdbcType="INTEGER" />
+    <result column="flexem_password" property="flexemPassword" jdbcType="VARCHAR" />
+    <result column="flexem_sn" property="flexemSn" jdbcType="VARCHAR" />
+    <result column="flexem_mqtt_ver" property="flexemMqttVer" jdbcType="INTEGER" />
+    <result column="flexem_pause" property="flexemPause" jdbcType="INTEGER" />
+    <result column="flexem_push_mode" property="flexemPushMode" jdbcType="VARCHAR" />
+    <result column="flexem_push_interval" property="flexemPushInterval" jdbcType="INTEGER" />
+    <result column="flexem_latitude" property="flexemLatitude" jdbcType="VARCHAR" />
+    <result column="flexem_longitude" property="flexemLongitude" jdbcType="VARCHAR" />
+    <result column="flexem_sim_ccid" property="flexemSimCcid" jdbcType="VARCHAR" />
+    <result column="flexem_sim_mnc" property="flexemSimMnc" jdbcType="VARCHAR" />
+    <result column="flexem_sim_mcc" property="flexemSimMcc" jdbcType="VARCHAR" />
+    <result column="flexem_sim_cel" property="flexemSimCel" jdbcType="VARCHAR" />
+    <result column="flexem_sim_lac" property="flexemSimLac" jdbcType="VARCHAR" />
+    <result column="flexem_sim_total_data" property="flexemSimTotalData" jdbcType="VARCHAR" />
+    <result column="flexem_sim_remain_data" property="flexemSimRemainData" jdbcType="VARCHAR" />
+    <result column="flexem_time_stamp" property="flexemTimeStamp" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, box_no, alarm_state, flexem_connect_sta, flexem_wireless, flexem_net_type, flexem_online_sta, 
+    flexem_password, flexem_sn, flexem_mqtt_ver, flexem_pause, flexem_push_mode, flexem_push_interval, 
+    flexem_latitude, flexem_longitude, flexem_sim_ccid, flexem_sim_mnc, flexem_sim_mcc, 
+    flexem_sim_cel, flexem_sim_lac, flexem_sim_total_data, flexem_sim_remain_data, flexem_time_stamp, 
+    update_time, water_quality_meter_state, liquid_level_meter_state, flow_meter_state, water_pump_state, rain_gauge_state, valve_state
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from flex_state
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectFlexStateList" resultType="com.zy.gis.pojo.flexem.FlexState">
+    select
+    <include refid="Base_Column_List" />
+    from flex_state
+    <where>
+      <if test="boxNo != null">
+        box_no = #{boxNo}
+      </if>
+    </where>
+  </select>
+
+  <select id="selectFlexStateCountByBoxNo" resultType="java.lang.Integer">
+      select count(*) from flex_state
+      where box_no = #{boxNo}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from flex_state
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zy.gis.pojo.flexem.FlexState" >
+    insert into flex_state (id, box_no, alarm_state, 
+      flexem_connect_sta, flexem_wireless, flexem_net_type, 
+      flexem_online_sta, flexem_password, flexem_sn, 
+      flexem_mqtt_ver, flexem_pause, flexem_push_mode, 
+      flexem_push_interval, flexem_latitude, flexem_longitude, 
+      flexem_sim_ccid, flexem_sim_mnc, flexem_sim_mcc, 
+      flexem_sim_cel, flexem_sim_lac, flexem_sim_total_data, 
+      flexem_sim_remain_data, flexem_time_stamp, update_time
+      )
+    values (#{id,jdbcType=INTEGER}, #{boxNo,jdbcType=VARCHAR}, #{alarmState,jdbcType=VARCHAR}, 
+      #{flexemConnectSta,jdbcType=INTEGER}, #{flexemWireless,jdbcType=INTEGER}, #{flexemNetType,jdbcType=INTEGER}, 
+      #{flexemOnlineSta,jdbcType=INTEGER}, #{flexemPassword,jdbcType=VARCHAR}, #{flexemSn,jdbcType=VARCHAR}, 
+      #{flexemMqttVer,jdbcType=INTEGER}, #{flexemPause,jdbcType=INTEGER}, #{flexemPushMode,jdbcType=VARCHAR}, 
+      #{flexemPushInterval,jdbcType=INTEGER}, #{flexemLatitude,jdbcType=VARCHAR}, #{flexemLongitude,jdbcType=VARCHAR}, 
+      #{flexemSimCcid,jdbcType=VARCHAR}, #{flexemSimMnc,jdbcType=VARCHAR}, #{flexemSimMcc,jdbcType=VARCHAR}, 
+      #{flexemSimCel,jdbcType=VARCHAR}, #{flexemSimLac,jdbcType=VARCHAR}, #{flexemSimTotalData,jdbcType=VARCHAR}, 
+      #{flexemSimRemainData,jdbcType=VARCHAR}, #{flexemTimeStamp,jdbcType=VARCHAR}, #{updateTime,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.zy.gis.pojo.flexem.FlexState" >
+    insert into flex_state
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="boxNo != null" >
+        box_no,
+      </if>
+      <if test="alarmState != null" >
+        alarm_state,
+      </if>
+      <if test="flexemConnectSta != null" >
+        flexem_connect_sta,
+      </if>
+      <if test="flexemWireless != null" >
+        flexem_wireless,
+      </if>
+      <if test="flexemNetType != null" >
+        flexem_net_type,
+      </if>
+      <if test="flexemOnlineSta != null" >
+        flexem_online_sta,
+      </if>
+      <if test="flexemPassword != null" >
+        flexem_password,
+      </if>
+      <if test="flexemSn != null" >
+        flexem_sn,
+      </if>
+      <if test="flexemMqttVer != null" >
+        flexem_mqtt_ver,
+      </if>
+      <if test="flexemPause != null" >
+        flexem_pause,
+      </if>
+      <if test="flexemPushMode != null" >
+        flexem_push_mode,
+      </if>
+      <if test="flexemPushInterval != null" >
+        flexem_push_interval,
+      </if>
+      <if test="flexemLatitude != null" >
+        flexem_latitude,
+      </if>
+      <if test="flexemLongitude != null" >
+        flexem_longitude,
+      </if>
+      <if test="flexemSimCcid != null" >
+        flexem_sim_ccid,
+      </if>
+      <if test="flexemSimMnc != null" >
+        flexem_sim_mnc,
+      </if>
+      <if test="flexemSimMcc != null" >
+        flexem_sim_mcc,
+      </if>
+      <if test="flexemSimCel != null" >
+        flexem_sim_cel,
+      </if>
+      <if test="flexemSimLac != null" >
+        flexem_sim_lac,
+      </if>
+      <if test="flexemSimTotalData != null" >
+        flexem_sim_total_data,
+      </if>
+      <if test="flexemSimRemainData != null" >
+        flexem_sim_remain_data,
+      </if>
+      <if test="waterQualityMeterState != null" >
+        water_quality_meter_state,
+      </if>
+      <if test="liquidLevelMeterState != null" >
+        liquid_level_meter_state,
+      </if>
+      <if test="flowMeterState != null" >
+        flow_meter_state,
+      </if>
+      <if test="waterPumpState != null" >
+        water_pump_state,
+      </if>
+      <if test="rainGaugeState != null" >
+        rain_gauge_state,
+      </if>
+      <if test="valveState != null" >
+        valve_state,
+      </if>
+      <if test="flexemTimeStamp != null" >
+        flexem_time_stamp,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="boxNo != null" >
+        #{boxNo,jdbcType=VARCHAR},
+      </if>
+      <if test="alarmState != null" >
+        #{alarmState,jdbcType=VARCHAR},
+      </if>
+      <if test="flexemConnectSta != null" >
+        #{flexemConnectSta,jdbcType=INTEGER},
+      </if>
+      <if test="flexemWireless != null" >
+        #{flexemWireless,jdbcType=INTEGER},
+      </if>
+      <if test="flexemNetType != null" >
+        #{flexemNetType,jdbcType=INTEGER},
+      </if>
+      <if test="flexemOnlineSta != null" >
+        #{flexemOnlineSta,jdbcType=INTEGER},
+      </if>
+      <if test="flexemPassword != null" >
+        #{flexemPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="flexemSn != null" >
+        #{flexemSn,jdbcType=VARCHAR},
+      </if>
+      <if test="flexemMqttVer != null" >
+        #{flexemMqttVer,jdbcType=INTEGER},
+      </if>
+      <if test="flexemPause != null" >
+        #{flexemPause,jdbcType=INTEGER},
+      </if>
+      <if test="flexemPushMode != null" >
+        #{flexemPushMode,jdbcType=VARCHAR},
+      </if>
+      <if test="flexemPushInterval != null" >
+        #{flexemPushInterval,jdbcType=INTEGER},
+      </if>
+      <if test="flexemLatitude != null" >
+        #{flexemLatitude,jdbcType=VARCHAR},
+      </if>
+      <if test="flexemLongitude != null" >
+        #{flexemLongitude,jdbcType=VARCHAR},
+      </if>
+      <if test="flexemSimCcid != null" >
+        #{flexemSimCcid,jdbcType=VARCHAR},
+      </if>
+      <if test="flexemSimMnc != null" >
+        #{flexemSimMnc,jdbcType=VARCHAR},
+      </if>
+      <if test="flexemSimMcc != null" >
+        #{flexemSimMcc,jdbcType=VARCHAR},
+      </if>
+      <if test="flexemSimCel != null" >
+        #{flexemSimCel,jdbcType=VARCHAR},
+      </if>
+      <if test="flexemSimLac != null" >
+        #{flexemSimLac,jdbcType=VARCHAR},
+      </if>
+      <if test="flexemSimTotalData != null" >
+        #{flexemSimTotalData,jdbcType=VARCHAR},
+      </if>
+      <if test="flexemSimRemainData != null" >
+        #{flexemSimRemainData,jdbcType=VARCHAR},
+      </if>
+
+      <if test="waterQualityMeterState != null" >
+        #{waterQualityMeterState},
+      </if>
+      <if test="liquidLevelMeterState != null" >
+        #{liquidLevelMeterState},
+      </if>
+      <if test="flowMeterState != null" >
+        #{flowMeterState},
+      </if>
+      <if test="waterPumpState != null" >
+        #{waterPumpState},
+      </if>
+      <if test="rainGaugeState != null" >
+        #{rainGaugeState},
+      </if>
+      <if test="valveState != null" >
+        #{valveState},
+      </if>
+
+      <if test="flexemTimeStamp != null" >
+        #{flexemTimeStamp,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByBoxNoKeySelective" parameterType="com.zy.gis.pojo.flexem.FlexState" >
+    update flex_state
+    <set >
+      <if test="alarmState != null" >
+        alarm_state = #{alarmState,jdbcType=VARCHAR},
+      </if>
+      <if test="flexemConnectSta != null" >
+        flexem_connect_sta = #{flexemConnectSta,jdbcType=INTEGER},
+      </if>
+      <if test="flexemWireless != null" >
+        flexem_wireless = #{flexemWireless,jdbcType=INTEGER},
+      </if>
+      <if test="flexemNetType != null" >
+        flexem_net_type = #{flexemNetType,jdbcType=INTEGER},
+      </if>
+      <if test="flexemOnlineSta != null" >
+        flexem_online_sta = #{flexemOnlineSta,jdbcType=INTEGER},
+      </if>
+      <if test="flexemPassword != null" >
+        flexem_password = #{flexemPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="flexemSn != null" >
+        flexem_sn = #{flexemSn,jdbcType=VARCHAR},
+      </if>
+      <if test="flexemMqttVer != null" >
+        flexem_mqtt_ver = #{flexemMqttVer,jdbcType=INTEGER},
+      </if>
+      <if test="flexemPause != null" >
+        flexem_pause = #{flexemPause,jdbcType=INTEGER},
+      </if>
+      <if test="flexemPushMode != null" >
+        flexem_push_mode = #{flexemPushMode,jdbcType=VARCHAR},
+      </if>
+      <if test="flexemPushInterval != null" >
+        flexem_push_interval = #{flexemPushInterval,jdbcType=INTEGER},
+      </if>
+      <if test="flexemLatitude != null" >
+        flexem_latitude = #{flexemLatitude,jdbcType=VARCHAR},
+      </if>
+      <if test="flexemLongitude != null" >
+        flexem_longitude = #{flexemLongitude,jdbcType=VARCHAR},
+      </if>
+      <if test="flexemSimCcid != null" >
+        flexem_sim_ccid = #{flexemSimCcid,jdbcType=VARCHAR},
+      </if>
+      <if test="flexemSimMnc != null" >
+        flexem_sim_mnc = #{flexemSimMnc,jdbcType=VARCHAR},
+      </if>
+      <if test="flexemSimMcc != null" >
+        flexem_sim_mcc = #{flexemSimMcc,jdbcType=VARCHAR},
+      </if>
+      <if test="flexemSimCel != null" >
+        flexem_sim_cel = #{flexemSimCel,jdbcType=VARCHAR},
+      </if>
+      <if test="flexemSimLac != null" >
+        flexem_sim_lac = #{flexemSimLac,jdbcType=VARCHAR},
+      </if>
+      <if test="flexemSimTotalData != null" >
+        flexem_sim_total_data = #{flexemSimTotalData,jdbcType=VARCHAR},
+      </if>
+      <if test="flexemSimRemainData != null" >
+        flexem_sim_remain_data = #{flexemSimRemainData,jdbcType=VARCHAR},
+      </if>
+
+      <if test="waterQualityMeterState != null" >
+        water_quality_meter_state = #{waterQualityMeterState},
+      </if>
+      <if test="liquidLevelMeterState != null" >
+        liquid_level_meter_state = #{liquidLevelMeterState},
+      </if>
+      <if test="flowMeterState != null" >
+        flow_meter_state = #{flowMeterState},
+      </if>
+      <if test="waterPumpState != null" >
+        water_pump_state = #{waterPumpState},
+      </if>
+      <if test="rainGaugeState != null" >
+        rain_gauge_state = #{rainGaugeState},
+      </if>
+      <if test="valveState != null" >
+        valve_state = #{valveState},
+      </if>
+
+      <if test="flexemTimeStamp != null" >
+        flexem_time_stamp = #{flexemTimeStamp,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where box_no = #{boxNo,jdbcType=INTEGER}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.zy.gis.pojo.flexem.FlexState" >
+    update flex_state
+    set box_no = #{boxNo,jdbcType=VARCHAR},
+      alarm_state = #{alarmState,jdbcType=VARCHAR},
+      flexem_connect_sta = #{flexemConnectSta,jdbcType=INTEGER},
+      flexem_wireless = #{flexemWireless,jdbcType=INTEGER},
+      flexem_net_type = #{flexemNetType,jdbcType=INTEGER},
+      flexem_online_sta = #{flexemOnlineSta,jdbcType=INTEGER},
+      flexem_password = #{flexemPassword,jdbcType=VARCHAR},
+      flexem_sn = #{flexemSn,jdbcType=VARCHAR},
+      flexem_mqtt_ver = #{flexemMqttVer,jdbcType=INTEGER},
+      flexem_pause = #{flexemPause,jdbcType=INTEGER},
+      flexem_push_mode = #{flexemPushMode,jdbcType=VARCHAR},
+      flexem_push_interval = #{flexemPushInterval,jdbcType=INTEGER},
+      flexem_latitude = #{flexemLatitude,jdbcType=VARCHAR},
+      flexem_longitude = #{flexemLongitude,jdbcType=VARCHAR},
+      flexem_sim_ccid = #{flexemSimCcid,jdbcType=VARCHAR},
+      flexem_sim_mnc = #{flexemSimMnc,jdbcType=VARCHAR},
+      flexem_sim_mcc = #{flexemSimMcc,jdbcType=VARCHAR},
+      flexem_sim_cel = #{flexemSimCel,jdbcType=VARCHAR},
+      flexem_sim_lac = #{flexemSimLac,jdbcType=VARCHAR},
+      flexem_sim_total_data = #{flexemSimTotalData,jdbcType=VARCHAR},
+      flexem_sim_remain_data = #{flexemSimRemainData,jdbcType=VARCHAR},
+      flexem_time_stamp = #{flexemTimeStamp,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

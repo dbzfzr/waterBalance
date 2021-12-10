@@ -1,0 +1,174 @@
+.layui-layer-title {
+    color: #E9EBEE !important;
+    font-size: 16px !important;
+    top: 3.5vh !important;
+    border-bottom: 2px solid #114497 !important;
+    background: rgba(28, 94, 210, 0.6) !important;
+    border-top: 1px solid #EFF0F1 !important;
+}
+
+.layui-form-label{
+    color: #F8F9FA !important;
+    font-size: 15px;
+    margin-top: -4px;
+}
+
+::-webkit-scrollbar{width: 0px; height: 1vh !important;}
+
+.layui-layer-ico {
+    background: url(../image/close.png) no-repeat !important;
+}
+
+.layui-input{
+    width: 60% !important;
+    line-height: 38px;
+    border-width: 2px;
+    border-style: solid;
+    background-color: transparent;
+    border-radius: 4px;
+    border-color: #124699;
+
+}
+
+.layui-form-select .layui-edge {
+    right: 285px !important;
+}
+
+.layui-form-select dl{
+     min-width: 60% !important;
+ }
+.layui-input-block{
+    margin-top: 10px !important;
+
+}
+input::-webkit-input-placeholder{
+    color:#F6F7F9 !important;
+}
+textarea::-webkit-input-placeholder{
+    color: #F6F7F9 !important;
+}
+
+.layui-textarea{
+    width: 60% !important;
+    background-color: #072E56;
+    border: 1px solid #072E56;
+    color: #F8F9FB;
+}
+.layui-textarea:hover{
+    border: 1px solid #072E56 !important;
+}
+
+
+/*运维管理下拉框样式*/
+.layui-form-select dl{
+    background-color: rgba(0,26,51,1)!important;
+    border: 1px solid #001A33 !important;
+    width: 1px;
+}
+.layui-form-select dl dd.layui-this{
+
+    background-color: rgba(25,66,55,0) !important;
+}
+.layui-form-select dl dd.layui-select-tips{
+    color: #04CCFB !important;
+}
+
+a, body{
+    color: #F9FAFD !important;
+}
+.layui-form-select dl dd:hover{
+    background-color: #05647F !important;
+    box-shadow: 2px 2px 4px #04ccfb;
+}
+.layui-form-select dl dd.layui-this{
+    background-color: #05647F !important;
+}
+
+.layui-form-item{
+    position: relative;
+    left: 75px;
+}
+
+.layui-btn-normal{
+    background: rgba(0, 128, 255, 0.2) linear-gradient(
+            175deg, rgba(0, 110, 255, 0.5) 0%, rgba(0, 110, 255, 0) 100%) !important;
+    left: 666px;
+    position: absolute;
+}
+
+.layui-table-fixed{
+    background: #021436;
+}
+
+.layui-layer-page .layui-layer-content{
+    height: 92% !important;
+    /*width: fit-content;*/
+    margin-left: 35px;
+}
+#timeTd{
+    position: absolute;
+    left: 50px;
+    font-weight: bold;
+    margin-left: 120px;
+}
+#orgTd{
+    position: absolute;
+    left: 50px;
+    font-weight: bold;
+    margin-left: 120px;
+}
+#boxAliasTd{
+    position: absolute;
+    left: 50px;
+    font-weight: bold;
+    margin-left: 120px;
+}
+#userTd{
+    position: absolute;
+    left: 50px;
+    font-weight: bold;
+    margin-left: 120px;
+}
+#breakdownDescriptionTd{
+    position: absolute;
+    left: 115px;
+    font-weight: bold;
+    margin-left:55px;
+}
+#repairDescriptionTd{
+    position: absolute;
+    left: 125px;
+    font-weight: bold;
+    margin-left: 45px;
+}
+#remarkTd{
+    position: absolute;
+    left: 235px;
+    font-weight: bold;
+    margin-left: -65px;
+    margin-top: 18px;
+}
+
+
+.layui-layer{
+    background: linear-gradient(rgba(3, 37 ,72,0.8) 10%, rgba(25, 97, 167 ,0.8) 80%,rgba(17, 92, 198,0.8) 100%) !important;
+}
+
+
+.layui-input:hover{
+
+    border-color: #124699 !important;
+}
+
+#organizationCode{
+    color: #F8F9FB !important;
+}
+
+.layui-form-select .layui-input{
+    color: #D8DBDF;
+}
+
+.layui-table-page .layui-laypage input{
+    width: 40px !important;
+}
+

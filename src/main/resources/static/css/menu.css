@@ -1,0 +1,18 @@
+/**
+省 市 等组织树图标样式
+ */
+
+.my-tree-icon-1, .my-tree-icon-2, .my-tree-icon-3{
+    background: url(../image/menu/menu.png) no-repeat;
+}
+
+.tree-file {
+    background: url(../image/menu/menu.png) no-repeat;
+}
+
+.tree-folder {
+    background: url(../image/menu/menu_on.png) no-repeat;
+}
+ .tree-folder-open {
+    background: url(../image/menu/menu_off.png) no-repeat;
+}

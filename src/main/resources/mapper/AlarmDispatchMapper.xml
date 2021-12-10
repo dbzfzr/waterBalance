@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zy.gis.mapper.AlarmDispatchMapper" >
+  <resultMap id="BaseResultMap" type="com.zy.gis.pojo.flexem.AlarmDispatch" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="alarm_record_id" property="alarmRecordId" jdbcType="INTEGER" />
+    <result column="alarm_time" property="alarmTime" jdbcType="VARCHAR" />
+    <result column="dispatch_user_id" property="dispatchUserId" jdbcType="INTEGER" />
+    <result column="dispatch_user_org_code" property="dispatchUserOrgCode" jdbcType="VARCHAR" />
+    <result column="dispatch_to_user_id" property="dispatchToUserId" jdbcType="INTEGER" />
+    <result column="dispatch_to_user_org_code" property="dispatchToUserOrgCode" jdbcType="VARCHAR" />
+    <result column="dispatch_time" property="dispatchTime" jdbcType="VARCHAR" />
+    <result column="handle_state" property="handleState" jdbcType="VARCHAR" />
+    <result column="wait_handle_time" property="waitHandleTime" jdbcType="VARCHAR" />
+    <result column="dispatch_description" property="dispatchDescription" jdbcType="VARCHAR" />
+    <result column="handle_result" property="handleResult" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, alarm_record_id, alarm_time, dispatch_user_id, dispatch_user_org_code, dispatch_to_user_id, 
+    dispatch_to_user_org_code, dispatch_time, handle_state, wait_handle_time, dispatch_description, 
+    handle_result, dispatch_type
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from alarm_dispatch
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectAlarmDispatchList" resultType="com.zy.gis.pojo.flexem.AlarmDispatch">
+    select
+    <include refid="Base_Column_List"/>
+    from alarm_dispatch
+    <where>
+      <if test="alarmRecordId != null and alarmRecordId != ''">
+        alarm_record_id = #{alarmRecordId}
+      </if>
+      <if test="dispatchToUserId != null">
+        and dispatch_to_user_id = #{dispatchToUserId}
+      </if>
+      <if test="handleState != null and handleState != ''">
+        and handle_state = #{handleState}
+      </if>
+    </where>
+    order by dispatch_time desc
+    <if test="limit != null and offset != null">
+      limit #{offset}, #{limit}
+    </if>
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from alarm_dispatch
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insertSelective" parameterType="com.zy.gis.pojo.flexem.AlarmDispatch" >
+    insert into alarm_dispatch
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="alarmRecordId != null" >
+        alarm_record_id,
+      </if>
+      <if test="alarmTime != null" >
+        alarm_time,
+      </if>
+      <if test="dispatchUserId != null" >
+        dispatch_user_id,
+      </if>
+      <if test="dispatchUserOrgCode != null" >
+        dispatch_user_org_code,
+      </if>
+      <if test="dispatchToUserId != null" >
+        dispatch_to_user_id,
+      </if>
+      <if test="dispatchToUserOrgCode != null" >
+        dispatch_to_user_org_code,
+      </if>
+      <if test="dispatchTime != null" >
+        dispatch_time,
+      </if>
+      <if test="handleState != null" >
+        handle_state,
+      </if>
+      <if test="waitHandleTime != null" >
+        wait_handle_time,
+      </if>
+      <if test="dispatchDescription != null" >
+        dispatch_description,
+      </if>
+      <if test="handleResult != null" >
+        handle_result,
+      </if>
+      <if test="dispatchType != null" >
+        dispatch_type,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="alarmRecordId != null" >
+        #{alarmRecordId,jdbcType=INTEGER},
+      </if>
+      <if test="alarmTime != null" >
+        #{alarmTime,jdbcType=VARCHAR},
+      </if>
+      <if test="dispatchUserId != null" >
+        #{dispatchUserId,jdbcType=INTEGER},
+      </if>
+      <if test="dispatchUserOrgCode != null" >
+        #{dispatchUserOrgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="dispatchToUserId != null" >
+        #{dispatchToUserId,jdbcType=INTEGER},
+      </if>
+      <if test="dispatchToUserOrgCode != null" >
+        #{dispatchToUserOrgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="dispatchTime != null" >
+        #{dispatchTime,jdbcType=VARCHAR},
+      </if>
+      <if test="handleState != null" >
+        #{handleState,jdbcType=VARCHAR},
+      </if>
+      <if test="waitHandleTime != null" >
+        #{waitHandleTime,jdbcType=VARCHAR},
+      </if>
+      <if test="dispatchDescription != null" >
+        #{dispatchDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="handleResult != null" >
+        #{handleResult,jdbcType=VARCHAR},
+      </if>
+      <if test="dispatchType != null" >
+        #{dispatchType},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateSelective" parameterType="com.zy.gis.pojo.flexem.AlarmDispatch" >
+    update alarm_dispatch
+    <set >
+      <if test="alarmTime != null" >
+        alarm_time = #{alarmTime,jdbcType=VARCHAR},
+      </if>
+      <if test="dispatchUserId != null" >
+        dispatch_user_id = #{dispatchUserId,jdbcType=INTEGER},
+      </if>
+      <if test="dispatchUserOrgCode != null" >
+        dispatch_user_org_code = #{dispatchUserOrgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="dispatchToUserId != null" >
+        dispatch_to_user_id = #{dispatchToUserId,jdbcType=INTEGER},
+      </if>
+      <if test="dispatchToUserOrgCode != null" >
+        dispatch_to_user_org_code = #{dispatchToUserOrgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="dispatchTime != null" >
+        dispatch_time = #{dispatchTime,jdbcType=VARCHAR},
+      </if>
+      <if test="handleState != null" >
+        handle_state = #{handleState,jdbcType=VARCHAR},
+      </if>
+      <if test="waitHandleTime != null" >
+        wait_handle_time = #{waitHandleTime,jdbcType=VARCHAR},
+      </if>
+      <if test="dispatchDescription != null" >
+        dispatch_description = #{dispatchDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="handleResult != null" >
+        handle_result = #{handleResult,jdbcType=VARCHAR},
+      </if>
+      <if test="dispatchType != null" >
+        dispatch_type =  #{dispatchType},
+      </if>
+    </set>
+    <where>
+      <if test="alarmRecordId != null" >
+        alarm_record_id = #{alarmRecordId,jdbcType=INTEGER}
+      </if>
+      <if test="dispatchToUserId != null">
+        and dispatch_to_user_id = #{dispatchToUserId}
+      </if>
+    </where>
+  </update>
+
+  <select id="selectAlarmDispatchCount" resultType="java.lang.Integer">
+    select count(*) from alarm_dispatch
+    <where>
+         <if test="dispatchToUserId != null">
+           dispatch_to_user_id = #{dispatchToUserId}
+         </if>
+         <if test="handleState != null and handleState != ''">
+            and handle_state = #{handleState}
+         </if>
+    </where>
+  </select>
+
+</mapper>

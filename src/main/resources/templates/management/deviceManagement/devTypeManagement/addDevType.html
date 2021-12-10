@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="content-type" content="text/html">
+    <meta charset="UTF-8">
+    <title>新增设备类型</title>
+    <script type="text/javascript" th:src="@{/webjars/layui/2.6.8/layui.js}"></script>
+    <link rel="stylesheet" th:href="@{/webjars/layui/2.6.8/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/css/layuiForm.css}">
+    <script th:src="@{/webjars/jquery/3.5.1/jquery.js}"></script>
+    <script th:src="@{/js/formUtil.js}"></script>
+    <style>
+        input::-webkit-input-placeholder {
+            color: #dadada !important;
+        }
+        .layui-form-item .layui-input-inline{
+            border:1px solid #1775DA !important;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+<div  class="layui-container" style="margin-top: 10px">
+    <form id="form" class="layui-form" name="form">
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span style="color: red;">*&nbsp;</span>设备类型名称：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="devTypeName"  id="devTypeName" lay-verify="required" placeholder="请输入设备类型名称" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+<script>
+    function initModifyView(data) {
+
+    }
+</script>
+</html>

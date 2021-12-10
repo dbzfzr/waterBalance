@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zy.gis.mapper.AlarmRuleMapper" >
+  <resultMap id="BaseResultMap" type="com.zy.gis.pojo.AlarmRule" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="device_type" property="deviceType" jdbcType="VARCHAR" />
+    <result column="alarm_type" property="alarmType" jdbcType="VARCHAR" />
+    <result column="alarm_parameter" property="alarmParameter" jdbcType="VARCHAR" />
+    <result column="alarm_superior_limit" property="alarmSuperiorLimit" jdbcType="VARCHAR" />
+    <result column="alarm_lower_limit" property="alarmLowerLimit" jdbcType="VARCHAR" />
+    <result column="enable" property="enable" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, control_system_type, device_type, alarm_type, alarm_parameter, alarm_superior_limit, alarm_lower_limit,
+    enable, create_time, update_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from alarm_rule
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from alarm_rule
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insertSelective" parameterType="com.zy.gis.pojo.AlarmRule" >
+    insert into alarm_rule
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="controlSystemType != null" >
+        control_system_type,
+      </if>
+      <if test="deviceType != null" >
+        device_type,
+      </if>
+      <if test="alarmType != null" >
+        alarm_type,
+      </if>
+      <if test="alarmParameter != null" >
+        alarm_parameter,
+      </if>
+      <if test="alarmSuperiorLimit != null" >
+        alarm_superior_limit,
+      </if>
+      <if test="alarmLowerLimit != null" >
+        alarm_lower_limit,
+      </if>
+      <if test="enable != null" >
+        enable,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="controlSystemType != null" >
+        #{controlSystemType},
+      </if>
+      <if test="deviceType != null" >
+        #{deviceType,jdbcType=VARCHAR},
+      </if>
+      <if test="alarmType != null" >
+        #{alarmType,jdbcType=VARCHAR},
+      </if>
+      <if test="alarmParameter != null" >
+        #{alarmParameter,jdbcType=VARCHAR},
+      </if>
+      <if test="alarmSuperiorLimit != null" >
+        #{alarmSuperiorLimit,jdbcType=VARCHAR},
+      </if>
+      <if test="alarmLowerLimit != null" >
+        #{alarmLowerLimit,jdbcType=VARCHAR},
+      </if>
+      <if test="enable != null" >
+        #{enable,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <!--20211207 Wangchong 查询报警事件规则-->
+  <select id="listGetAlarmRule" parameterType="com.zy.gis.orm.qo.QueryParameter" resultType="com.zy.gis.pojo.AlarmRule">
+    select
+    <include refid="Base_Column_List" />
+    from alarm_rule
+    <where>
+      <if test="parameter != null">
+
+        <if test="parameter.deviceType != null">
+          device_type = #{parameter.deviceType}
+        </if>
+        <if test="alarmParameter.controlSystemType != null">
+          and control_system_type = #{parameter.controlSystemType}
+        </if>
+        <if test="alarmParameter.deviceType != null">
+          and alarm_parameter = #{parameter.alarmParameter}
+        </if>
+
+      </if>
+    </where>
+    order by create_time desc
+    <if test="limit != null and offset != null">
+      limit #{offset}, #{limit}
+    </if>
+  </select>
+  <!--20211207 Wangchong 查询报警事件数量-->
+  <select id="countGetAlarmRule" resultType="java.lang.Integer" parameterType="com.zy.gis.orm.qo.QueryParameter">
+    select
+     count(*)
+    from alarm_rule
+    <where>
+      <if test="parameter != null">
+        <if test="parameter.deviceType != null">
+          device_type = #{parameter.deviceType}
+        </if>
+        <if test="parameter.deviceType != null">
+          device_type = #{parameter.deviceType}
+        </if>
+      </if>
+    </where>
+  </select>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.zy.gis.pojo.AlarmRule">
+    update alarm_rule
+    <set >
+      <if test="deviceType != null" >
+        device_type = #{deviceType,jdbcType=VARCHAR},
+      </if>
+      <if test="alarmType != null" >
+        alarm_type = #{alarmType,jdbcType=VARCHAR},
+      </if>
+      <if test="alarmParameter != null" >
+        alarm_parameter = #{alarmParameter,jdbcType=VARCHAR},
+      </if>
+      <if test="alarmSuperiorLimit != null" >
+        alarm_superior_limit = #{alarmSuperiorLimit,jdbcType=VARCHAR},
+      </if>
+      <if test="alarmLowerLimit != null" >
+        alarm_lower_limit = #{alarmLowerLimit,jdbcType=VARCHAR},
+      </if>
+      <if test="enable != null" >
+        enable = #{enable,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

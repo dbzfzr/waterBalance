@@ -1,0 +1,202 @@
+body {
+}
+*{
+    -webkit-box-sizing: border-box;
+}
+.main-frame{
+    width: 100%;
+    height: 90%;
+    position: absolute;
+    /*left: 2%;*/
+}
+.tree-title{
+    color: #B0C2E4;
+}
+.tree-title:hover{
+    color: #EECE12 !important;
+}
+/*.tree-node-selected{*/
+/*    color: red !important;*/
+/*}*/
+
+
+    /*.map{*/
+/*    height: 73%;*/
+/*    width:82%;*/
+/*    position:absolute;*/
+/*    left:328px;*/
+/*    top:200px;*/
+/*    padding:0px;*/
+/*    z-index: 0;*/
+/*    color: rgb(0, 0, 0);*/
+/*}*/
+
+/*!*去除百度地图LOGO*!*/
+/*.anchorBL{display:none;}*/
+.left{
+    width: 21%;
+    height: 113%;
+    border-color: #c62828;
+    border-width: 0vh 0.1vh 0vh 0vh;
+    border-color: #ffffff;
+    top: -1.5vh;
+    left: -0.5vh;
+    position: relative;
+    padding: 1vh;
+    display: inline-block;
+    background-color: rgba(0,31,66,0.5);
+    z-index: 1;
+    overflow: auto;
+}
+.right{
+    width: 78%;
+    height: 862px;
+    top: 20px;
+    display: inline-block;
+    border-width: 0vh 0.1vh 0vh 0vh;
+    border-color: #ffffff;
+    left: -0.5vh;
+    padding: 1vh;
+    overflow: auto;
+}
+.top-frame{
+    border-width: 0vh 0vh 0.1vh 0vh;
+    padding-bottom: 0.5vh;
+}
+.search-input{
+    width: 212px;
+    height: 36px;
+    background: #FFFFFF;
+    border-radius: 0.1vw;
+    color: #F0F2F4;
+    border: 1px solid #0F3A6B;
+    padding-left: 0.2vw;
+    padding-right: 0.2vw;
+    /*margin-top: 20px;*/
+    /*margin-left: 5px;*/
+}
+.search-button{
+    width: 72px;
+    height: 36px;
+    background: #000D25;
+    border: 1px solid #0F3A6B ;
+    color: #B3B9C2;
+    margin-left: 0.2vw;
+    border-radius: 0.1vw;
+    /*margin-top:20px;*/
+    margin-left: 15px;
+    position: absolute;
+}
+.search-button:active{
+    background: #135BBB;
+}
+.reset-button{
+    width: 72px;
+    height: 36px;
+    margin-left: 0.2vw;
+    background: #000D25;
+    border-radius: 0.1vw;
+    color: #B3B9C2;
+    border: 1px solid #0F3A6B ;
+    /*margin-top:20px;*/
+    margin-left: 97px;
+    position: absolute;
+}
+.reset-button:active{
+    background: #135BBB;
+}
+#searchBox .active{
+    background: rgba(0, 128, 255, 0.2) linear-gradient(175deg, rgba(0, 110, 255, 0.5) 0%, rgba(0, 110, 255, 0) 100%);
+    border: 1px solid;
+    border-image: radial-gradient(circle, rgba(142, 174, 255, 1), rgba(142, 174, 255, 0.34), rgba(142, 174, 255, 0)) 1 1;
+    opacity: 1;
+}
+#searchBox .active button{
+    color:#E5EBFF;
+    font-weight: bold;
+}
+#searchBox  button{
+    color:#E5EBFF;
+    text-decoration: none;
+}
+#searchBox  button:hover{
+    color:#FFFFFF;
+    font-weight: bold;
+}
+#searchBox :hover{
+    opacity: 1;
+}
+.search-input:-webkit-autofill{
+    box-shadow: 0 0 0 1000px #00142D inset !important;
+    -webkit-text-fill-color: #fff !important;
+}
+.icon-image{
+    width: 1.5vh;
+    height: 1.5vh;
+    margin: 0 0.2vw 0 0.5vw;
+}
+#top-bar{
+    border-width: 0vh 0vh 0.1vh 0vh;
+    padding-bottom: 0.5vh;
+    display: flex;
+    margin-top: -2px;
+    margin-left: 25px;
+}
+#top-bar li{
+    margin-right: 10px;
+    /*height: 40px;*/
+    width: 105px;
+    opacity:0.4;
+    height: 38px;
+    line-height: 38px;
+    border: 1px solid transparent;
+    background-color: #022152;
+    color: #fff;
+    white-space: nowrap;
+    border-image: radial-gradient(circle, rgba(142, 174, 255, 1), rgba(142, 174, 255, 0.34), rgba(142, 174, 255, 0)) 1 1;
+    text-align: center;
+    font-size: 14px;
+    border-radius: 2px;
+    cursor: pointer;
+}
+#top-bar .active{
+    /*background: url('../image/mainPage/menu_button_clicked.png') no-repeat 50% 50%;*/
+    /*background-size: 100% 100%;*/
+    background: rgba(0, 128, 255, 0.2) linear-gradient(175deg, rgba(0, 110, 255, 0.5) 0%, rgba(0, 110, 255, 0) 100%);
+    border: 1px solid;
+    border-image: radial-gradient(circle, rgba(142, 174, 255, 1), rgba(142, 174, 255, 0.34), rgba(142, 174, 255, 0)) 1 1;
+    opacity: 1;
+}
+#top-bar .active a{
+    /*color:#1E9FFF;*/
+    color:#E5EBFF;
+    font-weight: bold;
+}
+#top-bar li a{
+    color:#E5EBFF;
+    text-decoration: none;
+    padding: 11px 23px 10px 23px;
+}
+#top-bar li a:hover{
+    /*color:#1E9FFF;*/
+    color:#FFFFFF;
+    font-weight: bold;
+}
+#top-bar li:hover{
+    opacity: 1;
+}
+.iframe{
+    width: 100%;
+    height: 92%;
+}
+/*.key{*/
+/*    height: 10px;*/
+/*    width: 25px;*/
+/*    margin-top: 5px;*/
+/*}*/
+#area{
+    background: #00142D;
+}
+
+::-webkit-scrollbar{width: 0px; height: 1vh !important;}
+

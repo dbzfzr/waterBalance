@@ -1,0 +1,165 @@
+
+/*首页顶部背景色*/
+.layui-layout-admin .layui-header {
+    background-color: #041634;
+    height: 64px;
+}
+.layui-header .layui-nav .layui-nav-item>a {
+    font-size: 16px;
+    font-family: "PangMenZhengDao-3";
+    font-weight: 400;
+    color: #D3EBFF;
+    opacity: 0.5;
+    /*margin-left: 34px;*/
+
+   /* padding: 0px 20px 0px 0px;*/
+}
+/*顶部一级菜单选中字体样式*/
+.layui-header .layui-nav .layui-nav-itemed>a {
+    font-size: 16px;
+    font-family: "PangMenZhengDao-3";
+    font-weight: 400;
+    color: #D3EBFF!important;
+    opacity: 1;
+}
+/*顶部二级菜单*/
+.layui-nav-child{
+    background: #000D29;
+    border-radius: 0px 0px 6px 6px;
+    border: 0px;
+}
+/*顶部二级菜单默认字体样式*/
+.layui-nav .layui-nav-child a{
+
+    font-size: 14px;
+    font-family: Microsoft YaHei;
+    font-weight: 400;
+    color: #D3EBFF;
+    opacity: 0.5;
+    transition: all ease-in-out .8s;
+}
+/*顶部二级菜单选中字体样式*/
+.layui-nav .layui-nav-child a:hover{
+    background-color: #14325B;
+    font-size: 16px;
+    font-family: Microsoft YaHei;
+    font-weight: 400;
+    color: #D3EBFF;
+    opacity: 1;
+    transition: all ease-in-out .8s;
+}
+.layui-nav .layui-nav-child dd.layui-this a, .layui-nav-child dd.layui-this {
+    background-color: #14325B;
+    font-size: 14px;
+    font-family: Microsoft YaHei;
+    font-weight: 400;
+    color: #D3EBFF;
+    opacity: 1;
+}
+
+/*顶部一级菜单选中/鼠标悬停样式*/
+.layui-nav .layui-this:after, .layui-nav-bar, .layui-nav-tree .layui-nav-itemed:after {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 0;
+    height: 4px;
+    background: radial-gradient(circle, #0378FF, #102038);
+    transition: all .2s;
+    -webkit-transition: all .2s;
+    opacity: 1;
+}
+.layui-nav .layui-nav-item a:hover,.layui-nav .layui-nav-item a:after{
+    opacity: 1;
+}
+.header-item-checked{
+    left: 0;
+    position: absolute;
+    top: 36px;
+    width: 32px;
+    height: 20px;
+    background-image: url("../image/homepage-head-checked.png");
+    transition: all .2s;
+    -webkit-transition: all .2s;
+    opacity: 0;
+}
+/*导航栏用户名*/
+.layui-nav .layui-nav-item .username{
+    color:#D3EBFF;
+    font-size:14px;
+    font-family: Arial;
+    font-weight: 400;
+    opacity: 0.5;
+}
+.layui-nav .layui-nav-item .realTime,.layui-nav .layui-nav-item .realTime:hover,.layui-nav .layui-nav-item .quit{
+    font-size: 14px;
+    font-family: Microsoft YaHei;
+    font-weight: 400;
+    color: #D3EBFF;
+    opacity: 0.5;
+}
+.layui-nav .layui-nav-item .username:hover,.layui-nav .layui-nav-item .quit:hover{
+    opacity: 1;
+}
+/*首页左侧宽度*/
+.layui-layout-admin .layui-side,.layui-layout-admin .layui-side .layui-side-scroll,.layui-nav-tree {
+    width: 230px;
+}
+.layui-body{
+    left: 230px;
+}
+/*首页左侧背景色*/
+.layui-bg-black {
+    background-color: #041634!important;
+}
+/*首页组织树背景色*/
+.layui-nav .layui-nav-item {
+    /*background-color: #041634;*/
+}
+
+/*组织树默认字体样式*/
+.layui-side .layui-nav .layui-nav-item a {
+    font-size: 16px;
+    font-family: Microsoft YaHei;
+    font-weight: 400;
+    color: #D3EBFF;
+    opacity: 0.5;
+}
+/*组织树选中字体样式*/
+.layui-side .layui-nav .layui-nav-itemed>a {
+    font-size: 16px;
+    font-family: Microsoft YaHei;
+    font-weight: 400;
+    color: #D3EBFF!important;
+    opacity: 1;
+}
+/*组织树子节点默认背景*/
+.layui-nav-itemed>.layui-nav-child {
+    background-color: #041634!important;
+}
+/*组织树子节点选中背景以及选中字体样式*/
+.layui-nav-tree .layui-nav-child dd.layui-this a, .layui-nav-tree .layui-this>a ,.layui-nav-tree .layui-nav-item a:hover{
+    background-color: #14325B!important;
+    color: #D3EBFF;
+    opacity: 1;
+}
+
+.layui-nav-tree .layui-nav-child dd.layui-this, .layui-nav-tree .layui-nav-child dd.layui-this a, .layui-nav-tree .layui-this, .layui-nav-tree .layui-this>a, .layui-nav-tree .layui-this>a:hover {
+    background-color: #14325B!important;
+    color: #D3EBFF;
+    opacity: 1;
+}
+
+.layui-nav-tree .layui-nav-item .layui-nav-child a {
+    padding-left: 2.2vw;
+}
+
+.layui-nav-tree .layui-nav-item  a span{
+    padding-left: .3vw;
+}
+
+
+@font-face {
+    font-family: PangMenZhengDao-3;
+    src: url("/../fonts/PangMenZhengDao-3.ttf");
+}

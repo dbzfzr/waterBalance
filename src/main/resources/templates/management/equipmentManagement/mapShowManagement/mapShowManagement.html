@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="content-type" content="text/html">
+    <meta charset="UTF-8">
+
+    <title>地图展示</title>
+
+    <!--百度地图 -->
+<!--    <script type="text/javascript" src="https://api.map.baidu.com/api?type=webgl&v=1.0&ak=X4nK3H4asgsS4cuXSuvg0viGW9qPXDAQ"></script>--> <!--hhp百度地图-->
+    <script type="text/javascript" src="https://api.map.baidu.com/api?type=webgl&v=1.0&ak=smHViQElETSO7GAfRCoXuf4yGnIokjyC"></script>
+
+    <script th:src="@{/js/echarts.min.js}"></script>
+    <script th:src="@{/js/coordformat/index.js}"></script>
+    <script th:src="@{/webjars/jquery/3.5.1/jquery.js}"></script>
+    <link rel="stylesheet" th:href="@{/css/map.css}">
+    <style type="text/css">
+        .BMap_bubble_pop {
+            background: rgba(0, 128, 255, 0.2) linear-gradient(175deg, rgba(0, 110, 255, 0.5) 0%, rgba(0, 110, 255, 0) 100%) !important;
+            border: 1px solid !important;
+            border-image: radial-gradient(circle, rgba(142, 174, 255, 1), rgba(142, 174, 255, 0.34), rgba(142, 174, 255, 0)) 1 1 !important;
+            opacity: 0.8 !important;
+        }
+
+        .BMap_bubble_title {
+            color: #FAFAFA !important;
+        }
+
+        p, ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        #nav li a{
+            color:#ffffff;
+            text-decoration: none;
+        }
+
+        #nav li:hover {
+            font-size: 18px;
+            transition: all .5s ;
+        }
+
+        .navigation-bar{
+            height: 5.3vh !important;
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+        }
+
+        #nav{
+            position: absolute;
+            left: 3vw !important;
+            display: flex;
+        }
+
+        #nav li {
+            color:#fff;
+            width: 5.5vw;
+            height:4.1vh;
+            line-height: 4.1vh;
+            cursor: pointer;
+            transition: all .2s ease-in;
+            text-align: center;
+            bottom: 0;
+            margin-right: 0.625vw;
+            /*background: #d2d2d2;*/
+            border: 1px solid;
+            background: rgba(0, 128, 255, 0.2) linear-gradient(175deg, rgba(0, 110, 255, 0.5) 0%, rgba(0, 110, 255, 0) 100%);
+            border: 1px solid;
+            border-image: radial-gradient(circle, rgba(142, 174, 255, 1), rgba(142, 174, 255, 0.34), rgba(142, 174, 255, 0)) 1 1;
+            opacity: 1;
+        }
+        .hide{
+            display: none;
+        }
+
+        #flexemDataDiv::-webkit-scrollbar{width: 0px; height: 0px;}
+
+        #flexemDataDiv::-webkit-scrollbar-button:vertical{display: none!important;}
+        #flexemDataDiv::-webkit-scrollbar-track, ::-webkit-scrollbar-corner{background-color: #00AAFF;}
+        #flexemDataDiv::-webkit-scrollbar-thumb{border-radius: 0; background-color: rgba(0,0,0,.3);}
+
+        table{
+            width: 100%;
+            text-align: center;
+            font-family: PingFang-SC-Regular;
+            font-size: 15px;
+            font-weight: normal;
+            font-stretch: normal;
+            line-height: 35px;
+            letter-spacing: 1px;
+            color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+<!--百度地图-->
+<div id="container" class="map"></div>
+</body>
+<script type="text/javascript">
+
+    $(function () {
+        //获取最顶层父页面的body
+        var parentBody =  window.parent.parent.document.body;
+        parentBody.style='background-color:#031133';
+
+       if (parent.organizeTreeClickedNodeAttributes != null){
+           showFlexemDevice(parent.organizeTreeClickedNodeAttributes);
+       }
+    })
+
+    var map = new BMapGL.Map("container");
+    var point = new BMapGL.Point(120.20769107795724, 30.183872266995300);//创建点坐标，不一定是点坐标，要看设置
+    map.enableScrollWheelZoom(true);//设置鼠标滚轮缩放
+    map.setMapStyleV2({
+        styleId: '95f38494b1f5c7e070759907c618ff81'//自定义地图样式 hhp 726af33cb58954d724aa45935732a562
+
+    });
+
+    map.centerAndZoom(point,15);//设置中心点(确定中心点坐标)
+
+
+    var allPoint = [];
+    var marker = [];
+
+    // 20211105 Wangchong 存储已绘制的点的数据
+    var haveDrawnPointArray = [];
+
+    // 20211105 Wangchong 地图上显示点位
+    function showFlexemDevice(parameter) {
+           for (var i=0; i<haveDrawnPointArray.length;i++){
+               if (parameter.boxNo == haveDrawnPointArray[i].boxNo){
+                   map.centerAndZoom(haveDrawnPointArray[i].point, 18);
+                   map.closeInfoWindow();
+                   map.openInfoWindow(haveDrawnPointArray[i].infoWindow, haveDrawnPointArray[i].point);//弹出信息窗口
+                   return;
+               }
+           }
+           drawPoint(parameter);
+    }
+
+    // 显示点位信息框
+    function showPointInfoDiv() {
+        $("#networkPointInfoDiv").removeClass("hide");
+        $("#flexemDataDiv").addClass("hide");
+    }
+
+    //显示繁易屏设备信息框
+    function showFlexemDataDiv(){
+        $("#networkPointInfoDiv").addClass("hide");
+        $("#flexemDataDiv").removeClass("hide");
+    }
+
+    /**
+     * 绘制点位
+     * @author Wangchong
+     * @date 20211105
+     * @param parameter {"boxNo":"","boxAlias":"",...}
+     */
+    function drawPoint(parameter) {
+        var tempJson = {boxNo: parameter.boxNo};
+
+        var networkPointHaveFlexemInfo;
+        var item;
+        $.ajax({
+            url: 'getOneNetworkPointHaveFlexemInfo',
+            type: 'post',
+            data:JSON.stringify({boxNo: parameter.boxNo}),
+            contentType: 'application/json;charset=utf-8',
+            async: false,
+            success:function (res) {
+                networkPointHaveFlexemInfo = res;
+                item = res;
+            }
+        })
+
+        // var bd09 = wgs84Tobd09(networkPointHaveFlexemInfo.longitude, networkPointHaveFlexemInfo.latitude);//坐标转换
+        //
+        // var longitude = bd09[0];// 经度
+        //
+        // var latitude = bd09[1]; // 纬度
+
+
+
+        var longitude = networkPointHaveFlexemInfo.longitude;// 经度
+
+        var latitude = networkPointHaveFlexemInfo.latitude; // 纬度
+        var systemType = networkPointHaveFlexemInfo.systemType;
+
+        var pointIconImage;
+
+        var popupContentHtml = "<div class=\"navigation-bar\">\n" +
+            "    <ul id=\"nav\">\n" +
+            "        <li><a href=\"javascript:;\" onclick='showFlexemDataDiv()'>设备数据</a></li>\n" +
+            "        <li><a href=\"javascript:;\" onclick='showPointInfoDiv()'>点位数据</a></li>\n" +
+            "    </ul>\n" +
+            "</div>";
+        var text = "<div id='networkPointInfoDiv' class='hide' style='color:#fafafa;position:absolute;top: 40px;'><table>";
+        text = text + "<tr><td>管网点位编号</td>" + "<td>" + item.pointNo + "</td></tr>";
+        text = text + "<tr><td>管网类型</td>" + "<td>" + item.networkType + "</td></tr>";
+        text = text + "<tr><td>管网等级</td>" + "<td>" + item.networkLevel + "</td></tr>";
+        text = text + "<tr><td>管网点位类型</td>" + "<td>" + item.pointType + "</td></tr>";
+        text = text + "<tr><td>管网点位系统类型</td>" + "<td>" + item.systemType + "</td></tr>";
+        text = text + "<tr><td>管网材质</td>" + "<td>" + item.material + "</td></tr>";
+
+        text = text + "<tr><td>管网规格(mm)</td>" + "<td>" + item.specs + "</td></tr>";
+        text = text + "<tr><td>管网顶高程(m)</td>" + "<td>" + item.topDepth + "</td></tr>";
+        text = text + "<tr><td>管网底高程(m)</td>" + "<td>" + item.bottomDepth + "</td></tr>";
+        text = text + "<tr><td>管网竣工日期</td>" + "<td>" + item.completionDate + "</td></tr>";
+        text = text + "<tr><td>所属区域</td>" + "<td>" + item.addressName + "</td></tr>"
+        // text = text + "所属地点经度(百度经纬度)：" + longitude.toString().substring(0, longitude.toString().indexOf(".") + 7) + "<br/>";
+        // text = text + "所属地点纬度(百度经纬度)：" + latitude.toString().substring(0, latitude.toString().indexOf(".") + 7) + "<br/>";
+        text = text + "</table></div>";
+
+        popupContentHtml = popupContentHtml + text + "<div id='flexemDataDiv' style='height:330px;' >";
+
+        if (systemType == '油水分离器') {
+            pointIconImage = "../image/map_point_icon/icon_yellow.png";
+        } else if (systemType == '雨水监测点') {
+            pointIconImage = "../image/map_point_icon/icon_point_green.png";
+
+            popupContentHtml = popupContentHtml + "<iframe style='width: 100%;height:100%;border:none;' src='rainMontiorFlexDataPage?boxNo=" + parameter.boxNo + "'></iframe>";
+
+        } else if (systemType == '泵站') {
+            pointIconImage = "../image/map_point_icon/icon_2.png";
+
+            popupContentHtml = popupContentHtml + "<iframe style='width: 100%;height:100%;border:none;' src='pumpStationFlexDataPage?boxNo=" + parameter.boxNo + "'></iframe>";
+        } else if (systemType == '雨污分流器') {
+            pointIconImage = "../image/map_point_icon/icon_orange.png";
+        } else if (systemType == '污水监测点') {
+            pointIconImage = "../image/map_point_icon/icon_brown.png";
+
+            popupContentHtml = popupContentHtml + "<iframe style='width: 100%;height:100%;border:none;' src='sewageMonitorFlexDataPage?boxNo=" + parameter.boxNo + "'></iframe>";
+        } else {
+            pointIconImage = "../image/map_point_icon/icon_1.png";
+        }
+
+        popupContentHtml = popupContentHtml + "</div>";
+
+        var pointIcon = new BMapGL.Icon(pointIconImage, new BMapGL.Size(12, 12));//指定定位位置 new BMapGL.Size(8, 8)
+        //因为实际点击marker获取的经度比数据库中的小0.0000000007，所以在设置时先加0.000001，保证marker点击后获取的经纬度与数据库中保存的地点经纬度相同
+        var a = parseFloat(longitude);//parseFloat()函数可解析一个字符串，并返回一个浮点数。
+
+        var point = new BMapGL.Point(a, latitude); //创建点坐标
+
+        tempJson.point = point;
+        map.centerAndZoom(point, 15); // 以第一个点为中心，地图等级为15
+
+        var markerPoint = new BMapGL.Marker(point, {icon: pointIcon});
+        map.addOverlay(markerPoint);//添加覆盖物
+
+        var point = new BMapGL.Point(longitude, latitude);
+        var opts = {
+            width: 360, // 信息窗口宽度
+            height: 400, // 信息窗口高度
+            title: parameter.boxAlias, // 信息窗口标题
+            enableMessage: true, //设置允许信息窗发送短息
+            message: ""
+        }
+
+        var infoWindow = new BMapGL.InfoWindow(popupContentHtml, opts);//信息窗口
+        tempJson.infoWindow = infoWindow;
+        haveDrawnPointArray.push(tempJson);
+
+        map.openInfoWindow(infoWindow, point);//弹出信息窗口
+        markerPoint.addEventListener("click", function aaa() {//addEventListener() 方法用于向指定元素添加事件句柄。
+            map.openInfoWindow(infoWindow, point);//弹出信息窗口
+        });//监听标注事件
+    }
+
+    function wgs84Tobd09(longitude, latitude) {
+        //wgs84转国测局坐标
+        var wgs84Togcj02 = coordtransform.wgs84togcj02(longitude, latitude);
+        //国测局坐标转百度经纬度坐标
+        var gcj02Tobd09 = coordtransform.gcj02tobd09(wgs84Togcj02[0], wgs84Togcj02[1]);
+        // console.info('wgs84转百度经纬度坐标---->'+gcj02Tobd09[0] + ',' + gcj02Tobd09[1]);
+        return gcj02Tobd09;
+    }
+
+    //百度经纬度坐标转wgs84
+    function bd09Towgs84(longitude, latitude) {
+        //百度经纬度坐标转国测局坐标
+        var bd09Togcj02 = coordtransform.bd09togcj02(longitude, latitude);
+        //国测局坐标转wgs84坐标
+        var gcj02Towgs84 = coordtransform.gcj02towgs84(bd09Togcj02[0], bd09Togcj02[1]);
+        // console.info('百度经纬度坐标转wgs84---->'+gcj02Towgs84[0] + ',' + gcj02Towgs84[1]);
+        return gcj02Towgs84;
+    }
+</script>
+</html>

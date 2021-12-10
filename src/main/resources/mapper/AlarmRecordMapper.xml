@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zy.gis.mapper.AlarmRecordMapper">
+  <resultMap id="BaseResultMap" type="com.zy.gis.pojo.AlarmRecord">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="alarm_type" jdbcType="VARCHAR" property="alarmType" />
+    <result column="alarm_level" jdbcType="VARCHAR" property="alarmLevel" />
+    <result column="alarm_dev_code" jdbcType="VARCHAR" property="alarmDevCode" />
+    <result column="alarm_value" jdbcType="VARCHAR" property="alarmValue" />
+    <result column="handle_state" jdbcType="VARCHAR" property="handleState" />
+    <result column="alarm_time" jdbcType="VARCHAR" property="alarmTime" />
+    <result column="update_time" jdbcType="VARCHAR" property="updateTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, link_alarm_id, alarm_type, alarm_level, alarm_dev_code, alarm_station, alarm_description, dev_facility_no, alarm_value, handle_state, alarm_time,
+    update_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from alarm_record
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <insert id="insertSelective" parameterType="com.zy.gis.pojo.AlarmRecord" keyProperty="id" useGeneratedKeys="true">
+    insert into alarm_record
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="linkAlarmId != null">
+        link_alarm_id,
+      </if>
+      <if test="alarmType != null">
+        alarm_type,
+      </if>
+      <if test="alarmLevel != null">
+        alarm_level,
+      </if>
+      <if test="alarmDevCode != null">
+        alarm_dev_code,
+      </if>
+      <if test="alarmStation != null">
+        alarm_station,
+      </if>
+      <if test="alarmDescription != null">
+        alarm_description,
+      </if>
+      <if test="devFacilityNo != null and devFacilityNo != ''">
+        dev_facility_no,
+      </if>
+      <if test="alarmValue != null">
+        alarm_value,
+      </if>
+      <if test="handleState != null">
+        handle_state,
+      </if>
+      <if test="alarmTime != null">
+        alarm_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="linkAlarmId != null">
+        #{linkAlarmId},
+      </if>
+      <if test="alarmType != null">
+        #{alarmType,jdbcType=VARCHAR},
+      </if>
+      <if test="alarmLevel != null">
+        #{alarmLevel,jdbcType=VARCHAR},
+      </if>
+      <if test="alarmDevCode != null">
+        #{alarmDevCode,jdbcType=VARCHAR},
+      </if>
+      <if test="alarmStation != null">
+        #{alarmStation},
+      </if>
+      <if test="alarmDescription != null">
+        #{alarmDescription},
+      </if>
+      <if test="devFacilityNo != null and devFacilityNo != ''">
+        #{devFacilityNo,jdbcType=VARCHAR},
+      </if>
+      <if test="alarmValue != null">
+        #{alarmValue,jdbcType=VARCHAR},
+      </if>
+      <if test="handleState != null">
+        #{handleState,jdbcType=VARCHAR},
+      </if>
+      <if test="alarmTime != null">
+        #{alarmTime,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.zy.gis.pojo.AlarmRecord">
+    update alarm_record
+    <set>
+      <if test="alarmType != null">
+        alarm_type = #{alarmType,jdbcType=VARCHAR},
+      </if>
+      <if test="alarmLevel != null">
+        alarm_level = #{alarmLevel,jdbcType=VARCHAR},
+      </if>
+      <if test="alarmDevCode != null">
+        alarm_dev_code = #{alarmDevCode,jdbcType=VARCHAR},
+      </if>
+      <if test="devFacilityNo != null and devFacilityNo != ''">
+        dev_facility_no = #{devFacilityNo,jdbcType=VARCHAR},
+      </if>
+      <if test="alarmValue != null">
+        alarm_value = #{alarmValue,jdbcType=VARCHAR},
+      </if>
+      <if test="handleState != null">
+        handle_state = #{handleState,jdbcType=VARCHAR},
+      </if>
+      <if test="alarmTime != null">
+        alarm_time = #{alarmTime,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <!--20211022 Wangchong 查询报警记录列表-->
+  <select id="getAlarmRecordList" resultType="com.zy.gis.pojo.AlarmRecord">
+    select alarmRecord.id, alarmRecord.link_alarm_id, alarmRecord.alarm_type, alarmRecord.alarm_level, alarmRecord.alarm_dev_code, alarmRecord.alarm_station,
+    alarmRecord.alarm_description, alarmRecord.dev_facility_no, alarmRecord.alarm_value, alarmRecord.handle_state, alarmRecord.alarm_time, alarmRecord.update_time,
+    alarmDispatch.handle_result
+    from
+    (
+        select
+        <include refid="Base_Column_List"/>
+        from alarm_record
+        <where>
+          <if test="id != null">
+            id = #{id}
+          </if>
+          <if test="alarmType != null and alarmType != ''">
+            and alarm_type = #{alarmType,jdbcType=VARCHAR}
+          </if>
+          <if test="linkAlarmId != null">
+            and link_alarm_id = #{linkAlarmId}
+          </if>
+          <if test="alarmLevel != null and alarmLevel !=''">
+            and alarm_level = #{alarmLevel,jdbcType=VARCHAR}
+          </if>
+          <if test="alarmDevCode != null">
+            and alarm_dev_code = #{alarmDevCode,jdbcType=VARCHAR}
+          </if>
+          <if test="devFacilityNo != null and devFacilityNo != ''">
+            and dev_facility_no = #{devFacilityNo,jdbcType=VARCHAR}
+          </if>
+          <if test="handleState != null and handleState != ''">
+            and handle_state = #{handleState,jdbcType=VARCHAR}
+          </if>
+          <if test="queryStartTime != null and queryStartTime != '' and  queryEndTime != null and queryEndTime != ''">
+            and alarm_time between #{queryStartTime} and #{queryEndTime}
+          </if>
+        </where>
+        order by alarm_time desc, update_time desc
+    ) alarmRecord,
+        (select alarm_record_id, handle_result from alarm_dispatch
+           <where>
+             <if test="dispatchToUserId != null">
+               dispatch_to_user_id = #{dispatchToUserId}
+             </if>
+           </where>
+          ) alarmDispatch
+    where alarmRecord.id = alarmDispatch.alarm_record_id
+      <if test="limit != null and offset != null">
+          limit #{offset}, #{limit}
+      </if>
+  </select>
+
+  <select id="getAlarmRecordCount" resultType="java.lang.Integer">
+<!--    select-->
+<!--    count(*)-->
+<!--    from alarm_record-->
+<!--    <where>-->
+<!--      <if test="alarmType != null">-->
+<!--        alarm_type = #{alarmType,jdbcType=VARCHAR}-->
+<!--      </if>-->
+<!--      <if test="alarmLevel != null and alarmLevel !=''">-->
+<!--        and alarm_level = #{alarmLevel,jdbcType=VARCHAR}-->
+<!--      </if>-->
+<!--      <if test="alarmDevCode != null">-->
+<!--        and alarm_dev_code = #{alarmDevCode,jdbcType=VARCHAR}-->
+<!--      </if>-->
+<!--      <if test="alarmValue != null">-->
+<!--        and alarm_value = #{alarmValue,jdbcType=VARCHAR}-->
+<!--      </if>-->
+<!--      <if test="handleState != null">-->
+<!--        and handle_state = #{handleState,jdbcType=VARCHAR}-->
+<!--      </if>-->
+<!--    </where>-->
+    select count(*)
+    from
+    (
+    select id
+    from alarm_record
+    <where>
+      <if test="id != null">
+        id = #{id}
+      </if>
+      <if test="alarmType != null and alarmType != ''">
+        and alarm_type = #{alarmType,jdbcType=VARCHAR}
+      </if>
+      <if test="linkAlarmId != null">
+        and link_alarm_id = #{linkAlarmId}
+      </if>
+      <if test="alarmLevel != null and alarmLevel !=''">
+        and alarm_level = #{alarmLevel,jdbcType=VARCHAR}
+      </if>
+      <if test="alarmDevCode != null">
+        and alarm_dev_code = #{alarmDevCode,jdbcType=VARCHAR}
+      </if>
+      <if test="devFacilityNo != null and devFacilityNo != ''">
+        and dev_facility_no = #{devFacilityNo,jdbcType=VARCHAR}
+      </if>
+      <if test="handleState != null and handleState != ''">
+        and handle_state = #{handleState,jdbcType=VARCHAR}
+      </if>
+      <if test="queryStartTime != null and queryStartTime != '' and  queryEndTime != null and queryEndTime != ''">
+        and alarm_time between #{queryStartTime} and #{queryEndTime}
+      </if>
+    </where>
+    ) alarmRecord,
+    (select alarm_record_id from alarm_dispatch
+    <where>
+      <if test="dispatchToUserId != null">
+        dispatch_to_user_id = #{dispatchToUserId}
+      </if>
+    </where>
+    ) alarmDispatch
+    where alarmRecord.id = alarmDispatch.alarm_record_id
+  </select>
+
+  <select id="statisticAlarmHandleStateCount" resultType="com.alibaba.fastjson.JSONObject">
+     select handle_state as handleState, count(id) as recordCount from alarm_record group by handle_state
+  </select>
+   <!--20211112 Wangchong 根据报警id查找报警记录-->
+  <select id="selectAlarmRecordListByIdList" resultType="com.zy.gis.pojo.AlarmRecord">
+    select
+    <include refid="Base_Column_List" />
+    from alarm_record
+    <where>
+      <if test="alarmIdList != null and alarmIdList.size > 0">
+          id in
+          <foreach collection="alarmIdList" open="(" separator="," close=")" item="recordId">
+             #{recordId}
+          </foreach>
+      </if>
+    </where>
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    <!--
+      WARNING - @mbg.generated
+      This element is automatically generated by MyBatis Generator, do not modify.
+      This element was generated on Fri Oct 22 17:48:45 CST 2021.
+    -->
+    delete from alarm_record
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zy.gis.pojo.AlarmRecord">
+    <!--
+      WARNING - @mbg.generated
+      This element is automatically generated by MyBatis Generator, do not modify.
+      This element was generated on Fri Oct 22 17:48:45 CST 2021.
+    -->
+    insert into alarm_record (id, alarm_type, alarm_level, 
+      alarm_dev_code, alarm_value, handle_state, 
+      alarm_time, update_time)
+    values (#{id,jdbcType=INTEGER}, #{alarmType,jdbcType=VARCHAR}, #{alarmLevel,jdbcType=VARCHAR}, 
+      #{alarmDevCode,jdbcType=VARCHAR}, #{alarmValue,jdbcType=VARCHAR}, #{handleState,jdbcType=VARCHAR}, 
+      #{alarmTime,jdbcType=VARCHAR}, #{updateTime,jdbcType=VARCHAR})
+  </insert>
+</mapper>

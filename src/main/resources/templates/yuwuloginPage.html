@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh"  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>登录</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0, user-scalable=yes" />
+    <!--    <link rel="icon" th:href="@{/image/logo.ico}" type="image/x-icon"/>-->
+    <!--    <link rel="stylesheet" th:href="@{/css/sf.default.css}"  />-->
+    <link rel="icon" th:href="@{/image/login/logo-login.ico}" type="image/x-icon/"/>
+    <link rel="stylesheet"  th:href="@{/css/login.css}"/>
+
+    <script th:src="@{/webjars/jquery/3.5.1/jquery.js}"></script>
+    <script type="text/javascript" th:src="@{/webjars/layui/2.6.8/layui.js}"></script>
+    <link rel="stylesheet" th:href="@{/webjars/layui/2.6.8/css/layui.css}">
+    <script th:src="@{/webjars/jquery.cookie/1.4.1/jquery.cookie.js}"></script>
+    <style>
+        #rememberAccount {
+            height:auto!important;line-height:normal!important;min-width:18px;min-height:18px;
+            border:none!important;margin-right:0;padding-left:28px;padding-right:0;background:0 0
+        }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <div class="header">
+        <!--        <div class="img_logo" id="img_logo_div"></div>-->
+        <div class="title" id="yuwufenliuName"><span th:text="${yuwufenliuName}"></span></div>
+    </div>
+    <div class="contentWrap">
+        <div class="content">
+            <form id="fm1" class="" >
+                <div class="loginCon">
+                    <div class="user-login">
+                        <div id="errorMsgLabel"  class="layui-hide"></div>
+                        <div class="welcome" >用户登录</div>
+                        <div class="input-wrap">
+                            <div class="input-bg">
+                                <span class="ico ico-user"></span>
+                                <input onchange="changeErrorMsgLabelState()" id="username" placeholder="请输入手机号" value="18888888888" name="username" class="required" tabindex="1"  type="text"  size="25" autocomplete="off"/>
+                            </div>
+                        </div>
+
+                        <div class="input-wrap">
+                            <div class="input-bg">
+                                <span class="ico ico-lock"></span>
+                                <input onchange="changeErrorMsgLabelState()" id="password" placeholder="密码" value="123456" class="required" tabindex="2" accesskey="" type="password"  size="25" autocomplete="off" />
+                            </div>
+                        </div>
+                        <div class="remember">
+                            <div class="input-checkbox">
+                                <input type="checkbox"  id="rememberAccount" title="记住密码" >
+                                <label for="rememberAccount">&nbsp;&nbsp;记住密码</label>
+                            </div>
+                        </div>
+
+                        <div class="login-btn" id="submit" accesskey="l" tabindex="6" ><a>登录</a></div>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+<input id="userAccounts" class="layui-hide" value="">
+
+</body>
+<script>
+    window.onload = function () {
+        if (self != top) {
+            top.location.reload();
+        }
+    };
+    var availWindowWidth = 0;
+    var availWindowHeight = 0;
+    var form;
+
+    $(function() {
+        document.onkeydown = function(e) {
+            var ev = document.all ? window.event : e;
+            if (ev.keyCode == 13)
+                $('#submit').trigger('click');
+        };
+        availWindowHeight = window.screen.availHeight;
+        availWindowWidth = window.screen.availWidth;
+        console.log(availWindowHeight,availWindowWidth);
+        var lastLogin = $.cookie("zyLastLogin");
+        //20200523 Wangchong 上次登录的用户不空
+        if(lastLogin !== undefined) {
+            $('#username').val(lastLogin);
+            var password = $.cookie('zy'+lastLogin);
+            if(password !== undefined && password !== ''){
+                $('#password').val(password);
+                $("#rememberAccount").prop("checked",true);
+            }
+        }
+        var cookies = $.cookie();
+        for (var key in cookies) {
+            if (cookies[key] == ''){
+                $.removeCookie(key);//删除密码为空的cookie
+            }
+        }
+    });
+
+    function changeErrorMsgLabelState(){
+        var errorMsgLabel = $("#errorMsgLabel");
+        if (errorMsgLabel.attr('class').indexOf("layui-hide") >= 0){
+            return;
+        }
+        $("#errorMsgLabel").addClass("layui-hide");
+        $(".welcome").removeClass("layui-hide");
+    }
+
+    layui.use(['element','form','layer'], function() {
+        var element = layui.element,
+            layer = layui.layer;
+        form = layui.form;
+        form.render('checkbox','userLogin');
+
+        $('#submit').click(function () {
+            $("#errorMsgLabel").addClass("layui-hide");
+            $(".welcome").removeClass("layui-hide");
+            setTimeout(function () {
+                var username = $('#username').val();
+                var password = $('#password').val();
+                if(username =='' || password =='') {
+                    layer.msg('请输入账号密码',{time:2000});
+                    return;
+                }
+                if($("#rememberAccount").prop("checked")){
+                    //20200522 Wangchong 记住账号密码，有效期7天
+                    $.cookie('zy'+username, password, { expires: 7 });//'zy'标识
+                }
+                //20200523 Wangchong 记住上次登录的用户
+                $.cookie("zyLastLogin", username,{ expires: 7 });
+
+                var loading = layer.load(1, {shade: [0.1,'#fff']});
+                var request = {username:username, password:password};
+                $.ajax(
+                    {
+                        url:"checkLogin",
+                        type:"post",
+                        data:JSON.stringify(request),
+                        dataType:"json",
+                        contentType:"application/json;charset=utf-8",
+                        success:function (result) {
+                            if(result.code > 0)
+                            {
+                                layer.msg(result.message,{time:500},function () {
+                                    window.location.href = "yuwuHeadTitle"; //大屏展示
+                                });
+                            }
+                            else {
+                                //layer.msg(result.msg,{time:500});
+                                $("#errorMsgLabel").removeClass("layui-hide");
+                                $("#errorMsgLabel").text(result.message);
+                                $(".welcome").addClass("layui-hide");
+                            }
+                        },
+                        error:function (result) {
+                            var res = JSON.stringify(result)
+                            layer.msg("登录失败",{time:500},function () {
+                                layer.close(loading);
+                            });
+                        }
+                    }
+                ).fail(function (xhr) {
+                    layer.msg('登录失败 ' + xhr.status);
+                }).always(function () {
+                    layer.close(loading);
+                });
+
+            },200);
+        });
+
+        //取消记住密码
+        $("#rememberAccount").click(function(){
+            var checked = $("#rememberAccount").prop("checked");
+            if (!checked) {
+                var username = $('#username').val();
+                if(username !== ''){//用户名不为空的话
+                    $.cookie('zy'+username,'', { expires: 7 });//'zy'标识
+                }
+            }
+        })
+
+        //20200522 Wangchong 显示向上图标 弹出历史账号信息
+        $("#userNameDown").click(function(){
+            $("#userNameDown").addClass("layui-hide");
+            $("#userNameUp").removeClass("layui-hide");
+
+            var width = availWindowWidth*0.687;
+            var height = availWindowHeight*0.42;
+            var cookies = $.cookie();//获取cookie
+            var usernames = [];
+            for(var key in cookies){
+                if(key != 'zyLastLogin' && (key.indexOf("zy") == 0)) {
+                    var username = key.substring(2);
+                    usernames.push(username);
+                }
+            }
+            if(usernames.length == 0){
+                return;
+            }
+
+            bindFocus();//点击用户名输入框也可以关闭弹窗
+
+            $("#userAccounts").val(usernames.join(','));//用户历史账号页面读取数据
+            layer.open({
+                title:false,
+                id:'userLoginHistory',
+                type: 2,
+                area: ['280px','195px'],
+                anim:5,
+                content:'userLoginHistory',
+                offset:[height,width],
+                //offset:['436px','1320px'],
+                //skin:'layui-layer-lan',
+                shade:0,
+                closeBtn:0,
+                move:false,
+                resize:false,
+                success:function(layero,index){
+                    layer.style(loginPage,{
+                        opacity:0.9
+                    });
+                }
+            })
+        });
+
+        //点击向上箭头
+        $("#userNameUp").click(function() {
+            $("#userNameUp").addClass("layui-hide");
+            $("#userNameDown").removeClass("layui-hide");
+            $('#username').unbind('focus');
+            layer.close(layer.index);
+        });
+        function bindFocus() {
+            $('#username').focus(function (e) {
+                $("#userNameUp").addClass("layui-hide");
+                $("#userNameDown").removeClass("layui-hide");
+                layer.close(layer.index);
+                $(this).unbind(e);
+            });
+        }
+
+    })
+    function selectLogin(name) {
+        $('#username').val(name);
+        var password =  $.cookie('zy'+name);
+        if(password != ''){
+            $("#rememberAccount").prop("checked",true);
+            form.render('checkbox','userLogin');
+        }else{
+            $("#rememberAccount").prop("checked",false);
+            form.render('checkbox','userLogin');
+        }
+        $('#password').val(password);
+        layer.close(layer.index);
+        $("#userNameUp").addClass("layui-hide");
+        $("#userNameDown").removeClass("layui-hide");
+    }
+    function delUserName(name){
+        $.removeCookie('zy'+name);
+    }
+</script>
+</html>

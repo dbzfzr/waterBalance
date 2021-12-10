@@ -1,0 +1,132 @@
+.layui-form-label {
+    float: left;
+    display: block;
+    padding: 9px 15px;
+    font-weight: 400;
+    line-height: 20px;
+    text-align: right;
+    color:#FAFAFA;
+    width: 110px;
+}
+.layui-form-item .layui-input-inline {
+    float: left;
+    width: 280px;
+    margin-right: 10px;
+}
+
+.layui-btn {
+
+    background-color: transparent;
+    color: #FAFAFA;
+    border: 1px solid #0E4A4D;
+    box-shadow: 1px 1px #0E4A4D,1px 1px #0E4A4D inset;
+}
+
+.layui-input, .layui-select, .layui-textarea {
+    height: 38px;
+    line-height: 38px;
+    border-width: 2px;
+    border-style: solid;
+    background-color: transparent;
+    color: rgba(255,255,255,.6);
+    border-radius: 4px;
+    border-color: #0E4A4D;
+}
+.layui-input:hover {
+    border-color:#01AAED !important;
+    box-shadow: 2px 2px 4px #04CCFB;
+    -webkit-transition: all .8s;
+}
+.layui-form-select .layui-edge {
+    position: absolute;
+    right: 10px;
+    top: 18%;
+    width: 32px;
+    height: 32px;
+    margin-top: -6px;
+    cursor: pointer;
+    border: none !important;
+    background-image: url(../../image/arrow-up-gray.png) !important;
+    transition: all .3s;
+    -webkit-transition: all .3s;
+}
+
+/**
+layui-form-select dl样式 使用中
+*/
+.layui-form-select dl dd:hover {
+    background-color: #05647F !important;
+    box-shadow: 2px 2px 4px #04CCFB;
+    -webkit-transition: all .8s;
+}
+
+.layui-form-select dl dd.layui-this{
+    background-color: #05647F !important;
+    box-shadow: #04CCFB;
+}
+
+.layui-input-block {
+    margin-left: 32vw;
+    min-height: 36px;
+}
+
+.layui-form-select dl dd {
+    cursor: pointer;
+}
+.layui-form-select dl dd, .layui-form-select dl dt {
+    padding: 0 10px;
+    line-height: 36px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+dd {
+    display: block;
+    /*margin-inline-start: 40px;*/
+}
+.layui-form-select dl {
+    top: 50px;
+    /*background-color: rgba(8, 55, 76, 0.5) !important;*/
+    width: 142px;
+    height: 36vw;
+    overflow-y: auto;
+    border: solid 1px #08374C;
+    border-radius: 6px;
+    color: #04CCFB;
+}
+.layui-btn, .layui-disabled, .layui-icon, .layui-unselect {
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+body {
+    line-height: 1.6;
+    color: rgba(0,0,0,.85);
+    font: 14px Helvetica Neue,Helvetica,PingFang SC,Tahoma,Arial,sans-serif;
+    overflow: hidden;
+}
+a, body {
+    color: #333;
+}
+::-webkit-scrollbar {
+    width: 0.4vw;
+    height: 6vh;
+
+
+}
+
+::-webkit-scrollbar-button:vertical{display: none!important;}
+::-webkit-scrollbar-track, ::-webkit-scrollbar-corner{
+    background-color:transparent;
+    border-radius: 5px;
+    /*background-image: url("../image/management_Center/scrollBar.png")!important;*/
+    /*background-repeat:no-repeat;*/
+
+}
+::-webkit-scrollbar-thumb{
+    /*border-radius: 0; background-color: rgba(240,240,240,.3);*/
+    background-color: #CCDDFF;
+    background-repeat: no-repeat;
+    border-radius: 10px;
+}
+

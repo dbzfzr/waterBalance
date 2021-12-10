@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zy.gis.mapper.RainMonitorFlexDataMapper" >
+  <resultMap id="BaseResultMap" type="com.zy.gis.pojo.flexem.RainMonitorFlexData" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="box_no" property="boxNo" jdbcType="VARCHAR" />
+    <result column="water_temperature" property="waterTemperature" jdbcType="VARCHAR" />
+    <result column="ammonia_nitrogen" property="ammoniaNitrogen" jdbcType="VARCHAR" />
+    <result column="cod" property="cod" jdbcType="VARCHAR" />
+    <result column="conductivity" property="conductivity" jdbcType="VARCHAR" />
+    <result column="ph" property="ph" jdbcType="VARCHAR" />
+    <result column="suspended_solid" property="suspendedSolid" jdbcType="VARCHAR" />
+    <result column="turbidity" property="turbidity" jdbcType="VARCHAR" />
+    <result column="liquid_level" property="liquidLevel" jdbcType="VARCHAR" />
+    <result column="current_flow" property="currentFlow" jdbcType="VARCHAR" />
+    <result column="current_rainfall" property="currentRainfall" jdbcType="VARCHAR" />
+    <result column="flexem_time_stamp" property="flexemTimeStamp" jdbcType="VARCHAR" />
+    <result column="flexem_message_id" property="flexemMessageId" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, box_no, water_temperature, ammonia_nitrogen, cod, conductivity, ph, suspended_solid, 
+    turbidity, liquid_level, current_flow, current_rainfall, flexem_time_stamp, flexem_message_id
+  </sql>
+
+  <sql id="Define_Column_List" >
+    id, box_no, water_temperature, ammonia_nitrogen, cod, conductivity, ph, suspended_solid,
+    turbidity, liquid_level, current_flow, current_rainfall, flexem_time_stamp
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from rain_monitor_flex_data
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <!--202111011128 Wangchong 查询最新的一条数据记录-->
+  <select id="selectLatestData" parameterType="java.lang.String" resultType="com.zy.gis.pojo.flexem.RainMonitorFlexData">
+         select  <include refid="Base_Column_List" />
+         from rain_monitor_flex_data where box_no = #{boxNo}
+         order by flexem_time_stamp desc limit 1
+  </select>
+
+  <!--20211102 Wangchong 查询多条雨水监测点数据-->
+  <select id="selectRainMonitorDataList" resultType="com.zy.gis.pojo.flexem.RainMonitorFlexData">
+    select  <include refid="Define_Column_List" />  from rain_monitor_flex_data
+    <where>
+      <if test="boxNo != null and boxNo != ''">
+         box_no = #{boxNo}
+      </if>
+      <if test="startTime != null and endTime != null">
+        and flexem_time_stamp between #{startTime} and #{endTime}
+      </if>
+    </where>
+    order by flexem_time_stamp desc
+    <if test="limit != null and offset != null">
+      limit #{offset}, #{limit}
+    </if>
+  </select>
+
+  <select id="selectRainMonitorDataCount" resultType="java.lang.Integer">
+    select count(*) from rain_monitor_flex_data
+    <where>
+      <if test="boxNo != null and boxNo != ''">
+        box_no = #{boxNo}
+      </if>
+      <if test="startTime != null and endTime != null">
+        and flexem_time_stamp between #{startTime} and #{endTime}
+      </if>
+    </where>
+  </select>
+
+  <!--20211110 Wangchong 查询历史多条雨水监测点数据-->
+  <select id="selectRainMonitorHistoryDataList" resultType="com.zy.gis.pojo.flexem.RainMonitorFlexData">
+    select  <include refid="Define_Column_List" />  from history_rain_monitor_flex_data
+    <where>
+      <if test="boxNo != null and boxNo != ''">
+        box_no = #{boxNo}
+      </if>
+      <if test="startTime != null and endTime != null">
+        and flexem_time_stamp between #{startTime} and #{endTime}
+      </if>
+    </where>
+    order by flexem_time_stamp desc
+    <if test="limit != null and offset != null">
+      limit #{offset}, #{limit}
+    </if>
+  </select>
+
+  <!--20211110 Wangchong 查询历史雨水监测点数据条数-->
+  <select id="selectRainMonitorHistoryDataCount" resultType="java.lang.Integer">
+    select count(*) from history_rain_monitor_flex_data
+    <where>
+      <if test="boxNo != null and boxNo != ''">
+        box_no = #{boxNo}
+      </if>
+      <if test="startTime != null and endTime != null">
+        and flexem_time_stamp between #{startTime} and #{endTime}
+      </if>
+    </where>
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from rain_monitor_flex_data
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zy.gis.pojo.flexem.RainMonitorFlexData" >
+    insert into rain_monitor_flex_data (id, box_no, water_temperature, 
+      ammonia_nitrogen, cod, conductivity, 
+      ph, suspended_solid, turbidity, 
+      liquid_level, current_flow, current_rainfall, 
+      flexem_time_stamp, flexem_message_id)
+    values (#{id,jdbcType=INTEGER}, #{boxNo,jdbcType=VARCHAR}, #{waterTemperature,jdbcType=VARCHAR}, 
+      #{ammoniaNitrogen,jdbcType=VARCHAR}, #{cod,jdbcType=VARCHAR}, #{conductivity,jdbcType=VARCHAR}, 
+      #{ph,jdbcType=VARCHAR}, #{suspendedSolid,jdbcType=VARCHAR}, #{turbidity,jdbcType=VARCHAR}, 
+      #{liquidLevel,jdbcType=VARCHAR}, #{currentFlow,jdbcType=VARCHAR}, #{currentRainfall,jdbcType=VARCHAR}, 
+      #{flexemTimeStamp,jdbcType=VARCHAR}, #{flexemMessageId,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zy.gis.pojo.flexem.RainMonitorFlexData" >
+    insert into rain_monitor_flex_data
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="boxNo != null" >
+        box_no,
+      </if>
+      <if test="waterTemperature != null" >
+        water_temperature,
+      </if>
+      <if test="ammoniaNitrogen != null" >
+        ammonia_nitrogen,
+      </if>
+      <if test="cod != null" >
+        cod,
+      </if>
+      <if test="conductivity != null" >
+        conductivity,
+      </if>
+      <if test="ph != null" >
+        ph,
+      </if>
+      <if test="suspendedSolid != null" >
+        suspended_solid,
+      </if>
+      <if test="turbidity != null" >
+        turbidity,
+      </if>
+      <if test="liquidLevel != null" >
+        liquid_level,
+      </if>
+      <if test="currentFlow != null" >
+        current_flow,
+      </if>
+      <if test="currentRainfall != null" >
+        current_rainfall,
+      </if>
+      <if test="flexemTimeStamp != null" >
+        flexem_time_stamp,
+      </if>
+      <if test="flexemMessageId != null" >
+        flexem_message_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="boxNo != null" >
+        #{boxNo,jdbcType=VARCHAR},
+      </if>
+      <if test="waterTemperature != null" >
+        #{waterTemperature,jdbcType=VARCHAR},
+      </if>
+      <if test="ammoniaNitrogen != null" >
+        #{ammoniaNitrogen,jdbcType=VARCHAR},
+      </if>
+      <if test="cod != null" >
+        #{cod,jdbcType=VARCHAR},
+      </if>
+      <if test="conductivity != null" >
+        #{conductivity,jdbcType=VARCHAR},
+      </if>
+      <if test="ph != null" >
+        #{ph,jdbcType=VARCHAR},
+      </if>
+      <if test="suspendedSolid != null" >
+        #{suspendedSolid,jdbcType=VARCHAR},
+      </if>
+      <if test="turbidity != null" >
+        #{turbidity,jdbcType=VARCHAR},
+      </if>
+      <if test="liquidLevel != null" >
+        #{liquidLevel,jdbcType=VARCHAR},
+      </if>
+      <if test="currentFlow != null" >
+        #{currentFlow,jdbcType=VARCHAR},
+      </if>
+      <if test="currentRainfall != null" >
+        #{currentRainfall,jdbcType=VARCHAR},
+      </if>
+      <if test="flexemTimeStamp != null" >
+        #{flexemTimeStamp,jdbcType=VARCHAR},
+      </if>
+      <if test="flexemMessageId != null" >
+        #{flexemMessageId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <!--20211110 Wangchong 插入历史数据表-->
+  <insert id="insertHistorySelective" parameterType="com.zy.gis.pojo.flexem.RainMonitorFlexData" >
+    insert into history_rain_monitor_flex_data
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="boxNo != null" >
+        box_no,
+      </if>
+      <if test="waterTemperature != null" >
+        water_temperature,
+      </if>
+      <if test="ammoniaNitrogen != null" >
+        ammonia_nitrogen,
+      </if>
+      <if test="cod != null" >
+        cod,
+      </if>
+      <if test="conductivity != null" >
+        conductivity,
+      </if>
+      <if test="ph != null" >
+        ph,
+      </if>
+      <if test="suspendedSolid != null" >
+        suspended_solid,
+      </if>
+      <if test="turbidity != null" >
+        turbidity,
+      </if>
+      <if test="liquidLevel != null" >
+        liquid_level,
+      </if>
+      <if test="currentFlow != null" >
+        current_flow,
+      </if>
+      <if test="currentRainfall != null" >
+        current_rainfall,
+      </if>
+      <if test="flexemTimeStamp != null" >
+        flexem_time_stamp,
+      </if>
+      <if test="flexemMessageId != null" >
+        flexem_message_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="boxNo != null" >
+        #{boxNo,jdbcType=VARCHAR},
+      </if>
+      <if test="waterTemperature != null" >
+        #{waterTemperature,jdbcType=VARCHAR},
+      </if>
+      <if test="ammoniaNitrogen != null" >
+        #{ammoniaNitrogen,jdbcType=VARCHAR},
+      </if>
+      <if test="cod != null" >
+        #{cod,jdbcType=VARCHAR},
+      </if>
+      <if test="conductivity != null" >
+        #{conductivity,jdbcType=VARCHAR},
+      </if>
+      <if test="ph != null" >
+        #{ph,jdbcType=VARCHAR},
+      </if>
+      <if test="suspendedSolid != null" >
+        #{suspendedSolid,jdbcType=VARCHAR},
+      </if>
+      <if test="turbidity != null" >
+        #{turbidity,jdbcType=VARCHAR},
+      </if>
+      <if test="liquidLevel != null" >
+        #{liquidLevel,jdbcType=VARCHAR},
+      </if>
+      <if test="currentFlow != null" >
+        #{currentFlow,jdbcType=VARCHAR},
+      </if>
+      <if test="currentRainfall != null" >
+        #{currentRainfall,jdbcType=VARCHAR},
+      </if>
+      <if test="flexemTimeStamp != null" >
+        #{flexemTimeStamp,jdbcType=VARCHAR},
+      </if>
+      <if test="flexemMessageId != null" >
+        #{flexemMessageId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.zy.gis.pojo.flexem.RainMonitorFlexData" >
+    update rain_monitor_flex_data
+    <set >
+      <if test="boxNo != null" >
+        box_no = #{boxNo,jdbcType=VARCHAR},
+      </if>
+      <if test="waterTemperature != null" >
+        water_temperature = #{waterTemperature,jdbcType=VARCHAR},
+      </if>
+      <if test="ammoniaNitrogen != null" >
+        ammonia_nitrogen = #{ammoniaNitrogen,jdbcType=VARCHAR},
+      </if>
+      <if test="cod != null" >
+        cod = #{cod,jdbcType=VARCHAR},
+      </if>
+      <if test="conductivity != null" >
+        conductivity = #{conductivity,jdbcType=VARCHAR},
+      </if>
+      <if test="ph != null" >
+        ph = #{ph,jdbcType=VARCHAR},
+      </if>
+      <if test="suspendedSolid != null" >
+        suspended_solid = #{suspendedSolid,jdbcType=VARCHAR},
+      </if>
+      <if test="turbidity != null" >
+        turbidity = #{turbidity,jdbcType=VARCHAR},
+      </if>
+      <if test="liquidLevel != null" >
+        liquid_level = #{liquidLevel,jdbcType=VARCHAR},
+      </if>
+      <if test="currentFlow != null" >
+        current_flow = #{currentFlow,jdbcType=VARCHAR},
+      </if>
+      <if test="currentRainfall != null" >
+        current_rainfall = #{currentRainfall,jdbcType=VARCHAR},
+      </if>
+      <if test="flexemTimeStamp != null" >
+        flexem_time_stamp = #{flexemTimeStamp,jdbcType=VARCHAR},
+      </if>
+      <if test="flexemMessageId != null" >
+        flexem_message_id = #{flexemMessageId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zy.gis.pojo.flexem.RainMonitorFlexData" >
+    update rain_monitor_flex_data
+    set box_no = #{boxNo,jdbcType=VARCHAR},
+      water_temperature = #{waterTemperature,jdbcType=VARCHAR},
+      ammonia_nitrogen = #{ammoniaNitrogen,jdbcType=VARCHAR},
+      cod = #{cod,jdbcType=VARCHAR},
+      conductivity = #{conductivity,jdbcType=VARCHAR},
+      ph = #{ph,jdbcType=VARCHAR},
+      suspended_solid = #{suspendedSolid,jdbcType=VARCHAR},
+      turbidity = #{turbidity,jdbcType=VARCHAR},
+      liquid_level = #{liquidLevel,jdbcType=VARCHAR},
+      current_flow = #{currentFlow,jdbcType=VARCHAR},
+      current_rainfall = #{currentRainfall,jdbcType=VARCHAR},
+      flexem_time_stamp = #{flexemTimeStamp,jdbcType=VARCHAR},
+      flexem_message_id = #{flexemMessageId,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <delete id="deleteAll">
+    delete from rain_monitor_flex_data
+  </delete>
+</mapper>

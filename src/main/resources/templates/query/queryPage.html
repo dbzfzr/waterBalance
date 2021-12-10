@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="content-type" content="text/html">
+    <meta charset="UTF-8">
+    <title>综合查询</title>
+    <style>
+        .body{
+            background-color: #031133;
+        }
+        .BMap_bubble_pop {
+            background: rgba(0, 128, 255, 0.2) linear-gradient(175deg, rgba(0, 110, 255, 0.5) 0%, rgba(0, 110, 255, 0) 100%) !important;
+            border: 1px solid !important;
+            border-image: radial-gradient(circle, rgba(142, 174, 255, 1), rgba(142, 174, 255, 0.34), rgba(142, 174, 255, 0)) 1 1 !important;
+            opacity: 0.8 !important;
+        }
+
+        .BMap_bubble_title {
+            color: #FAFAFA !important;
+        }
+
+        p, ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        #nav li a {
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        #nav li:hover {
+            font-size: 18px;
+            transition: all .5s;
+        }
+
+        .navigation-bar {
+            height: 5.3vh !important;
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+        }
+
+        #nav {
+            position: absolute;
+            left: 4vw !important;
+            display: flex;
+        }
+
+        #nav li {
+            color: #fff;
+            width: 5.5vw;
+            height: 4.1vh;
+            line-height: 4.1vh;
+            cursor: pointer;
+            transition: all .2s ease-in;
+            text-align: center;
+            bottom: 0;
+            margin-right: 0.625vw;
+            /*background: #d2d2d2;*/
+            border: 1px solid;
+            background: rgba(0, 128, 255, 0.2) linear-gradient(175deg, rgba(0, 110, 255, 0.5) 0%, rgba(0, 110, 255, 0) 100%);
+            border: 1px solid;
+            border-image: radial-gradient(circle, rgba(142, 174, 255, 1), rgba(142, 174, 255, 0.34), rgba(142, 174, 255, 0)) 1 1;
+            opacity: 1;
+        }
+
+        .hide {
+            display: none;
+        }
+
+        #flexemDataDiv::-webkit-scrollbar {
+            width: 0px;
+            height: 0px;
+        }
+
+        #flexemDataDiv::-webkit-scrollbar-button:vertical {
+            display: none !important;
+        }
+
+        #flexemDataDiv::-webkit-scrollbar-track, ::-webkit-scrollbar-corner {
+            background-color: #00AAFF;
+        }
+
+        #flexemDataDiv::-webkit-scrollbar-thumb {
+            border-radius: 0;
+            background-color: rgba(0, 0, 0, .3);
+        }
+
+        table {
+            width: 100%;
+            text-align: center;
+            font-family: PingFang-SC-Regular;
+            font-size: 15px;
+            font-weight: normal;
+            font-stretch: normal;
+            line-height: 35px;
+            letter-spacing: 2px;
+            color: #fafafa;
+        }
+    </style>
+</head>
+<body class="body">
+<ul id="nav" style="position: absolute;top:0vh;left:40%;"></ul>
+<h3 class="intelligence">智慧管网水平衡系统</h3>
+<a href="/mainHeadTitle" style="margin-left: 1800px; mix-blend-mode: hard-light; margin-top: -35px; position: absolute;"><img src="../image/management_Center/console.png"></a>
+<a href="/logout" style="margin-left: 1850px; mix-blend-mode: hard-light; margin-top: -35px; position: absolute;"><img src="../image/management_Center/exit.png"></a>
+<div class="main-frame">
+    <div id="container" class="map" style="left: -54px;"></div>
+    <div class="left-menu-frame">
+        <div class="top-frame">
+            <button id="network" onclick="menu(this)" class="menu-button" style="">管网</button>
+            <button id="operation" onclick="menu(this)" class="menu-button">事件中心</button>
+
+        </div>
+
+        <div class="sever"></div>
+        <div class="tree-frame-event">
+            <ul id="eventCenter"></ul>
+            <span class="title" id="equipmentDistribution">设备分布</span>
+            <ul id="networkTree"></ul>
+            <span class="title" id="systemDistribution">系统分布</span>
+            <ul id="devTree" ></ul>
+        </div>
+    </div>
+    <div style="display: block" id="changheStreet">
+        <div class="region-manager">
+            <div class="region-check-frame">
+                <div style="display: inline-flex;" class="region-check" onclick="getRegionTree()">
+                    <p class="checked-region-name" style="color: #94E0F8">浙江省</p>
+                    <i class="layui-icon" style="">&#xe623;</i>
+                </div>
+            </div>
+            <div class="organize-tree-frame layui-hide">
+                <ul id="organizeTree" ></ul>
+            </div>
+        </div>
+        <div class="system-icon">
+            <div class="icon-example">
+                <div class="rain-pipeline"></div>
+                <span class="title">雨水管网</span>
+                <div class="sewage-pipeline"></div>
+                <span class="title">污水管网</span>
+            </div>
+            <div class="icon-example">
+                <img class="icon-image" src="../image/map_point_icon/icon_yellow.png">
+                <span class="title">油水分离器</span>
+                <img class="icon-image" src="../image/map_point_icon/icon_point_green.png">
+                <span class="title">污水监测点</span>
+                <img class="icon-image" src="../image/map_point_icon/icon_orange.png">
+                <span class="title">雨污分流器</span>
+            </div>
+            <div class="icon-example">
+                <img class="icon-image" src="../image/homePage/rainMonitor.png">
+                <span class="title">雨水监测点</span>
+                <img class="icon-image" src="../image/homePage/pumpStation.png">
+                <span class="title">泵站</span>
+
+            </div>
+        </div>
+        <div class="dev-icon layui-hide">
+            <div class="icon-example">
+                <img class="icon-image" src="../image/map_point_icon/icon_point_green.png">
+                <span class="title">水质仪</span>
+                <img class="icon-image" src="../image/map_point_icon/icon_brown.png">
+                <span class="title">液位计</span>
+                <img class="icon-image" src="../image/map_point_icon/icon_blue.png">
+                <span class="title">雨量计</span>
+                <img class="icon-image" src="../image/map_point_icon/icon_orange.png">
+                <span class="title">流量计</span>
+            </div>
+            <div class="icon-example">
+                <img class="icon-image" src="../image/map_point_icon/icon_2.png">
+                <span class="title">抽水泵</span>
+                <img class="icon-image" src="../image/map_point_icon/icon_yellow.png">
+                <span class="title">阀门</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="right-menu-frame" style="display: none" id="earlyWarningRecord">
+        <iframe id="iframe" name="equipmentManagementIframe" frameborder="0" scrolling="no" style="width: 102%;height: 104%;position: absolute;left: 2px;top: 0px;" src="alarmRecordPage"></iframe>
+
+    </div>
+
+</div>
+</body>
+<link rel="stylesheet" th:href="@{/css/map.css}">
+<link rel="stylesheet" th:href="@{/css/queryPage.css}">
+<!--jquery-->
+<script th:src="@{/webjars/jquery/3.5.1/jquery.js}"></script>
+<!--layui-->
+<script type="text/javascript" th:src="@{/webjars/layui/2.6.8/layui.js}"></script>
+<link rel="stylesheet" th:href="@{/webjars/layui/2.6.8/css/layui.css}">
+<link rel="stylesheet" th:href="@{/css/layuiTable.css}">
+<link rel="stylesheet" th:href="@{/css/layuiLayer.css}">
+<!--EasyUI_Tree 样式-->
+<script type="text/javascript" th:src="@{/js/jquery-easyui-1.9.4/jquery.easyui.min.js}"></script>
+<link rel="stylesheet" type="text/css" th:href="@{/js/jquery-easyui-1.9.4/themes/default/easyui.css}">
+<link rel="stylesheet" type="text/css" th:href="@{/js/jquery-easyui-1.9.4/themes/icon.css}">
+<link rel="stylesheet" type="text/css" th:href="@{/js/jquery-easyui-1.9.4/themes/gray/tree.css}">
+<link rel="stylesheet" th:href="@{/css/my-easyui-tree.css}">
+<!--导航栏样式-->
+<!--<link rel="stylesheet" th:href="@{/css/managementPage.css}">-->
+<!--百度地图-->
+<script type="text/javascript" src="https://api.map.baidu.com/api?type=webgl&v=1.0&ak=smHViQElETSO7GAfRCoXuf4yGnIokjyC"></script>
+<!--坐标转化-->
+<script th:src="@{/js/coordformat/index.js}"></script>
+<script th:src="@{/js/htmlPage/baiduMapAndPipeLine.js}"></script>
+<!--region区域搜索-->
+<script>
+    var checkedOrganizeId;
+    var checkedTreeLevel;
+    var prismGroup = [];
+    var labelGroup =[]
+
+    $('#organizeTree').tree({
+        url: 'getOrganizeTreeByLevel?iconCls=my-tree-icon-4',
+        onLoadSuccess:function () { //当数据加载成功时触发
+            var root = $('#organizeTree').tree('getRoots');
+            if(root.length > 0){
+                $(".checked-region-name").html(root[0].text)
+                checkedOrganizeId = root[0].id;
+                checkedTreeLevel = root[0].iconCls;
+                getDistrict(root[0].text,root[0].iconCls);
+            }
+        },
+        onClick:function (node) {
+            console.log(node);
+            checkedOrganizeId = node.id;
+            checkedTreeLevel = node.iconCls;
+            $(".checked-region-name").html(node.text)
+            getDistrict(node.text,node.iconCls);
+        }
+
+    })
+
+    function getRegionTree() {
+        if($($(".region-check").find('i'))[0].className.indexOf('checked') > -1){
+            $(".region-check").find('i').html('&#xe623;');
+            $($(".region-check").find('i')).removeClass('checked');
+            $(".organize-tree-frame").addClass('layui-hide');
+        }else{
+            $(".region-check").find('i').html('&#xe625;');
+            $($(".region-check").find('i')).addClass('checked');
+            $(".organize-tree-frame").removeClass('layui-hide');
+        }
+    }
+
+    //点击组织树 框选区域以及自动缩放地图大小
+    function getDistrict(district,iconCls) {
+
+        var prism;
+        var threeDHight = 200;//3D棱柱高度
+        var mapLevel = 13;//地图缩放大小
+        var time = 1000; //旋转地图角度等待时间
+        var topFillColor = '#003399';
+        var sideFillColor = '#062070';
+        if(checkedTreeLevel == 'my-tree-icon-6'){
+            topFillColor = '#0055ff';
+            sideFillColor = '#062c9b';
+        }
+        switch (iconCls) {
+            case 'my-tree-icon-1':
+                threeDHight = 50000;
+                mapLevel = 8;
+                time = 3000;
+                break;
+            case 'my-tree-icon-2':
+                threeDHight = 10000;
+                mapLevel = 10;
+                break;
+            case 'my-tree-icon-3':
+                threeDHight = 2000;
+                mapLevel = 13;
+                break;
+            case 'my-tree-icon-4':
+                threeDHight = 1000;
+                mapLevel = 15;
+                break;
+            case 'my-tree-icon-5':
+                threeDHight = 200;
+                mapLevel = 16;
+                break;
+            case 'my-tree-icon-6':
+                threeDHight = 200;
+                mapLevel = 17.9;
+                break;
+            default:
+                break;
+        }
+        var centerPoint ;
+        var houses;
+        // map.clearOverlays();//清空覆盖物
+        //清空3D棱柱
+        for(var i=0; i<prismGroup.length; i++){
+            map.removeOverlay(prismGroup[i]);
+        }
+        for(var i=0; i<labelGroup.length; i++){
+            map.removeOverlay(labelGroup[i]);
+        }
+        prismGroup = [];
+        labelGroup = [];
+        $.post('getRegionData',{organizeId:checkedOrganizeId},function (res) {
+            if(res.length > 0){
+                var points = [];
+                $.each(res,function (index,item) {
+                    var point = new BMapGL.Point(item.longitude,item.latitude);
+                    points.push(point);
+                });
+                //计算中心点 start
+                centerPoint = getCenterPoint(points);
+                //end
+                var marker = new BMapGL.Marker(centerPoint);
+                var label = new BMapGL.Label(district,{
+                    offset:new BMapGL.Size(0,0),
+
+                });
+                marker.setLabel(label);
+                map.addOverlay(marker);
+                labelGroup.push(marker);
+                map.centerAndZoom(centerPoint,mapLevel);//设置中心点以及地图大小
+                window.setTimeout(function (){
+                    map.setTilt(60);//改变地图倾斜角度
+                },time);
+
+                var prism2 = new BMapGL.Prism(points, threeDHight, {
+                    topFillColor: topFillColor,
+                    topFillOpacity: 0.4,
+                    sideFillColor: sideFillColor,
+                    sideFillOpacity: 0.2,
+                    enableMassClear: true
+                });
+                map.addOverlay(prism2); //添加覆盖物
+                prismGroup.push(prism2);
+            }else{
+                queryHouse(district, '浙江省', "GFoKC0MaH0l4iCj6bNKZedu5fCPkEXWe", function(data) {
+                    if (data.message == 'ok') {
+                        houses = data.results;
+                        if(houses.length > 0){
+                            var location = data.results[0].location;
+                            centerPoint = new BMapGL.Point(location.lng, location.lat);
+                            var marker = new BMapGL.Marker(centerPoint);
+                            var label = new BMapGL.Label(district,{
+                                offset:new BMapGL.Size(0,0),
+
+                            });
+                            marker.setLabel(label);
+                            map.addOverlay(marker);
+                            labelGroup.push(marker);
+
+                            map.centerAndZoom(centerPoint,mapLevel);//设置中心点以及地图大小
+                            window.setTimeout(function (){
+                                map.setTilt(60);//改变地图倾斜角度
+                            },time);
+
+                            if(iconCls == 'my-tree-icon-6'){
+                                if(houses && houses.length > 0){
+                                    var house = houses[0];
+                                    queryHouseOutline(house.uid, function(houseOutline){
+                                        var geo = houseOutline.content.geo;
+
+                                        if(geo){
+                                            villageLocation = location;
+                                            var geoObj = parseGeo(geo);
+                                            //边界点
+                                            var points = coordinateToPoints(map, geoObj.points);
+                                            var prism = new BMapGL.Prism(points, threeDHight, {
+                                                topFillColor: topFillColor,
+                                                topFillOpacity: 0.4,
+                                                sideFillColor: sideFillColor,
+                                                sideFillOpacity: 0.2,
+                                                enableMassClear: true
+                                            });
+                                            map.addOverlay(prism); //添加覆盖物
+                                            prismGroup.push(prism);
+
+                                            // map.setTilt(60);
+                                            // map.setViewport(prism.getPath()); //调整视野
+                                        }
+                                    });
+                                }
+                            }else{
+                                boundary.get(district, function (data) {
+                                    var points = [];
+                                    for(var j= 0; j <data.boundaries.length; j++){
+                                        var boundaries = data.boundaries[j].split(";");
+
+                                        var locationStr;
+                                        for (var i = 0; i < boundaries.length; i++) {
+                                            locationStr = boundaries[i];
+                                            var point = new BMapGL.Point(locationStr.substring(0, locationStr.indexOf(",")), locationStr.substring(locationStr.indexOf(",") + 1));//创建点坐标，不一定是点坐标，要看设置
+                                            points[i] = point;
+                                        }
+                                    }
+
+                                    prism = new BMapGL.Prism(points, threeDHight, {
+                                        topFillColor: topFillColor,
+                                        topFillOpacity: 0.4,
+                                        sideFillColor: sideFillColor,
+                                        sideFillOpacity: 0.2,
+                                        enableMassClear: true
+                                    });
+                                    map.addOverlay(prism); //添加覆盖物
+                                    prismGroup.push(prism);
+                                });
+                            }
+                        }
+                    }
+                });
+            }
+
+        });
+
+    }
+    /**
+     * 模糊查询小区信息, 无返回值
+     * @param {} house	小区名称
+     * @param {} city	所属城市名称
+     * @param {} ak		百度地图AK
+     * @param {} callback	回调函数，该函数可以接收到请求的返回值
+     */
+    var queryHouse = function(house, city, ak, callback){
+        var baseURL = 'http://api.map.baidu.com/place/v2/search?';
+        var url = baseURL + "&query=" + house + "&region=" + city + "&output=json&ak=" + ak;
+
+        //console.log(url)
+        callback && (window.queryHouseCallback = callback);
+        $.ajax({
+            type: "get",
+            async: false,
+            url: url,
+            dataType: "jsonp",
+            jsonpCallback: "queryHouseCallback",
+            success: function(datas) {
+            }
+        });
+    };
+    // 查询区域信息
+    var queryHouseOutline = function(hid, callback){
+        var baseURL = 'http://map.baidu.com/?reqflag=pcmap&coord_type=3&from=weBMapGL&qt=ext&ext_ver=new&l=18';
+        var url = baseURL + "&uid=" + hid;
+        callback && (window.queryHouseOutlineCallback = callback);
+        $.ajax({
+            type: "get",
+            async: false,
+            url: url,
+            dataType: "jsonp",
+            jsonpCallback: "queryHouseOutlineCallback",
+            success: function(datas) {
+            }
+        });
+    };
+    /**
+     * 墨卡托坐标解析
+     * @param {} mocator
+     * @return {}
+     */
+    var parseGeo = function(mocator){
+        if(typeof mocator != 'string'){
+            return {};
+        }
+        var t = mocator.split("|");
+        var n = parseInt(t[0]);
+        var i = t[1];
+        var r = t[2];
+        var o = r.split(";");
+        if(n === 4){
+            for (var a = [], s = 0; s < o.length - 1; s++){
+                "1" === o[s].split("-")[0] && a.push(o[s].split("-")[1]);
+            }
+            o = a;
+            o.push("");
+        }
+        var u = [];
+        switch(n){
+            case 1:
+                u.push(o[0]);
+                break;
+            case 2:
+            case 3:
+            case 4:
+                for (var s = 0; s < o.length - 1; s++) {
+                    var l = o[s];
+                    if (l.length > 100){
+                        l = l.replace(/(-?[1-9]\d*\.\d*|-?0\.\d*[1-9]\d*|-?0?\.0+|0|-?[1-9]\d*),(-?[1-9]\d*\.\d*|-?0\.\d*[1-9]\d*|-?0?\.0+|0|-?[1-9]\d*)(,)/g,
+                            "$1,$2;");
+                        u.push(l);
+                    } else {
+                        for (var c = [], d = l.split(","), f = 0; f < d.length; f += 2) {
+                            var p = d[f];
+                            var h = d[f + 1];
+                            c.push(p + "," + h);
+                        }
+                        u.push(c.join(";"))
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+
+        if(u.length <= 1){
+            u = u.toString();
+        }
+
+        var result = {
+            type : n,
+            bound : i,
+            points : u
+        };
+        return result;
+    };
+    /**
+     * 墨卡托坐标转百度坐标 baidu jsapi WebGL 版本使用
+     * @param {} coordinate
+     * @return {}
+     */
+    var coordinateToPoints = function(map, coordinate) {
+        var points = [];
+        if (coordinate) {
+            var arr = coordinate.split(";");
+            if(arr){
+                for(var i = 0; i < arr.length; i++){
+
+                    var coord = arr[i].split(",");
+                    if(coord && coord.length == 2){
+                        var lngLat = map.mercatorToLnglat(coord[0], coord[1]);
+                        //console.log(lngLat)
+                        //var point = project.pointToLngLat(mctXY);
+                        points.push(new BMapGL.Point(lngLat[0], lngLat[1]));
+                    }
+                }
+            }
+        }
+        return points;
+    };
+    /*计算不规则多边形中心点*/
+    function getCenterPoint(points) {
+        var minLng;
+        var maxLng;
+        var minLat;
+        var maxLat;
+        $.each(points,function (index,item) {
+            if(index == 0){
+                minLng = item.lng;
+                maxLng = item.lng;
+                minLat = item.lat;
+                maxLat = item.lat;
+            }
+            if(minLng > item.lng){
+                minLng = item.lng;
+            }
+            if(maxLng < item.lng){
+                maxLng = item.lng;
+            }
+            if(minLat > item.lat){
+                minLat = item.lat;
+            }
+            if(maxLat < item.lat){
+                maxLat = item.lat;
+            }
+        })
+        var centerLng = (minLng + maxLng)/2;
+        var centerLat = (minLat + maxLat)/2;
+        return new BMapGL.Point(centerLng,centerLat);
+    }
+</script>
+<!--Tree-->
+<script>
+    var allPoint = [];              //系统分布--所有点位集合
+    var allPipeline = [];           //系统分布--所有管线集合
+    var allCheckedPoint = [];       //系统分布--所有选中点位集合
+    var allCheckedPipeline = [];    //系统分布--所有选中点位集合
+    $(function () {
+        $('#network').css('background','rgba(0, 128, 255, 0.2) linear-gradient(\n' +
+            '175deg, rgba(0, 110, 255, 0.5) 0%, rgba(0, 110, 255, 0) 100%)');
+    })
+
+    function menu(res) {
+        var btnName = $(res).html();
+        console.info('btnName='+btnName);
+        if(btnName == '管网'){
+            $('#network').css('background','rgba(0, 128, 255, 0.2) linear-gradient(\n' +
+                '175deg, rgba(0, 110, 255, 0.5) 0%, rgba(0, 110, 255, 0) 100%)');
+
+            $('#operation').css('background','#01112D');
+        }else{
+            $('#operation').css('background','rgba(0, 128, 255, 0.2) linear-gradient(\n' +
+                '175deg, rgba(0, 110, 255, 0.5) 0%, rgba(0, 110, 255, 0) 100%)');
+            $('#network').css('background','#01112D');
+        }
+    }
+
+    $("#operation").click(function () {
+        $("#networkTree").css('display','none');
+        $("#devTree").css('display','none');
+        $("#equipmentDistribution").css('display','none');
+        $("#systemDistribution").css('display','none');
+        $("#eventCenter").css('display','block');
+        $("#changheStreet").css('display','none');
+        $("#earlyWarningRecord").css('display','block');
+        $("#container").css('display','none');
+
+        $("#eventCenter").tree({
+            url:'getDevOrganizeTree',
+            onClick:function (node) {
+                console.info(node);
+                var attributes = node.attributes;
+                console.info(attributes);
+
+                if ("" != attributes){
+                    organizeTreeClickedNodeAttributes = JSON.parse(attributes);
+                    console.info(organizeTreeClickedNodeAttributes)
+                    organizeTreeClickedNodeAttributes.boxAlias = node.text;
+                    console.info(node.text)
+                }else {
+                    organizeTreeClickedNodeAttributes = null;
+                }
+
+                var iframeWindow = $("#iframe")[0].contentWindow;
+                console.info(iframeWindow)
+
+                // 报警记录
+                if (iframeWindow.location.href.indexOf("alarmRecordPage") >= 0){
+                    if ("" == attributes){
+                        return;
+                    }
+                    iframeWindow.devNodeClickReloadFunction(JSON.parse(attributes));
+                    return;;
+                }
+            }
+        })
+    })
+    
+    $("#network").click(function () {
+        $("#eventCenter").css('display','none');
+        $("#networkTree").css('display','block');
+        $("#changheStreet").css('display','block');
+        $("#devTree").css('display','block');
+        $("#equipmentDistribution").css('display','block');
+        $("#systemDistribution").css('display','block');
+        $("#earlyWarningRecord").css('display','none');
+        $("#container").css('display','block');
+
+    })
+
+
+</script>
+</html>

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="content-type" content="text/html">
+    <meta charset="UTF-8">
+    <title>新增管线</title>
+    <script type="text/javascript" th:src="@{/webjars/layui/2.6.8/layui.js}"></script>
+    <link rel="stylesheet" th:href="@{/webjars/layui/2.6.8/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/css/layuiForm.css}">
+    <script th:src="@{/webjars/jquery/3.5.1/jquery.js}"></script>
+    <script th:src="@{/js/formUtil.js}"></script>
+    <script th:src="@{/js/myjs.js}"></script>
+    <style>
+        /*隐藏滚动条*/
+        ::-webkit-scrollbar{width: 0px; height: 0px;}
+        input::-webkit-input-placeholder {
+            color: #dadada !important;
+        }
+        .layui-form-select .layui-input{
+            color: #dadada !important;
+        }
+        .layui-form-item .layui-input-inline{
+            border:1px solid #1775DA !important;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+<div  class="layui-container" style="margin-top: 10px;">
+    <form id="form" class="layui-form" name="form" style=" overflow-y: scroll; height: 380px;">
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span style="color: red;">*&nbsp;</span>管线编号:</label>
+            <div class="layui-input-inline">
+                <input type="text" name="pipelineNo"  id="pipelineNo" lay-verify="required" placeholder="请输入管线编号" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span style="color: red;">*&nbsp;</span>起始点位:</label>
+            <div class="layui-input-inline div-select" >
+                <select name="startPointNo" noinputmsg="请选择起始点位" lay-filter="startPoint" >
+                    <option><span>请选择起始点位</span></option>
+                    <option th:each="networkPointInfo:${networkPointInfoList}"  th:value="${networkPointInfo.pointNo}" ><span th:text="${networkPointInfo.pointNo}"></span></option>
+                </select>
+                <input id="startLongitude" name="startLongitude" class="layui-input layui-hide" value=""
+                       placeholder="请输入起点经度">
+                <input id="startLatitude" name="startLatitude" class="layui-input layui-hide" value=""
+                       placeholder="请输入起点纬度">
+                <input id="startTopDepth" name="startTopDepth" class="layui-input layui-hide" value=""
+                       placeholder="请输入起点顶高程">
+                <input id="startBottomDepth" name="startBottomDepth" class="layui-input layui-hide" value=""
+                       placeholder="请输入起点底高程">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span style="color: red;">*&nbsp;</span>终止点位:</label>
+            <div class="layui-input-inline div-select" >
+                <select name="endPointNo" noinputmsg="请选择终止点位" lay-filter="endPoint" >
+                    <option><span>请选择终止点位</span></option>
+                    <option th:each="networkPointInfo:${networkPointInfoList}"  th:value="${networkPointInfo.pointNo}" ><span th:text="${networkPointInfo.pointNo}"></span></option>
+                </select>
+                <input id="endLongitude" name="endLongitude" class="layui-input layui-hide" value=""
+                       placeholder="请输入终点经度">
+                <input id="endLatitude" name="endLatitude" class="layui-input layui-hide" value=""
+                       placeholder="请输入终点纬度">
+                <input id="endTopDepth" name="endTopDepth" class="layui-input layui-hide" value=""
+                       placeholder="请输入终点顶高程">
+                <input id="endBottomDepth" name="endBottomDepth" class="layui-input layui-hide" value=""
+                       placeholder="请输入终点底高程">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span style="color: red;">*&nbsp;</span>所属地点:</label>
+            <div class="layui-input-inline div-select" >
+                <select name="addressId" noinputmsg="请选择所属地点" lay-filter="organizeCheck" >
+                    <option><span>请选择所属地点</span></option>
+                    <option th:each="organizeInfo:${organizeInfoList}"  th:value="${organizeInfo.id}" ><span th:text="${organizeInfo.organizeName}"></span></option>
+                </select>
+                <input id="addressName" name="addressName" class="layui-input layui-hide" value=""
+                       placeholder="请选择所属地点">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span style="color: red;">*&nbsp;</span>管网类型:</label>
+            <div class="layui-input-inline div-select" >
+                <select name="networkType" noinputmsg="请选择管网类型" lay-filter="" >
+                    <option><span>请选择管网类型</span></option>
+                    <option><span>雨水管网</span></option>
+                    <option><span>污水管网</span></option>
+                    <option><span>供水管网</span></option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span style="color: red;">*&nbsp;</span>管网级别:</label>
+            <div class="layui-input-inline div-select" >
+                <select name="networkLevel" noinputmsg="请选择管网级别" lay-filter="" >
+                    <option><span>请选择管网级别</span></option>
+                    <option><span>一级管网</span></option>
+                    <option><span>二级管网</span></option>
+                    <option><span>三级管网</span></option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">系统类型:</label>
+            <div class="layui-input-inline div-select" >
+                <select name="systemType" noinputmsg="请选择系统类型" lay-filter="" >
+                    <option><span>请选择系统类型</span></option>
+                    <option th:each="systemTypeInfo:${systemTypeInfoList}"  th:value="${systemTypeInfo.systemTypeName}" ><span th:text="${systemTypeInfo.systemTypeName}"></span></option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span style="color: red;">*&nbsp;</span>材质:</label>
+            <div class="layui-input-inline div-select" >
+                <select name="material" noinputmsg="请选择材质" lay-filter="" >
+                    <option><span>请选择材质</span></option>
+                    <option th:each="materialTypeInfo:${materialTypeInfoList}"  th:value="${materialTypeInfo.materialTypeName}"><span th:text="${materialTypeInfo.materialTypeName}"></span></option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span style="color: red;">*&nbsp;</span>规格(mm):</label>
+            <div class="layui-input-inline div-select" >
+                <select name="specs" noinputmsg="请选择规格" lay-filter="" >
+                    <option><span>请选择规格</span></option>
+                    <option th:each="specsTypeInfo:${specsTypeInfoList}" th:value="${specsTypeInfo.specsTypeName}" ><span th:text="${specsTypeInfo.specsTypeName}"></span></option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span style="color: red;">*&nbsp;</span>竣工日期:</label>
+            <div class="layui-input-inline">
+                <input type="text" name="completionDate"  id="completionDate" lay-verify="required" placeholder="请输入竣工日期" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+<script th:inline="javascript">
+    var networkPointInfoList = [[${networkPointInfoList}]]; // 加上th:inline="javascript" 在js中获取后台model中传的数据
+    var laydate;
+    layui.use(['table','layer','form','laydate'],function () {
+        var table = layui.table,
+            layer = layui.layer,
+            form = layui.form;
+        laydate = layui.laydate;
+        form.on('select(startPoint)', function (data) {
+            var startPointNo = data.elem[data.elem.selectedIndex].text;
+            $.each(networkPointInfoList,function (index,item) {
+                if(item.pointNo == startPointNo){
+                    $("#startLongitude").val(item.longitude);
+                    $("#startLatitude").val(item.latitude);
+                    $("#startTopDepth").val(item.topDepth);
+                    $("#startBottomDepth").val(item.bottomDepth);
+                }
+            })
+        });
+
+        form.on('select(endPoint)', function (data) {
+            var endPointNo = data.elem[data.elem.selectedIndex].text;
+            if(endPointNo ==  $("select[name='startPointNo']").val()){
+                layer.msg("终止点位不能与起始点位相同!");
+                $("select[name='endPointNo']").val('请选择终止点位');
+                $("#endLongitude").val('');
+                $("#endLatitude").val('');
+                $("#endTopDepth").val('');
+                $("#endBottomDepth").val('');
+                layui.form.render('select');
+                return;
+            }
+            $.each(networkPointInfoList,function (index,item) {
+                if(item.pointNo == endPointNo){
+                    $("#endLongitude").val(item.longitude);
+                    $("#endLatitude").val(item.latitude);
+                    $("#endTopDepth").val(item.topDepth);
+                    $("#endBottomDepth").val(item.bottomDepth);
+                }
+            })
+        });
+
+        form.on('select(organizeCheck)', function (data) {
+            var addressName = data.elem[data.elem.selectedIndex].text;
+            console.info("addressName:"+addressName)
+            $("#addressName").val(addressName);
+        });
+
+        console.info("init...")
+        //日期开始时间
+        laydate.render({
+            elem: '#completionDate'
+            ,type: 'date'
+            ,value: DateUtil.dateformat(new Date(),"yyyy-MM-dd")
+            ,done: function(value, date, endDate){
+                // console.log(value); //得到日期生成的值，如：2017-08-18
+                // console.log(date); //得到日期时间对象：{year: 2017, month: 8, date: 18, hours: 0, minutes: 0, seconds: 0}
+                // console.log(endDate); //得结束的日期时间对象，开启范围选择（range: true）才会返回。对象成员同上。
+            }
+        });
+    })
+
+    function initModifyView(data) {
+        console.info("initModifyView")
+        console.info(data)
+        $("select[name='startPointNo']").val(data.startPointNo);
+        $("select[name='endPointNo']").val(data.endPointNo);
+        $("select[name='addressId']").val(data.addressId);
+        $("select[name='networkType']").val(data.networkType);
+        $("select[name='networkLevel']").val(data.networkLevel);
+        $("select[name='systemType']").val(data.systemType);
+        $("select[name='material']").val(data.material);
+        $("select[name='specs']").val(data.specs);
+        //重新渲染表单,只有执行了这一步，部分表单元素才会自动修饰成功
+        layui.form.render('select');
+
+        //日期开始时间
+        laydate.render({
+            elem: '#completionDate'
+            ,type: 'date'
+            ,value: data.completionDate
+            ,done: function(value, date, endDate){
+                // console.log(value); //得到日期生成的值，如：2017-08-18
+                // console.log(date); //得到日期时间对象：{year: 2017, month: 8, date: 18, hours: 0, minutes: 0, seconds: 0}
+                // console.log(endDate); //得结束的日期时间对象，开启范围选择（range: true）才会返回。对象成员同上。
+            }
+        });
+    }
+</script>
+</html>

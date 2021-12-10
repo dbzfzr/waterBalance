@@ -1,0 +1,300 @@
+@font-face {
+    font-family: PangMenZhengDao-3;
+    src: url(../fonts/PangMenZhengDao-3.ttf);
+}
+.item-inline{
+    display: inline;
+}
+.query-item .space{
+    margin-left: 89px;
+}
+.query-item .item-inline .item-name{
+    font-family: PingFang-SC-Regular;
+    font-size: 14px;
+    font-weight: normal;
+    font-stretch: normal;
+    line-height: 32px;
+    letter-spacing: 1px;
+    color: red;
+}
+
+.layui-form-select .layui-edge {
+    position: absolute;
+    right: 10px;
+    top:40%;
+    width:16px;
+    height:16px;
+    margin-top: -3px;
+    cursor: pointer;
+    border:none !important;
+    background-image: url('../image/mainPage/arrow-up.png')  !important;
+
+    transition: all .3s;
+    -webkit-transition: all .3s;
+}
+/*-----------下拉框----------------*/
+.query-item.div-selected .layui-form .item-selected input{
+    width: 120px;
+}
+
+.headerTitle{
+    width: 100vw;
+    height: 8vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    background: url(../image/mainPage/headTitleBg.png) no-repeat;
+    background-size: 100% 100%;
+    /*display: grid;*/
+    /*grid-template-columns: 20% 60% 20%;*/
+    padding: 0 2vw 1vh;
+    font-family: Adobe Heiti Std;
+    font-size: .8vw;
+}
+
+/*.infoTitle {*/
+/*    color: #FAFAFA;*/
+/*    position: relative;*/
+/*    !*left: calc(50% - 20px);*!*/
+/*    font-size: 6em;*/
+/*    top: 10px;*/
+/*}*/
+
+.div-selected .layui-form .layui-input:hover, .layui-textarea:hover{
+    border-color:#154ff6!important;
+}
+.div-selected .layui-form .layui-input:focus, .layui-textarea:focus{
+    border-color:#154ff6!important;
+}
+/**
+layui-form-select样式
+ */
+.layui-form-select input{
+    background-color:rgba(255,255,255,0) !important;
+    color: #04CCFB;
+    border:none;
+    width:146px;
+}
+
+.div-selected .layui-form .layui-form-select .layui-edge {
+    border-top-color: #ffffff;
+}
+
+/**
+layui-form-select dl样式 使用中
+ */
+.layui-form-select dl {
+    top: 50px;
+    background-color: rgba(8, 55, 76, 0.5) !important;
+    width:146px;
+    height:240px;
+    overflow-y: auto;
+    border: solid 1px #08374C;
+    border-radius: 6px;
+    color: #04CCFB;
+}
+
+.layui-form-select dl::-webkit-scrollbar {    /*滚动条整体样式*/
+    width: 6px;                        /*高宽分别对应横竖滚动条的尺寸*/
+    height: 1px;
+}
+.layui-form-select dl::-webkit-scrollbar-thumb {  /*滚动条里面小方块*/
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+    background: rgba(76, 101, 115, 0.4);
+}
+.layui-form-select dl::-webkit-scrollbar-track {  /*滚动条里面轨道*/
+    /* -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2); */
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0);
+}
+
+.layui-form-select dl dd:hover {
+    background-color: #05647F !important;
+    box-shadow: 2px 2px 4px #04CCFB;
+    -webkit-transition: all .8s;
+}
+
+.layui-form-select dl dd.layui-this{
+    background-color: #05647F !important;
+    box-shadow: #04CCFB;
+}
+
+    /*----------------------------*/
+
+.data-statistics .events-total-number{
+    width: 194px;
+    height: 77px;
+    border-radius: 5px;
+    border: solid 1px #4075fc;
+    text-align: center;
+    margin-right: 11px;
+}
+
+/*------------------------------layui-table表单样式优化----------------------*/
+/*去除边框线*/
+.layui-table td, .layui-table th, .layui-table-col-set, .layui-table-fixed-r, .layui-table-grid-down, .layui-table-header, .layui-table-page, .layui-table-tips-main, .layui-table-tool, .layui-table-total, .layui-table-view, .layui-table[lay-skin=line], .layui-table[lay-skin=row] {
+    border-width: 0px;
+    border-style: solid;
+    border-color: #e6e6e6;
+}
+.layui-table td{
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgba(255, 255, 255, 0);
+}
+
+/*.layui-table-click,.layui-table-click td,.layui-table-hover,.layui-table-hover td,.layui-table tbody tr:hover,.layui-table td:hover{*/
+.layui-table-click,.layui-table-click td,.layui-table-hover,.layui-table-hover td{
+    border-color: #154ff6;
+    background-color:#154ff6;
+}
+.layui-table tr {
+    transition: auto;
+    -webkit-transition: auto;
+}
+/*表单头背景色*/
+/*.layui-table thead tr,.layui-table-hover*/
+.layui-table tbody tr:hover, .layui-table thead tr, .layui-table-click, .layui-table-header, .layui-table-hover, .layui-table-mend, .layui-table-patch, .layui-table-tool, .layui-table-total, .layui-table-total tr, .layui-table[lay-even] tr:nth-child(even){
+    background-image: linear-gradient(180deg,
+    #2961ef 0%,
+    #154ff6 100%),
+    linear-gradient(
+            #2659cb,
+            #2659cb);
+    background-blend-mode: normal,
+    normal;
+    background-color:#154ff6;
+}
+/*表单头字体样式*/
+.layui-table thead tr{
+    font-family: SourceHanSansCN-Regular;
+    font-size: 17px;
+    font-weight: normal;
+    font-stretch: normal;
+    line-height: 28px;
+    letter-spacing: 1px;
+    color: #00e1ff;
+}
+/*表单头排序箭头样式*/
+.layui-table-sort .layui-table-sort-asc{
+    border-bottom-color: #00e1ff;
+}
+.layui-table-sort .layui-table-sort-asc:hover{
+    border-bottom-color: #092366;
+}
+.layui-table-sort .layui-table-sort-desc{
+     border-top-color: #00e1ff;
+ }
+.layui-table-sort .layui-table-sort-desc:hover {
+    border-top-color: #092366;
+}
+
+/*table表单数据内容背景色和字体颜色*/
+.layui-table {
+    width: 100%;
+    background-color: #fff0;
+    /*color: #fff;*/
+    font-family: PingFang-SC-Regular;
+    font-size: 15px;
+    font-weight: normal;
+    font-stretch: normal;
+    line-height: 35px;
+    letter-spacing: 1px;
+    color: #ffffff;
+
+}
+::-webkit-scrollbar{width: 0px; height: 0px;}
+
+::-webkit-scrollbar-button:vertical{display: none!important;}
+::-webkit-scrollbar-track, ::-webkit-scrollbar-corner{background-color: #00AAFF;}
+::-webkit-scrollbar-thumb{border-radius: 0; background-color: rgba(0,0,0,.3);}
+
+/*layui tips 提示框 start*/
+.layui-layer-tips .layui-layer-content {
+    border-radius: 10px!important;
+}
+
+
+/*layui tips 提示框 end*/
+.layui-table-tips-main {
+    background-color: #0c32f4;
+    color: #FFFFFF;
+    border-radius: 5px;
+}
+.layui-table-tips-c {
+    padding: 0px;
+    background-color:#000000;
+}
+.layui-table-grid-down, .layui-table-grid-down:hover {
+    background-color: #08205F;
+}
+/*箭头样式*/
+.layui-table-grid-down {
+    color: #1A53F4;
+}
+
+
+
+.region-manager, .dev-manager, .network-manager{
+    width: 15.625vw;
+    height:3.7vh;
+    position: relative;
+    margin-top: 5px;
+}
+.region-check-frame{
+    width: 100%;
+    height: 3.5vh;
+    background: rgba(5,27,77,0.80);
+    text-align: center;
+    line-height: 3.5vh;
+    border-top: #1851D2 0.3vh solid;
+    border-bottom: #1851D2 0.3vh solid;
+
+}
+.layui-icon{
+    color: #FFFFFF;
+    margin-left: 0.5vw;
+}
+.organize-tree-frame{
+    width: 100%;
+    height: 50vh;
+    position:absolute;
+    top: 4vh;
+    /*background:rgba(13,122,154,0.80);*/
+    /*background:rgba(3,67,86,0.80);*/
+    background: rgba(5,27,77,0.80);
+    z-index: 1;
+    color: #FFFFFF;
+    overflow-y: scroll;
+}
+
+.icon-example{
+    display: flex;
+    position: relative;
+    width: 25vw;
+    height: 3vh;
+}
+.rain-pipeline{
+    width: 1vw;
+    height: .2vh;
+    background: #09FC6B;
+    margin: 1.3vh 0.5vw;
+}
+.sewage-pipeline{
+    width: 1vw;
+    height: .2vh;
+    background: #FE0001;
+    margin: 1.3vh 0.5vw;
+}
+
+.icon-image{
+    width: 1.5vh;
+    height: 1.5vh;
+    margin: .8vh 0.5vw;
+}
+.title{
+    color:#FFFFFF;
+    padding: 0.2vw 0;
+}

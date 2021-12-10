@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>管理中心</title>
+    <script th:src="@{/webjars/jquery/3.5.1/jquery.js}"></script>
+    <script type="text/javascript" th:src="@{/webjars/layui/2.6.8/layui.js}"></script>
+    <link rel="stylesheet" th:href="@{/webjars/layui/2.6.8/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/css/layuiTable.css}">
+    <link rel="stylesheet" th:href="@{/css/layuiLayer.css}">
+    <link rel="stylesheet" th:href="@{/css/managementPage.css}">
+<style>
+    @font-face {
+        font-family: PangMenZhengDao-3;
+        src: url(../fonts/PangMenZhengDao-3.ttf);
+    }
+
+    .layui-layer-content input{
+    }
+    .layui-layer-setwin{
+        top: 25px !important;
+
+    }
+
+    .layui-layer-title{
+        color:#F2F4F7 !important;
+        border-bottom:1px solid #033061;
+        line-height: 50px !important;
+        background-color: #11469C;
+    }
+    .layui-layer-input{
+        background-color: rgba(0,33,70,0.2);
+        background-image: url("../image/regionmanagement/input.png");
+        border: 1px solid #0A3F77 !important;
+        position: absolute;
+        left: 13px;
+        color: #E8EAEE !important;
+    }
+    .layui-layer-btn a{
+        margin-top: 84px;
+        background: rgba(0, 8, 26, 0.2) !important;
+        border: 1px solid !important;
+        border-image: linear-gradient(180deg, rgba(0, 128, 255, 0.16), rgba(58, 157, 255, 0.3)) 1 1 !important;
+        color: #E8EAEE !important;
+    }
+    .layui-layer-prompt{
+        width: 300px;
+        height: 210px !important;
+        background-image:
+                url('../image/regionmanagement/areaBulletFrame.png')!important;
+        background-position:
+                -23px -33px, 23px 56px;
+        background-color: rgba(25,77,160,0.2);
+    }
+    .layui-layer-dialog{
+        width: 300px;
+        height: 230px;
+        background-image:
+                url('../image/regionmanagement/areaBulletFrame.png')!important;
+        background-position:
+                -24px -8px, 23px 56px;
+        background-color: rgba(25,77,160,0.2);
+    }
+    /*.layui-layer {*/
+    /*        width: 300px;*/
+    /*        height: 230px;*/
+    /*    background-image:*/
+    /*        url('../image/regionmanagement/areaBulletFrame.png')!important;*/
+    /*    background-position:*/
+    /*            -24px -10px, 23px 56px;*/
+    /*    background-color: rgba(25,77,160,0.2);*/
+    /*}*/
+</style>
+</head>
+<body class="body" style="background-image:url('../image/management_Center/backgroundPicture.png')">
+    <ul id="nav" style="position: absolute;top:0vh;left:40%;"></ul>
+    <h3  class="intelligence">智慧管网水平衡系统</h3>
+    <a href="/logout" style="margin-left: 1850px; mix-blend-mode: hard-light; margin-top: -35px; position: absolute;"><img src="../image/management_Center/exit.png"></a>
+    <a href="/mainHeadTitle" style="margin-left: 1800px; mix-blend-mode: hard-light; margin-top: -35px; position: absolute;"><img src="../image/management_Center/console.png"></a>
+    <iframe id="ifame" name="managementIframe" frameborder="0" scrolling="no" style="width:100%;height:89%;position:absolute;bottom:0px;top:10vh;left: 0px;" src=""></iframe>
+</body>
+<script th:inline="javascript">
+   var menuInfoList = [[ ${menuInfoList} ]];
+   var defaultPage = [[ ${defaultPage}]];
+    // 创建单个导航菜单
+    function createNav(menuInfo){
+        var html =  "<li class=''>";
+
+        if (defaultPage == null && menuInfo.url == "equipmentManagement"){
+            $("#ifame").attr('src', "equipmentManagement");
+            html =  "<li class='active'>";
+        }
+        if (defaultPage != null){
+            if (menuInfo.url == defaultPage){
+                $("#ifame").attr('src', defaultPage);
+                html =  "<li class='active'>";
+            }
+        }
+        html = html + "<a target='managementIframe' href='" + menuInfo.url + "'>" + menuInfo.name + "</a></li>";
+        $("#nav").append(html);
+        var navLis = $("#nav li");
+        // for (var i=0; i<navLis.length; i++){
+        //     if($(navLis[i]).children().html() == '设施设备查看'){
+        //         $(navLis[i]).addClass("active");
+        //     }
+        // }
+        navLis.click(function () {
+            for (var i=0; i<navLis.length; i++){
+                if ($(navLis[i]).attr("class").indexOf("active") >= 0){
+                    $(navLis[i]).removeClass("active");
+                }
+            }
+            $(this).addClass("active");
+        });
+    }
+
+    var menu;
+    for (var i=0 ;i<menuInfoList.length; i++){
+        menu = menuInfoList[i];
+            createNav(menu);
+    }
+
+    $(function () {
+        $("#nav li")
+    })
+</script>
+</html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>数据监控</title>
+    <!--EasyUI_Tree 样式-->
+    <script type="text/javascript" th:src="@{/js/jquery-easyui-1.9.4/jquery.easyui.min.js}"></script>
+    <link rel="stylesheet" type="text/css" th:href="@{/js/jquery-easyui-1.9.4/themes/default/easyui.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/js/jquery-easyui-1.9.4/themes/icon.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/js/jquery-easyui-1.9.4/themes/gray/tree.css}">
+    <link rel="stylesheet" th:href="@{/css/my-easyui-tree.css}">
+    <!-- layui 图表扩展css-->
+    <script th:src="@{/webjars/jquery/3.5.1/jquery.js}"></script>
+    <script type="text/javascript" th:src="@{/webjars/layui/2.6.8/layui.js}"></script>
+    <link rel="stylesheet" th:href="@{/webjars/layui/2.6.8/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/css/layuiTable.css}">
+    <link rel="stylesheet" th:href="@{/css/devdatamanagement.css}">
+    <link rel="stylesheet" th:href="@{/css/toolBarIcon.css}">
+
+    <style>
+        table{
+            border-collapse: separate;
+            border-spacing: 1px;
+        }
+        .body{
+            background-color: rgba(2,21,56,0.3);
+        }
+    </style>
+</head>
+<body class="body">
+<div id="monitor" style="padding: 5px;">
+<!--    <div style="margin-top: 30px;margin-left: 44px;">-->
+<!--        <div style="height: 40px;width: 105px;display: inline-block;">-->
+<!--            <button class="layui-btn layui-bt-xs active">当天数据</button>-->
+<!--        </div>-->
+<!--        <div  style="display: inline-block;height: 40px;width: 105px;">-->
+<!--            <button class="layui-btn layui-bt-xs">监控设置</button>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--    <div style="margin-top: 15px;margin-left: 44px;">-->
+<!--        <div style="margin-top: 5px;display: inline-block">-->
+<!--            <button class="layui-btn layui-btn-xs">一键打开</button>-->
+<!--        </div>-->
+<!--        <div style="margin-top: 5px;display: inline-block">-->
+<!--            <button class="layui-btn layui-btn-xs">一键关闭</button>-->
+<!--        </div>-->
+
+
+<!--        <div  id="selectAll" style="color: #DDF1EF;display: inline-block;font-size: 17px;margin-left: 5px;margin-top: 13px;position: absolute ">-->
+<!--            设备类型:-->
+<!--            <button id="equipment"-->
+<!--                    style="background-color:#003575;border: 0;display: inline-block;width: 140px;height: 32px;margin-left:10px;position: absolute;margin-top: -3px">-->
+<!--                <p style="margin-left: -55px;display: inline-block"></p>-->
+<!--                <span style="margin-left: -54px">区</span>-->
+<!--                <i class="layui-icon" style="margin-left: 95px;position: absolute;margin-top: -2px;">&#xe623;</i>-->
+
+<!--            </button>-->
+<!--        </div>-->
+<!--        <div id="systemInfo"  style="height: 155px;width: 100px;display: none;font-weight: bold;-->
+<!--                                           margin-top: 5px;margin-left: 310px;z-index: 5;position:relative;">-->
+<!--            <form class="layui-form">-->
+<!--                <input type="checkbox" lay-filter="allChoose" name="allSel" id="allSel" style="margin-left: 20px"  lay-skin="primary"><span style="color: #EFF1F4">全部</span>-->
+<!--                <input type="checkbox"   lay-filter="devTypeIdGroup" th:each="devTypeInfo:${DevTypeInfoList}"-->
+<!--                       name="devTypeIdGroup" th:value="${devTypeInfo.id}" th:title="${devTypeInfo.devTypeName}"  lay-skin="primary"/>-->
+<!--                <submit type="button" id="confirm" style="margin-left: 70px;color: #F4F6F8">确认</submit>-->
+<!--            </form>-->
+<!--        </div>-->
+<!--        <div class="region-manager" style="margin-top: 50px;overflow: auto;height: 60%;">-->
+<!--            <ul id="devDataTree" style="color: #FFFFFF"></ul>-->
+<!--        </div>-->
+<!--    </div>-->
+</div>
+<div>
+    <table id="flexemDataTable">
+
+    </table>
+</div>
+<script type="text/html" id="No.">
+    {{d.LAY_TABLE_INDEX+1}}
+</script>
+</body>
+<script type="text/javascript" th:src="@{/js/htmlPage/equipmentManagement/flexemDataTableRender.js}"></script>
+<script>
+    //获取最顶层父页面的body
+    var parentBody = window.parent.parent.document.body;
+    parentBody.style="background-image:url(\'../image/management_Center/backgroundPicture.png\')";
+
+    $(function () {
+        if (parent.organizeTreeClickedNodeAttributes != null){
+            setTimeout(function () {
+                renderFlexemDataTable(parent.organizeTreeClickedNodeAttributes);
+            }, 200);
+        }
+    });
+
+    var x = 1;
+    $("#equipment").click(function () {
+        console.info("----->"+x);
+        if(x%2==1){
+            $("#systemInfo").css('display','block');
+            //设备类型默认全选
+            var child = $("#systemInfo input[type='checkbox']");
+            child.each(function (index, item) {
+                item.checked = true;
+            });
+            form.render('checkbox');//重载
+            $("#equipment").find("i").html('&#xe625');
+        }
+        if(x%2==0){
+            $("#systemInfo").css('display','none');
+            $("#equipment").find("i").html('&#xe623');
+        }
+        x++;
+    });
+
+    var form, table;
+
+    layui.use(['form','jquery','table','element'], function () {
+        form = layui.form;
+        var $ = layui.jquery;  //获取模块
+
+        table = layui.table;
+        var element = layui.element;
+
+        form.on('checkbox(allChoose)', function (data) {
+            var child = $("#systemInfo input[type='checkbox']");
+            child.each(function (index, item) {
+                item.checked = data.elem.checked;
+            });
+            form.render('checkbox');//重载
+        });
+
+        form.on('checkbox(devTypeIdGroup)', function (data) {
+            var sib = $("#systemInfo").find(' input[name="devTypeIdGroup"][type="checkbox"]:checked').length;
+            var total = $("#systemInfo").find(' input[name="devTypeIdGroup"][type="checkbox"]').length;
+            if (sib != total) {
+                console.info( $("#systemInfo").find('input[type="checkbox"]'));
+                $($("#systemInfo").find('input[type="checkbox"]')[0]).prop("checked", false);
+                form.render();
+            }else{
+                $($("#systemInfo").find('input[type="checkbox"]')[0]).prop("checked", true);
+                form.render();
+            }
+        });
+    });
+
+    function renderFlexemDataTable(parameter){
+        if (parameter.systemType == "雨水监测点"){
+            rainMonitorFlexDataTableRenderJsonObject.where.boxNo = parameter.boxNo;
+            rainMonitorFlexDataTableRenderJsonObject.url = 'getRainMonitorFlexDataList';
+            table.render(rainMonitorFlexDataTableRenderJsonObject);
+            return;
+        }
+        if (parameter.systemType == "污水监测点"){
+            sewageMonitorFlexDataTableRenderJsonObject.where.boxNo = parameter.boxNo;
+            sewageMonitorFlexDataTableRenderJsonObject.url = 'getSewageMonitorFlexDataList';
+            table.render(sewageMonitorFlexDataTableRenderJsonObject);
+            return;
+        }
+        if (parameter.systemType == "泵站"){
+            pumpStationFlexDataTableRenderJsonObject.where.boxNo = parameter.boxNo;
+            pumpStationFlexDataTableRenderJsonObject.url = 'getPumpStationFlexDataList';
+            table.render(pumpStationFlexDataTableRenderJsonObject);
+        }
+    }
+
+    $("#confirm").click(function () {
+        $("#systemInfo").css('display','none');
+        $("#equipment").find("i").html("&#xe623");
+        x++;
+        var data = [];
+        var choice = $("#systemInfo").find('input[name="devTypeIdGroup"][type="checkbox"]:checked');
+        for(var i = 0 ; i< choice.length ; i++){
+                data.push(choice[i].title)
+        }
+
+        console.info(data);
+    })
+</script>
+</html>

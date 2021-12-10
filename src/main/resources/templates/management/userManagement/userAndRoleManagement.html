@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+
+    <meta charset="UTF-8">
+    <title>用户管理</title>
+    <th:block th:include="management/deviceManagement/include :: header('')"/>
+    <style>
+        .layui-nav-tree .layui-nav-child dd.layui-this, .layui-nav-tree .layui-nav-child dd.layui-this a, .layui-nav-tree .layui-this, .layui-nav-tree .layui-this>a, .layui-nav-tree .layui-this>a:hover {
+            background-image: url("../image/listBox.png")!important;
+            margin-left: 1.7px;
+            height: 36px;
+        }
+
+        .layui-breadcrumb a:hover{
+            color:#FFFFFF !important;
+            font-weight: bold;
+        }
+
+        .layui-nav-tree .layui-nav-child dd.layui-this, .layui-nav-tree .layui-nav-child dd.layui-this a, .layui-nav-tree .layui-this, .layui-nav-tree .layui-this>a, .layui-nav-tree .layui-this>a:hover{
+            background-color: #010E23 !important;
+        }
+        .layui-nav-tree .layui-nav-bar{
+            background-color: rgba(25,66,55,0) !important;
+        }
+
+
+
+
+    </style>
+    <script th:src="@{/webjars/jquery/3.5.1/jquery.js}"></script>
+</head>
+<body>
+<div class="layui-layout layui-layout-admin">
+    <script>
+        //获取最顶层父页面的body
+        var parentBody = window.parent.parent.document.body;
+        parentBody.style="background-image:url(\'../image/management_Center/backgroundPicture.png\')";
+    </script>
+
+    <!-- 头部区域（可配合layui已有的水平导航） -->
+    <th:block th:include="management/userManagement/include :: menus"></th:block>
+    <div class="layui-body" style="top: 0px;">
+        <!-- 内容 -->
+        <iframe name="content" frameborder="0" scrolling="no" style="width: 100%; height: 99.7%;" src="userManagement">
+        </iframe>
+    </div>
+</div>
+</body>
+</html>

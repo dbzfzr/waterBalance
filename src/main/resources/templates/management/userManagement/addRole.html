@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="content-type" content="text/html">
+    <meta charset="UTF-8">
+    <title>新增角色类型</title>
+    <script type="text/javascript" th:src="@{/webjars/layui/2.6.8/layui.js}"></script>
+    <link rel="stylesheet" th:href="@{/webjars/layui/2.6.8/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/css/layuiForm.css}">
+    <script th:src="@{/webjars/jquery/3.5.1/jquery.js}"></script>
+    <script th:src="@{/js/formUtil.js}"></script>
+    <script th:src="@{/js/jquery-easyui-1.9.4/jquery.easyui.min.js}"></script>
+    <link rel="stylesheet"  th:href="@{/js/jquery-easyui-1.9.4/themes/default/easyui.css}">
+    <link rel="stylesheet" th:href="@{/js/jquery-easyui-1.9.4/themes/icon.css}">
+    <link rel="stylesheet" th:href="@{/css/menu.css}">
+    <style>
+        input::-webkit-input-placeholder {
+            color: #dadada !important;
+        }
+
+        /*添加角色弹框css样式*/
+        .tree-file{
+            background: rgba(25,66,55,0);
+        }
+        .tree-checkbox0{
+            background:url("../image/treeIcon/organizatinTreeCheckButton.png") !important;
+        }
+        .tree-checkbox1{
+            background: url("../image/treeIcon/organizatinTreeCheckButton1.png")!important;
+        }
+        .tree-checkbox2{
+            background:url("../image/treeIcon/organizatinTreeCheckButton.png") !important;
+        }
+        .tree-node-selected{
+            background: rgba(13,106,242,1);
+            color: #F5F6F8 !important;
+        }
+        .tree-node-hover{
+            background: rgba(18,70,154,0.5);
+            color: #F5F6F8 !important;
+
+        }
+        .tree-expanded{
+            background: url("../image/management_Center/arrowOpen.png") !important;
+        }
+        .tree-collapsed{
+            background: url("../image/management_Center/arrowOff.png") !important;
+        }
+    </style>
+</head>
+<body>
+<div  class="layui-container" style="margin-top: 10px">
+    <form id="form" class="layui-form" name="form">
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span style="color: red;">*&nbsp;</span>角色名称：</label>
+            <div class="layui-input-inline">
+                <input  style="border-color: #3399FF ; border-width: 1px;" type="text" name="roleName"  id="roleName" lay-verify="required" placeholder="请输入角色名称" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </form>
+    <ul id="menuTree" class="easyui-tree" style="margin-left: 20px;color: #FAFAFA;">
+
+    </ul>
+</div>
+</body>
+<script>
+    function initModifyView(data) {
+
+    }
+
+    function getTreeCheckedId() {
+        //var data = tree.getChecked('menuTree');
+        var data = $('#menuTree').tree('getChecked', ['checked','indeterminate']);
+        var newMenuIds = []
+        for (var i=0; i< data.length; i++) {
+            newMenuIds.push(data[i].id);
+        }
+        return newMenuIds;
+    }
+
+    // 添加角色时显示的菜单信息
+    function addRoleDisplayMenu(){
+
+        $('#menuTree').tree({
+            url:'getAllMenuInfoList',
+            type:'get',
+            animate:true,
+            checkbox:true
+        });
+    }
+
+    function editRoleDisplayMenu(roleId){
+        $('#menuTree').tree({
+            url:'getMenuInfoListByRoleId?roleId=' + roleId,
+            type:'post',
+            animate:true,
+            checkbox:true
+        });
+    }
+
+</script>
+</html>
